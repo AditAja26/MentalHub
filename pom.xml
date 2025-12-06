@@ -128,7 +128,7 @@
   </dependencies>
 
   <build>
-    <finalName>healthhubutm</finalName>
+    <finalName>mentalhub</finalName>
 
     <plugins>
       <!-- Compiler for Java 17 -->

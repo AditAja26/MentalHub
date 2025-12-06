@@ -11,7 +11,7 @@
          http://www.springframework.org/schema/mvc
          https://www.springframework.org/schema/mvc/spring-mvc.xsd">
 
-  <context:component-scan base-package="com.secj3303.controller, com.secj3303.services" />
+  <context:component-scan base-package="com.controller, com.services" />
   <mvc:annotation-driven />
 
   <!-- <bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">

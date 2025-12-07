@@ -7,11 +7,130 @@
         <link rel="stylesheet" th:href="@{/resources/css/nav-bar.css}" />
 
         <style>
-            
+            body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f0f2f5; /* Light grey background */
+        }
+        
+        .create-post-container {
+            max-width: 700px;
+            margin: 40px auto;
+            padding: 30px;
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+        
+        h1 {
+            color: #333;
+            font-size: 2rem;
+            border-bottom: 2px solid #e9ecef;
+            padding-bottom: 10px;
+            margin-top: 0;
+        }
+
+        p {
+            color: #666;
+            margin-bottom: 25px;
+        }
+
+        .post-form label {
+            display: block;
+            font-weight: bold;
+            color: #444;
+            margin-top: 15px;
+            margin-bottom: 5px;
+        }
+
+        .post-form input[type="text"],
+        .post-form textarea {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ced4da;
+            border-radius: 6px;
+            box-sizing: border-box; /* Includes padding in the element's total width */
+            font-size: 1rem;
+            font-family: inherit;
+        }
+        
+        .post-form textarea {
+            resize: vertical; /* Allows user to resize vertically */
+        }
+
+        .form-actions {
+            margin-top: 30px;
+            display: flex;
+            justify-content: flex-end; /* Pushes buttons to the right */
+            gap: 15px;
+        }
+
+        .submit-btn,
+        .cancel-btn {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 6px;
+            font-weight: bold;
+            cursor: pointer;
+            text-decoration: none; /* For the cancel link */
+            text-align: center;
+            transition: background-color 0.2s;
+        }
+        
+        .submit-btn {
+            background-color: #7b68ee; /* Purple primary action */
+            color: white;
+        }
+        
+        .submit-btn:hover {
+            background-color: #6a5acd;
+        }
+        
+        .cancel-btn {
+            background-color: #f8f9fa; /* Light background for secondary action */
+            color: #495057;
+            border: 1px solid #ced4da;
+        }
+        
+        .cancel-btn:hover {
+            background-color: #e2e6ea;
+        }
         </style>
     </head>
 
     <body>
+        <header class="main-header">
+            <div class="logo">
+                <a th:href="@{/profile}"><img th:src="@{/resources/images/logo.png}" alt="MentalHub Logo" style="height: 80px;"></a>
+            </div>
+            
+            <nav class="user-nav">
+                <a th:href="@{/notifications}" class="notification-icon">🔔</a>
+                
+                <a th:href="@{/logout}">Logout</a>
+            </nav>
+        </header>
+
+        <main class="create-post-container">
         
+        <h1>Create a New Post</h1>
+        
+            <form th:action="@{/peer/create}" method="post" class="post-form">
+                
+                <label for="postTitle">Title</label>
+                <input type="text" id="postTitle" name="title" maxlength="100" required placeholder="A short, descriptive title for your post">
+                
+                <label for="postContent">What's on your mind?</label>
+                <textarea id="postContent" name="content" rows="10" required placeholder="Type your thoughts, questions, or resources here..."></textarea>
+                
+                <div class="form-actions">
+                    <a th:href="@{/peer/posts}" class="cancel-btn">Cancel</a>
+                    <button type="submit" class="submit-btn">Publish Post</button>
+                </div>
+            </form>
+        
+        </main>
+
     </body>
 </html>

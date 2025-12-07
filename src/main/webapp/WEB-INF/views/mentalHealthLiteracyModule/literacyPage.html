@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+    <head>
+        <meta charset="UTF-8">
+        <title>Mental Health Literacy | MentalHub</title>
+
+        <link rel="stylesheet" th:href="@{/resources/css/nav-bar.css}"/>
+
+        <style>
+            /* General Reset and Base Styling */
+            body {
+                /* Uses a clean, standard font */
+                font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+                margin: 0;
+                padding: 0;
+                /* Light background color similar to the prototype */
+                background-color: #f8f9fa; 
+                color: #343a40; 
+            }
+
+            /* Main Two-Column Layout Container */
+            .literacy-container {
+                display: flex;
+                max-width: 1200px;
+                margin: 40px auto; /* Centers content below the header */
+                padding: 0 20px;
+                gap: 30px; /* Space between the two columns */
+                flex-wrap: wrap; /* Allows sections to stack on small screens */
+            }
+
+            /* Styling for the two main content sections */
+            .link-section, 
+            .quiz-section {
+                flex: 1; /* Both sections take up equal width */
+                min-width: 300px; 
+                background-color: #ffffff;
+                border-radius: 8px;
+                box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05); /* Subtle shadow for depth */
+                padding: 25px;
+            }
+
+            /* 🎯 CHANGES FOR SCROLLING */
+            .link-section {
+                /* Sets the maximum height for the section */
+                max-height: 450px; 
+                /* Enables a vertical scrollbar when content exceeds max-height */
+                overflow-y: auto; 
+            }
+
+            /* Section Titles (The highlighted blocks in the prototype) */
+            .link-section h2,
+            .quiz-section h2 {
+                background-color: #7b68ee; /* A strong purple color */
+                color: white;
+                padding: 15px 20px;
+                /* Negative margin pulls the title box flush with the card edges */
+                margin: -25px -25px 20px -25px; 
+                border-top-left-radius: 8px;
+                border-top-right-radius: 8px;
+                font-size: 1.5rem;
+                text-align: center;
+                text-transform: uppercase;
+            }
+
+            /* Article Card Styling (Left side) */
+            .article-card {
+                border: 1px solid #dee2e6;
+                border-radius: 6px;
+                padding: 15px;
+                margin-bottom: 15px;
+                transition: box-shadow 0.2s;
+            }
+
+            .article-card:hover {
+                box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            }
+
+            /* Styling for links within the section */
+            .resource-list {
+                list-style: none;
+                padding: 0;
+            }
+
+            .resource-list li {
+                margin-bottom: 8px;
+                padding: 8px 0;
+                border-bottom: 1px dotted #ced4da;
+            }
+
+            .resource-list a {
+                text-decoration: none;
+                color: #007bff;
+                font-weight: 500;
+            }
+
+            .resource-list a:hover {
+                text-decoration: underline;
+            }
+
+            /* Quiz Section Styling (Right side) */
+            .quiz-question p {
+                font-weight: bold;
+                margin-top: 0;
+                border-bottom: 1px solid #e9ecef;
+                padding-bottom: 10px;
+                margin-bottom: 15px;
+            }
+
+            .radio-option {
+                margin-bottom: 10px;
+                display: flex;
+                align-items: center;
+            }
+
+            .radio-option input[type="radio"] {
+                /* Spacing for the radio button */
+                margin-right: 10px;
+            }
+
+            /* Submit Button Styling (Quiz) */
+            #daily-quiz-form button[type="submit"] {
+                display: block;
+                width: 100%;
+                padding: 12px;
+                background-color: #7b68ee; /* Match the title color */
+                color: white;
+                border: none;
+                border-radius: 5px;
+                font-size: 1.1rem;
+                cursor: pointer;
+                margin-top: 25px;
+                transition: background-color 0.2s;
+            }
+
+            #daily-quiz-form button[type="submit"]:hover {
+                background-color: #6a5acd; 
+            }
+
+            /* Footer (If included in the HTML) */
+            footer {
+                text-align: center;
+                padding: 20px;
+                margin-top: 40px;
+                border-top: 1px solid #e9ecef;
+                color: #6c757d;
+            }
+
+            /* Media Query for Responsiveness */
+            @media (max-width: 768px) {
+                .literacy-container {
+                    /* Stacks columns vertically on smaller screens */
+                    flex-direction: column; 
+                    margin-top: 20px;
+                }
+            }
+        </style>
+    </head>
+
+    <body>
+        <header class="main-header">
+            <div class="logo">
+                <a th:href="@{/profile}"><img th:src="@{/resources/images/logo.png}" alt="MentalHub Logo" style="height: 80px;"></a>
+            </div>
+            
+            <nav class="user-nav">
+                <a th:href="@{/notifications}" class="notification-icon">🔔</a>
+                
+                <a th:href="@{/logout}">Logout</a>
+            </nav>
+        </header>
+
+
+        <main class="literacy-container">
+        
+        <section class="link-section">
+            <h2>Mental Health Articles</h2>
+            
+            <div class="article-card">
+                <a href="https://www.verywellmind.com/the-importance-of-mental-health-for-wellbeing-5207938"><h3>The Importance of Mental Health</h3></a>
+                <p>Learn why taking care of your mind is essential for academic success and overall well-being. </p>
+            </div>
+            
+            <div class="article-card">
+                <h3>Lorem Ipsum</h3>
+                <p>Placeholder content for a second article/resource link.</p>
+            </div>
+
+            <div class="article-card">
+                <h3>Lorem Ipsum</h3>
+                <p>Placeholder content for a second article/resource link.</p>
+            </div>
+
+            <div class="article-card">
+                <h3>Lorem Ipsum</h3>
+                <p>Placeholder content for a second article/resource link.</p>
+            </div>
+
+            <div class="article-card">
+                <h3>Lorem Ipsum</h3>
+                <p>Placeholder content for a second article/resource link.</p>
+            </div>
+        </section>
+
+        <section class="quiz-section">
+            <h2>Daily Quiz</h2>
+            <form id="daily-quiz-form" action="#" method="post">
+                
+                <div class="quiz-question">
+                    <p><strong>Good mental health helps you:</strong></p>
+                    
+                    <div class="radio-option">
+                        <input type="radio" id="q1a" name="q1" value="a">
+                        <label for="q1a">Avoid all stress entirely</label>
+                    </div>
+                    
+                    <div class="radio-option">
+                        <input type="radio" id="q1b" name="q1" value="b">
+                        <label for="q1b">Cope with normal life stresses and work productively</label>
+                    </div>
+                    
+                    <div class="radio-option">
+                        <input type="radio" id="q1c" name="q1" value="c">
+                        <label for="q1c">Never feel sad or anxious</label>
+                    </div>
+                    
+                    <div class="radio-option">
+                        <input type="radio" id="q1d" name="q1" value="d">
+                        <label for="q1d">Become instantly successful</label>
+                    </div>
+                </div>
+
+                <button type="submit">Submit Answer</button>
+            </form>
+        </section>
+        
+    </main>
+    </body>
+</html>

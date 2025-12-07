@@ -5,7 +5,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-import com.model.User;
+
 
 @Controller
 @RequestMapping("/advisor")
@@ -17,4 +17,15 @@ public class AdvisorController {
         // model.addAttribute("advisorName", user != null ? user.getName() : "Student");
         return "mainPages/advisorLandingPage";
     }
+
+    @GetMapping("/appointment")
+    public String showAppointment() {
+        return "#";
+    }
+
+    @GetMapping("/report")
+    public String showReport() {
+        return "#";
+    }
+    
 }

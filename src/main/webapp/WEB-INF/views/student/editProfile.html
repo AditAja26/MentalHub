@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Profile - MentalHub</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #E8E4F0;
+            min-height: 100vh;
+        }
+
+        .header {
+            background-color: white;
+            padding: 20px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .logo-container {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .logo-icon {
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, #4A90E2 0%, #357ABD 100%);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 28px;
+            font-weight: bold;
+            position: relative;
+        }
+
+        .logo-plus {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            width: 20px;
+            height: 20px;
+            background-color: #4A90E2;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 14px;
+            font-weight: bold;
+            border: 2px solid white;
+        }
+
+        .logo-text {
+            font-size: 28px;
+            font-weight: 600;
+            color: #4A90E2;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 30px;
+        }
+
+        .nav-link {
+            color: #666;
+            text-decoration: none;
+            font-size: 16px;
+            transition: color 0.3s;
+        }
+
+        .nav-link.active {
+            color: #333;
+            text-decoration: underline;
+            font-weight: 600;
+        }
+
+        .nav-link:hover {
+            color: #4A90E2;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 40px auto;
+            padding: 0 20px;
+        }
+
+        .page-title {
+            font-size: 32px;
+            font-weight: 700;
+            color: #333;
+            margin-bottom: 40px;
+        }
+
+        .edit-layout {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 50px;
+        }
+
+        .form-section {
+            display: flex;
+            flex-direction: column;
+            gap: 30px;
+        }
+
+        .field-group {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .field-label {
+            font-size: 16px;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .field-input {
+            background-color: #D8D4E0;
+            border: none;
+            border-radius: 25px;
+            padding: 18px 25px;
+            font-size: 16px;
+            color: #333;
+            outline: none;
+            transition: box-shadow 0.3s;
+        }
+
+        .field-input:focus {
+            box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.3);
+        }
+
+        .field-input::placeholder {
+            color: #999;
+        }
+
+        .avatar-section {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .avatar-preview {
+            width: 200px;
+            height: 200px;
+            background-color: #D0D0D0;
+            border-radius: 50%;
+        }
+
+        .avatar-label {
+            font-size: 16px;
+            font-weight: 600;
+            color: #333;
+            cursor: pointer;
+        }
+
+        .confirm-btn {
+            background-color: #7CB98B;
+            color: white;
+            border: none;
+            border-radius: 25px;
+            padding: 15px 50px;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            margin-top: 20px;
+        }
+
+        .confirm-btn:hover {
+            background-color: #6AA87A;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="logo-container">
+            <div class="logo-icon">
+                M
+                <div class="logo-plus">+</div>
+            </div>
+            <span class="logo-text">MentalHub</span>
+        </div>
+        <div class="nav-links">
+            <a th:href="@{/student/profile}" class="nav-link active">Profile</a>
+            <a href="#" class="nav-link">Awarness</a>
+            <a href="#" class="nav-link">Help-Seeking</a>
+            <a href="#" class="nav-link">Crisis Management</a>
+            <a href="#" class="nav-link">Support Services</a>
+        </div>
+    </div>
+
+    <div class="container">
+        <h1 class="page-title">Edit Personal Information</h1>
+
+        <form th:action="@{/student/profile/update}" method="post" class="edit-layout">
+            <div class="form-section">
+                <div class="field-group">
+                    <label class="field-label">Name</label>
+                    <input type="text" name="name" class="field-input" th:value="${user.name}" placeholder="Enter your name">
+                </div>
+
+                <div class="field-group">
+                    <label class="field-label">Email</label>
+                    <input type="email" name="email" class="field-input" th:value="${user.email}" placeholder="Enter your email">
+                </div>
+
+                <div class="field-group">
+                    <label class="field-label">Password</label>
+                    <input type="password" name="password" class="field-input" placeholder="Enter new password">
+                </div>
+
+                <div class="field-group">
+                    <label class="field-label">Phone Number</label>
+                    <input type="tel" name="phone" class="field-input" th:value="${user.phone}" placeholder="Enter your phone number">
+                </div>
+            </div>
+
+            <div class="avatar-section">
+                <div class="avatar-preview"></div>
+                <label class="avatar-label">Edit Profile Picture</label>
+                <input type="file" name="avatar" accept="image/*" style="display: none;">
+                <button type="submit" class="confirm-btn">Confirm</button>
+            </div>
+        </form>
+    </div>
+</body>
+</html>
+

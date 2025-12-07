@@ -106,18 +106,7 @@
     </style>
 </head>
 <body>
-    <div class="header">
-        <div class="logo-container">
-            <img th:src="@{/resources/images/logo.png}" alt="MentalHub Logo" class="logo-img">
-        </div>
-        <div class="nav-links">
-            <a th:href="@{/admin}" class="nav-link active">Admin</a>
-            <a href="#" class="nav-link">Awarness</a>
-            <a href="#" class="nav-link">Help-Seeking</a>
-            <a href="#" class="nav-link">Crisis Management</a>
-            <a href="#" class="nav-link">Support Services</a>
-        </div>
-    </div>
+    <div th:replace="~{_layout :: main-header}"></div>
 
     <div class="container">
         <h1 class="page-title">Edit Article</h1>

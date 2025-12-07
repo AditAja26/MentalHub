@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+    <head>
+        <meta charset="UTF-8">
+        <title>Peer Support Forum | MentalHub</title>
+        
+        <link rel="stylesheet" th:href="@{/resources/css/nav-bar.css}" />
+
+        <style>
+            body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f0f2f5; /* Light grey background */
+        }
+        
+        .peer-feed-container {
+            max-width: 800px; 
+            margin: 40px auto; 
+            padding: 0 20px;
+        }
+
+        .feed-header {
+            text-align: center; 
+            margin-bottom: 30px;
+        }
+
+        .feed-header h1 {
+            color: #333; 
+            font-size: 2.2rem; 
+            margin-bottom: 5px;
+        }
+
+        .feed-header p {
+            color: #666; 
+            font-size: 1.1rem;
+        }
+
+        .new-post-btn {
+            display: inline-block; 
+            margin-top: 15px; 
+            padding: 10px 20px; 
+            background-color: #7b68ee; /* Purple accent */
+            color: white; 
+            text-decoration: none; 
+            border-radius: 8px; 
+            font-weight: bold; 
+            transition: background-color 0.2s;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+
+        .new-post-btn:hover {
+            background-color: #6a5acd;
+        }
+
+        /* Post Card Styling */
+        .post-card {
+            background-color: white; 
+            border-radius: 10px; 
+            padding: 20px; 
+            margin-bottom: 20px; 
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+
+        .post-header {
+            border-bottom: 1px solid #eee; 
+            padding-bottom: 8px; 
+            margin-bottom: 10px;
+        }
+        
+        .username {
+            font-weight: bold; 
+            color: #444;
+        }
+        
+        .timestamp {
+            float: right; 
+            color: #888; 
+            font-size: 0.9em;
+        }
+
+        .post-body p {
+            color: #333; 
+            line-height: 1.5; 
+            margin: 0 0 15px 0;
+        }
+        
+        .post-actions {
+            font-size: 0.9em; 
+            color: #555;
+        }
+
+        .post-actions a {
+            color: #007bff; 
+            text-decoration: none; 
+            font-weight: bold; 
+            margin-right: 15px;
+        }
+
+        .post-actions span:last-child {
+            border-left: 1px solid #ccc; 
+            padding-left: 15px;
+        }
+        </style>
+    </head>
+
+    <body>
+        <header class="main-header">
+            <div class="logo">
+                <a th:href="@{/profile}"><img th:src="@{/resources/images/logo.png}" alt="MentalHub Logo" style="height: 80px;"></a>
+            </div>
+            
+            <nav class="user-nav">
+                <a th:href="@{/notifications}" class="notification-icon">🔔</a>
+                
+                <a th:href="@{/logout}">Logout</a>
+            </nav>
+        </header>
+
+        <main class="peer-feed-container">
+
+            <div class="feed-header">
+            <h1>Peer Support Forum</h1>
+            <p>Connect with other students and share your thoughts in a safe space.</p>
+            
+            <a th:href="@{/peer/createPost}" class="new-post-btn">+ Start a New Conversation</a>
+        </div>
+        
+        <section class="posts-list">
+            
+            <div class="post-card">
+                
+                <div class="post-header">
+                    <span class="username">Student XYZ</span>
+                    <span class="timestamp">2 hours ago</span>
+                </div>
+                
+                <div class="post-body">
+                    <p>I've been feeling really overwhelmed with my assignments lately. Does anyone else struggle with balancing academic pressure and personal life? Any tips would be appreciated!</p>
+                </div>
+                
+                <div class="post-actions">
+                    <a th:href="@{/peer/commentPost/1}" class="reply-link">Reply (5)</a>
+                    <span>12 Likes</span>
+                </div>
+            </div>
+
+            <div class="post-card">
+                
+                <div class="post-header">
+                    <span class="username">HappyStudent</span>
+                    <span class="timestamp">Yesterday</span>
+                </div>
+                
+                <div class="post-body">
+                    <p>Just wanted to share a good resource I found on mindfulness techniques. It helped me a lot this week!</p>
+                </div>
+                
+                <div class="post-actions">
+                    <a th:href="@{/peer/commentPost/2}" class="reply-link">Reply (10)</a>
+                    <span>25 Likes</span>
+                </div>
+            </div>
+            
+        </section>
+        </main>
+    </body>
+
+</html>

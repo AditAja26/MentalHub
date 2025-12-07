@@ -14,12 +14,12 @@ public class PeerSupportController {
         return "peerSupportModule/posts";
     }
 
-    @GetMapping("/createPost")
+    @GetMapping("/new")
     public String createPostPage(Model model){
         return "peerSupportModule/createPost";
     }
 
-    @GetMapping("/commentPost")
+    @GetMapping("/reply")
     public String showCommentPage(Model model){
         return "peerSupportModule/commentPost";
     }

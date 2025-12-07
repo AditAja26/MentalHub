@@ -4,97 +4,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Educational Content - MentalHub</title>
+    <link th:href="@{/resources/css/nav-bar.css}" rel="stylesheet" type="text/css"/>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
             background-color: #f5f5f5;
-            min-height: 100vh;
-        }
-
-        .header {
-            background-color: white;
-            padding: 20px 40px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-bottom: 1px solid #e0e0e0;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-        }
-
-        .logo-container {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .logo-m {
-            width: 40px;
-            height: 40px;
-            background: linear-gradient(135deg, #4A90E2 0%, #357ABD 100%);
-            border-radius: 8px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-size: 24px;
-            font-weight: bold;
-            position: relative;
         }
 
         .logo-text {
-            font-size: 24px;
-            font-weight: 600;
             color: #333;
-        }
-
-        .logo-plus {
-            position: absolute;
-            top: -5px;
-            right: -5px;
-            width: 18px;
-            height: 18px;
-            background-color: #4A90E2;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-size: 12px;
-            font-weight: bold;
-            border: 2px solid white;
-        }
-
-        .nav-links {
-            display: flex;
-            gap: 30px;
-        }
-
-        .nav-link {
-            color: #666;
-            text-decoration: none;
-            font-size: 16px;
-            transition: color 0.3s;
-        }
-
-        .nav-link.active {
-            color: #4A90E2;
-            text-decoration: underline;
-        }
-
-        .nav-link:hover {
-            color: #4A90E2;
-        }
-
-        .container {
-            max-width: 1200px;
-            margin: 40px auto;
-            padding: 0 20px;
         }
 
         .content-panel {
@@ -142,6 +59,7 @@
             color: #999;
             cursor: pointer;
             transition: color 0.3s;
+            text-decoration: none;
         }
 
         .article-arrow:hover {
@@ -163,6 +81,7 @@
             font-weight: 600;
             cursor: pointer;
             transition: background-color 0.3s;
+            text-decoration: none;
         }
 
         .edit-btn:hover {
@@ -179,21 +98,43 @@
             font-weight: 600;
             cursor: pointer;
             transition: background-color 0.3s;
+            text-decoration: none;
         }
 
         .delete-btn:hover {
             background-color: #C0392B;
+        }
+
+        .add-article-btn {
+            background-color: #7CB98B;
+            color: white;
+            padding: 12px 25px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .add-article-btn:hover {
+            background-color: #6AA87A;
+        }
+
+        .panel-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .panel-title {
+            font-size: 24px;
+            color: #333;
         }
     </style>
 </head>
 <body>
     <div class="header">
         <div class="logo-container">
-            <div class="logo-m">
-                M
-                <div class="logo-plus">+</div>
-            </div>
-            <span class="logo-text">MentalHub</span>
+            <img th:src="@{/resources/images/logo.png}" alt="MentalHub Logo" class="logo-img">
         </div>
         <div class="nav-links">
             <a th:href="@{/admin}" class="nav-link active">Admin</a>
@@ -206,9 +147,9 @@
 
     <div class="container">
         <div class="content-panel">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
-                <h1 style="font-size: 24px; color: #333;">Educational Content</h1>
-                <a th:href="@{/admin/content/add}" style="background-color: #7CB98B; color: white; padding: 12px 25px; border-radius: 8px; text-decoration: none; font-weight: 600;">+ Add Article</a>
+            <div class="panel-header">
+                <h1 class="panel-title">Educational Content</h1>
+                <a th:href="@{/admin/content/add}" class="add-article-btn">+ Add Article</a>
             </div>
             <div class="article-list">
                 <div th:if="${#lists.isEmpty(articles)}" style="text-align: center; padding: 40px; color: #888;">
@@ -230,5 +171,3 @@
     </div>
 </body>
 </html>
-
-

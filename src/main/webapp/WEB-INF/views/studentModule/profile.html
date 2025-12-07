@@ -4,99 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Profile - MentalHub</title>
+    <link th:href="@{/resources/css/nav-bar.css}" rel="stylesheet" type="text/css"/>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #E8E4F0;
-            min-height: 100vh;
-        }
-
-        .header {
-            background-color: white;
-            padding: 20px 40px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-        }
-
-        .logo-container {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .logo-icon {
-            width: 50px;
-            height: 50px;
-            background: linear-gradient(135deg, #4A90E2 0%, #357ABD 100%);
-            border-radius: 10px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-size: 28px;
-            font-weight: bold;
-            position: relative;
-        }
-
-        .logo-plus {
-            position: absolute;
-            top: -5px;
-            right: -5px;
-            width: 20px;
-            height: 20px;
-            background-color: #4A90E2;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-size: 14px;
-            font-weight: bold;
-            border: 2px solid white;
-        }
-
-        .logo-text {
-            font-size: 28px;
-            font-weight: 600;
-            color: #4A90E2;
-        }
-
-        .nav-links {
-            display: flex;
-            gap: 30px;
-        }
-
-        .nav-link {
-            color: #666;
-            text-decoration: none;
-            font-size: 16px;
-            transition: color 0.3s;
-        }
-
-        .nav-link.active {
-            color: #333;
-            text-decoration: underline;
-            font-weight: 600;
-        }
-
-        .nav-link:hover {
-            color: #4A90E2;
-        }
-
-        .container {
-            max-width: 1200px;
-            margin: 40px auto;
-            padding: 0 20px;
-        }
-
         .profile-layout {
             display: grid;
             grid-template-columns: 2fr 1fr;
@@ -194,11 +103,7 @@
 <body>
     <div class="header">
         <div class="logo-container">
-            <div class="logo-icon">
-                M
-                <div class="logo-plus">+</div>
-            </div>
-            <span class="logo-text">MentalHub</span>
+            <img th:src="@{/resources/images/logo.png}" alt="MentalHub Logo" class="logo-img">
         </div>
         <div class="nav-links">
             <a th:href="@{/student/profile}" class="nav-link active">Profile</a>
@@ -253,4 +158,3 @@
     </div>
 </body>
 </html>
-

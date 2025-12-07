@@ -31,7 +31,7 @@ public class AdminController {
     public String showUsersList(Model model) {
         List<User> users = userService.getAllUsers();
         model.addAttribute("users", users);
-        return "admin/usersList";
+        return "adminModule/usersList";
     }
 
     @GetMapping("/users/{id}")
@@ -41,7 +41,7 @@ public class AdminController {
             return "redirect:/admin/users";
         }
         model.addAttribute("user", user);
-        return "admin/userDetail";
+        return "adminModule/userDetail";
     }
 
     @GetMapping("/users/{id}/edit")
@@ -51,7 +51,7 @@ public class AdminController {
             return "redirect:/admin/users";
         }
         model.addAttribute("user", user);
-        return "admin/editUser";
+        return "adminModule/editUser";
     }
 
     @PostMapping("/users/{id}/update")
@@ -81,7 +81,7 @@ public class AdminController {
     public String showContentList(Model model) {
         List<Article> articles = articleService.getAllArticles();
         model.addAttribute("articles", articles);
-        return "admin/contentList";
+        return "adminModule/contentList";
     }
 
     @GetMapping("/content/{id}")
@@ -91,7 +91,7 @@ public class AdminController {
             return "redirect:/admin/content";
         }
         model.addAttribute("article", article);
-        return "admin/articleView";
+        return "adminModule/articleView";
     }
 
     @GetMapping("/content/{id}/edit")
@@ -101,7 +101,7 @@ public class AdminController {
             return "redirect:/admin/content";
         }
         model.addAttribute("article", article);
-        return "admin/editArticle";
+        return "adminModule/editArticle";
     }
 
     @PostMapping("/content/{id}/update")
@@ -128,7 +128,7 @@ public class AdminController {
     @GetMapping("/content/add")
     public String showAddArticle(Model model) {
         model.addAttribute("article", new Article());
-        return "admin/addArticle";
+        return "adminModule/addArticle";
     }
 
     @PostMapping("/content/add")

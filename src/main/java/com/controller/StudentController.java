@@ -38,14 +38,14 @@ public class StudentController {
             userService.addUser(user);
         }
         model.addAttribute("user", user);
-        return "student/profile";
+        return "studentModule/profile";
     }
 
     @GetMapping("/profile/edit")
     public String showEditProfile(Model model) {
         User user = userService.getUserById(CURRENT_USER_ID);
         model.addAttribute("user", user);
-        return "student/editProfile";
+        return "studentModule/editProfile";
     }
 
     @PostMapping("/profile/update")
@@ -72,7 +72,7 @@ public class StudentController {
         List<Goal> completedGoals = goalService.getCompletedGoalsByUserId(CURRENT_USER_ID);
         model.addAttribute("activeGoals", activeGoals);
         model.addAttribute("completedGoals", completedGoals);
-        return "student/goals";
+        return "studentModule/goals";
     }
 
     @PostMapping("/goals/add")

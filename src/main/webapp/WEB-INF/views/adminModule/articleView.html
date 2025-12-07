@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${article.title}">Article - MentalHub</title>
+    <link th:href="@{/resources/css/nav-bar.css}" rel="stylesheet" type="text/css"/>
+    <style>
+        .logo-text {
+            color: #333;
+        }
+
+        .container {
+            max-width: 1000px;
+        }
+
+        .article-card {
+            background-color: white;
+            border-radius: 16px;
+            padding: 40px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+
+        .article-title {
+            font-size: 32px;
+            font-weight: 700;
+            color: #333;
+            margin-bottom: 30px;
+        }
+
+        .article-body {
+            font-size: 16px;
+            line-height: 1.8;
+            color: #444;
+            margin-bottom: 40px;
+            white-space: pre-wrap;
+        }
+
+        .article-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 15px;
+        }
+
+        .delete-btn {
+            background-color: #E74C3C;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            padding: 12px 30px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            text-decoration: none;
+        }
+
+        .delete-btn:hover {
+            background-color: #C0392B;
+        }
+
+        .confirm-btn {
+            background-color: #27AE60;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            padding: 12px 30px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            text-decoration: none;
+        }
+
+        .confirm-btn:hover {
+            background-color: #229954;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="logo-container">
+            <img th:src="@{/resources/images/logo.png}" alt="MentalHub Logo" class="logo-img">
+        </div>
+        <div class="nav-links">
+            <a th:href="@{/admin}" class="nav-link active">Admin</a>
+            <a href="#" class="nav-link">Awarness</a>
+            <a href="#" class="nav-link">Help-Seeking</a>
+            <a href="#" class="nav-link">Crisis Management</a>
+            <a href="#" class="nav-link">Support Services</a>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="article-card">
+            <h1 class="article-title" th:text="${article.title}">The Student's Guide to Taming Test Anxiety</h1>
+            <div class="article-body" th:text="${article.content}">Test anxiety is a specific type of performance anxiety...</div>
+            <div class="article-actions">
+                <a th:href="@{/admin/content/{id}/delete(id=${article.id})}" class="delete-btn">Delete</a>
+                <a th:href="@{/admin/content/{id}/edit(id=${article.id})}" class="confirm-btn">Edit</a>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

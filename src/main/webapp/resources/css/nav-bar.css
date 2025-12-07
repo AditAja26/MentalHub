@@ -1,0 +1,28 @@
+/* Styling for the main header container */
+.main-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 30px;
+    background-color: #ffffff; /* White background */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+    border-bottom: 3px solid #6c757d; /* A color accent */
+}
+
+/* Styling for the links inside the navigation */
+.user-nav a {
+    margin-left: 20px;
+    text-decoration: none;
+    color: #495057; /* Dark text */
+    font-weight: 600;
+}
+
+.user-nav a:hover {
+    color: #007bff; /* Blue hover color */
+}
+
+/* Styling for the notification icon (e.g., bell) */
+.notification-icon {
+    font-size: 1.2rem;
+    color: #dc3545; /* Red alert color */
+}

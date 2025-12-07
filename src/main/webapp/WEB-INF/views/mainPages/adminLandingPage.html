@@ -1,23 +1,137 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
-    <head>
-        <meta charset="UTF-8">
-        <title>Mental Health Literacy | MentalHub</title>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Landing Page - MentalHub</title>
+    <link th:href="@{/resources/css/nav-bar.css}" rel="stylesheet" type="text/css"/>
+    <style>
+        body {
+            background-color: #f5f5f5;
+        }
 
-        <link rel="stylesheet" th:href="@{/resources/css/nav-bar.css}"/>
-    </head>
+        .logo-text {
+            color: #333;
+        }
 
-    <body>
-        <header class="main-header">
-            <div class="logo">
-                <a th:href="@{/profile}"><img th:src="@{/resources/images/logo.png}" alt="MentalHub Logo" style="height: 80px;"></a>
+        .welcome-section {
+            margin-bottom: 40px;
+        }
+
+        .welcome-text {
+            font-size: 32px;
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .welcome-name {
+            color: #4A90E2;
+        }
+
+        .subtitle {
+            font-size: 18px;
+            color: #666;
+            margin-top: 10px;
+        }
+
+        .cards-container {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 30px;
+            margin-top: 40px;
+        }
+
+        .card {
+            background-color: #f8f8f8;
+            border-radius: 16px;
+            padding: 30px;
+            display: flex;
+            align-items: center;
+            gap: 30px;
+            cursor: pointer;
+            transition: transform 0.3s, box-shadow 0.3s;
+            text-decoration: none;
+            color: inherit;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 16px rgba(0,0,0,0.1);
+        }
+
+        .card-image {
+            width: 120px;
+            height: 120px;
+            flex-shrink: 0;
+            background-color: #e8e8e8;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 48px;
+        }
+
+        .card-content {
+            flex: 1;
+        }
+
+        .card-title {
+            font-size: 24px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .manage-user-card .card-image {
+            background: linear-gradient(135deg, #E8F4F8 0%, #D4E8F0 100%);
+        }
+
+        .manage-content-card .card-image {
+            background: linear-gradient(135deg, #F0F8E8 0%, #E0F0D4 100%);
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="logo-container">
+            <img th:src="@{/resources/images/logo.png}" alt="MentalHub Logo" class="logo-img">
+        </div>
+        <div class="header-right">
+            <a href="#" class="logout-link">Logout</a>
+            <div class="notification-icon">
+                🔔
+                <div class="notification-badge">1</div>
             </div>
-            
-            <nav class="user-nav">
-                <a th:href="@{/notifications}" class="notification-icon">🔔</a>
-                
-                <a th:href="@{/logout}">Logout</a>
-            </nav>
-        </header>
-    </body>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="welcome-section">
+            <h1 class="welcome-text">
+                Welcome Back <span class="welcome-name" th:text="${adminName ?: 'Admin'}">Hakimi</span>
+            </h1>
+            <p class="subtitle">What would you like to do?</p>
+        </div>
+
+        <div class="cards-container">
+            <a th:href="@{/admin/users}" class="card manage-user-card">
+                <div class="card-image">
+                    👤
+                </div>
+                <div class="card-content">
+                    <h2 class="card-title">Manage User</h2>
+                </div>
+            </a>
+
+            <a th:href="@{/admin/content}" class="card manage-content-card">
+                <div class="card-content">
+                    <h2 class="card-title">Manage Educational Content</h2>
+                </div>
+                <div class="card-image">
+                    📚
+                </div>
+            </a>
+        </div>
+    </div>
+</body>
 </html>

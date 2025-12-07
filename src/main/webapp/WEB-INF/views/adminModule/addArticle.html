@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Article - MentalHub</title>
+    <link th:href="@{/resources/css/nav-bar.css}" rel="stylesheet" type="text/css"/>
+    <style>
+        .container {
+            max-width: 900px;
+        }
+
+        .page-title {
+            font-size: 28px;
+            font-weight: 700;
+            color: #333;
+            margin-bottom: 30px;
+        }
+
+        .form-card {
+            background-color: white;
+            border-radius: 16px;
+            padding: 40px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        .form-label {
+            display: block;
+            font-size: 16px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 15px 20px;
+            border: 2px solid #E8E4F0;
+            border-radius: 10px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: #4A90E2;
+        }
+
+        .form-textarea {
+            width: 100%;
+            padding: 15px 20px;
+            border: 2px solid #E8E4F0;
+            border-radius: 10px;
+            font-size: 16px;
+            min-height: 200px;
+            resize: vertical;
+            font-family: inherit;
+            transition: border-color 0.3s;
+        }
+
+        .form-textarea:focus {
+            outline: none;
+            border-color: #4A90E2;
+        }
+
+        .form-select {
+            width: 100%;
+            padding: 15px 20px;
+            border: 2px solid #E8E4F0;
+            border-radius: 10px;
+            font-size: 16px;
+            background-color: white;
+            cursor: pointer;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 15px;
+            margin-top: 30px;
+        }
+
+        .btn {
+            padding: 15px 40px;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            text-decoration: none;
+            display: inline-block;
+            text-align: center;
+        }
+
+        .btn-primary {
+            background-color: #7CB98B;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background-color: #6AA87A;
+        }
+
+        .btn-secondary {
+            background-color: #F5A89A;
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background-color: #E4988A;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="logo-container">
+            <img th:src="@{/resources/images/logo.png}" alt="MentalHub Logo" class="logo-img">
+        </div>
+        <div class="nav-links">
+            <a th:href="@{/admin}" class="nav-link active">Admin</a>
+            <a href="#" class="nav-link">Awarness</a>
+            <a href="#" class="nav-link">Help-Seeking</a>
+            <a href="#" class="nav-link">Crisis Management</a>
+            <a href="#" class="nav-link">Support Services</a>
+        </div>
+    </div>
+
+    <div class="container">
+        <h1 class="page-title">Add New Article</h1>
+        
+        <div class="form-card">
+            <form th:action="@{/admin/content/add}" method="post">
+                <div class="form-group">
+                    <label class="form-label">Title</label>
+                    <input type="text" name="title" class="form-input" placeholder="Enter article title" required>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Category</label>
+                    <select name="category" class="form-select">
+                        <option value="awareness">Awareness</option>
+                        <option value="help-seeking">Help-Seeking</option>
+                        <option value="crisis-management">Crisis Management</option>
+                        <option value="support-services">Support Services</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Description</label>
+                    <textarea name="description" class="form-textarea" style="min-height: 100px;" placeholder="Enter a brief description" required></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Content</label>
+                    <textarea name="content" class="form-textarea" placeholder="Enter the full article content" required></textarea>
+                </div>
+
+                <div class="button-group">
+                    <button type="submit" class="btn btn-primary">Add Article</button>
+                    <a th:href="@{/admin/content}" class="btn btn-secondary">Cancel</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</body>
+</html>

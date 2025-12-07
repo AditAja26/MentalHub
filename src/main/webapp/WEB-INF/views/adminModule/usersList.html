@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Users List - MentalHub</title>
+    <link th:href="@{/resources/css/nav-bar.css}" rel="stylesheet" type="text/css"/>
+    <style>
+        body {
+            background-color: #f5f5f5;
+        }
+
+        .logo-text {
+            color: #333;
+        }
+
+        .content-panel {
+            background-color: #E8E4F0;
+            border-radius: 16px;
+            padding: 40px;
+            min-height: 600px;
+        }
+
+        .panel-title {
+            font-size: 28px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 30px;
+        }
+
+        .user-list {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .user-card {
+            background-color: white;
+            border-radius: 12px;
+            padding: 25px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+
+        .user-info {
+            display: flex;
+            gap: 40px;
+            flex: 1;
+        }
+
+        .user-name-age {
+            min-width: 200px;
+        }
+
+        .user-name {
+            font-size: 20px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 5px;
+        }
+
+        .user-age {
+            font-size: 14px;
+            color: #666;
+        }
+
+        .user-contact {
+            min-width: 250px;
+        }
+
+        .user-email {
+            font-size: 14px;
+            color: #333;
+            margin-bottom: 5px;
+        }
+
+        .user-phone {
+            font-size: 14px;
+            color: #666;
+        }
+
+        .manage-btn {
+            background-color: #FFC107;
+            color: #333;
+            border: none;
+            border-radius: 8px;
+            padding: 12px 24px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            text-decoration: none;
+        }
+
+        .manage-btn:hover {
+            background-color: #FFB300;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="logo-container">
+            <img th:src="@{/resources/images/logo.png}" alt="MentalHub Logo" class="logo-img">
+        </div>
+        <div class="nav-links">
+            <a th:href="@{/admin}" class="nav-link active">Admin</a>
+            <a href="#" class="nav-link">Awarness</a>
+            <a href="#" class="nav-link">Help-Seeking</a>
+            <a href="#" class="nav-link">Crisis Management</a>
+            <a href="#" class="nav-link">Support Services</a>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="content-panel">
+            <h1 class="panel-title">Users list</h1>
+            <div class="user-list">
+                <div th:if="${#lists.isEmpty(users)}" style="text-align: center; padding: 40px; color: #888;">
+                    No users found.
+                </div>
+                <div class="user-card" th:each="user : ${users}">
+                    <div class="user-info">
+                        <div class="user-name-age">
+                            <div class="user-name" th:text="${user.name}">Bambang</div>
+                            <div class="user-age" th:text="${user.age != null ? user.age + ' Years Old' : 'Age not set'}">21 Years Old</div>
+                        </div>
+                        <div class="user-contact">
+                            <div class="user-email" th:text="${user.email}">bambang@yahoo.com</div>
+                            <div class="user-phone" th:text="${user.phone}">082337729130</div>
+                        </div>
+                    </div>
+                    <a th:href="@{/admin/users/{id}(id=${user.id})}" class="manage-btn">Manage</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

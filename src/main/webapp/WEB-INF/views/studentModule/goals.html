@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Goals - MentalHub</title>
+    <link th:href="@{/resources/css/nav-bar.css}" rel="stylesheet" type="text/css"/>
+    <style>
+        .goals-layout {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 30px;
+        }
+
+        .active-goals-section {
+            background-color: #D8D4E0;
+            border-radius: 16px;
+            padding: 30px;
+        }
+
+        .section-title {
+            font-size: 22px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 25px;
+        }
+
+        .goals-list {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .goal-item {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .goal-text {
+            flex: 1;
+            background-color: white;
+            border-radius: 12px;
+            padding: 20px;
+            font-size: 16px;
+            font-weight: 500;
+            color: #333;
+            line-height: 1.5;
+        }
+
+        .complete-btn {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 5px;
+            text-decoration: none;
+        }
+
+        .complete-btn:hover {
+            transform: scale(1.1);
+        }
+
+        .check-icon {
+            width: 50px;
+            height: 50px;
+            background-color: #7CB98B;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            color: white;
+            transition: transform 0.2s;
+        }
+
+        .complete-label {
+            font-size: 14px;
+            font-weight: 600;
+            color: #7CB98B;
+        }
+
+        .add-goal-btn {
+            background-color: #8B7B9B;
+            color: white;
+            border: none;
+            border-radius: 25px;
+            padding: 15px 35px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 30px;
+            transition: background-color 0.3s;
+        }
+
+        .add-goal-btn:hover {
+            background-color: #7A6A8A;
+        }
+
+        .completed-section {
+            background-color: #D8D4E0;
+            border-radius: 16px;
+            padding: 30px;
+        }
+
+        .completed-goals-list {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .completed-goal {
+            background-color: white;
+            border-radius: 12px;
+            padding: 15px 20px;
+            font-size: 14px;
+            color: #7CB98B;
+            font-weight: 500;
+            font-style: italic;
+        }
+
+        .back-btn {
+            background-color: #F5A89A;
+            color: white;
+            border: none;
+            border-radius: 25px;
+            padding: 15px 50px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 30px;
+            transition: background-color 0.3s;
+            text-decoration: none;
+            display: inline-block;
+            text-align: center;
+        }
+
+        .back-btn:hover {
+            background-color: #E4988A;
+        }
+
+        .no-goals {
+            color: #888;
+            font-style: italic;
+            padding: 20px;
+            text-align: center;
+        }
+
+        /* Modal Styles */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .modal-overlay.active {
+            display: flex;
+        }
+
+        .modal {
+            background-color: #7B6B8D;
+            border-radius: 16px;
+            padding: 40px;
+            width: 90%;
+            max-width: 550px;
+        }
+
+        .modal-title {
+            font-size: 28px;
+            font-weight: 700;
+            color: white;
+            margin-bottom: 25px;
+        }
+
+        .modal-textarea {
+            width: 100%;
+            height: 200px;
+            border: none;
+            border-radius: 12px;
+            padding: 20px;
+            font-size: 16px;
+            font-family: inherit;
+            resize: none;
+            outline: none;
+        }
+
+        .modal-btn {
+            background-color: #7CB98B;
+            color: white;
+            border: none;
+            border-radius: 25px;
+            padding: 15px 40px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 25px;
+            float: right;
+            transition: background-color 0.3s;
+        }
+
+        .modal-btn:hover {
+            background-color: #6AA87A;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="logo-container">
+            <img th:src="@{/resources/images/logo.png}" alt="MentalHub Logo" class="logo-img">
+        </div>
+        <div class="nav-links">
+            <a th:href="@{/student/profile}" class="nav-link active">Profile</a>
+            <a href="#" class="nav-link">Awarness</a>
+            <a href="#" class="nav-link">Help-Seeking</a>
+            <a href="#" class="nav-link">Crisis Management</a>
+            <a href="#" class="nav-link">Support Services</a>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="goals-layout">
+            <div class="active-goals-section">
+                <h2 class="section-title">Active Goals</h2>
+                <div class="goals-list">
+                    <div th:if="${#lists.isEmpty(activeGoals)}" class="no-goals">
+                        No active goals. Add one below!
+                    </div>
+                    <div class="goal-item" th:each="goal : ${activeGoals}">
+                        <div class="goal-text" th:text="${goal.description}">Goal description</div>
+                        <a th:href="@{/student/goals/{id}/complete(id=${goal.id})}" class="complete-btn">
+                            <div class="check-icon">✓</div>
+                            <div class="complete-label">Complete</div>
+                        </a>
+                    </div>
+                </div>
+                <button class="add-goal-btn" onclick="openModal()">Add Custom Goal</button>
+            </div>
+
+            <div class="completed-section">
+                <h2 class="section-title">Completed Goals</h2>
+                <div class="completed-goals-list">
+                    <div th:if="${#lists.isEmpty(completedGoals)}" class="no-goals">
+                        No completed goals yet.
+                    </div>
+                    <div class="completed-goal" th:each="goal : ${completedGoals}" th:text="${goal.description}">Completed goal</div>
+                </div>
+                <a th:href="@{/student/profile}" class="back-btn">Back</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Goal Modal -->
+    <div class="modal-overlay" id="goalModal">
+        <div class="modal">
+            <h2 class="modal-title">Write a Goal</h2>
+            <form th:action="@{/student/goals/add}" method="post">
+                <textarea name="goalDescription" class="modal-textarea" placeholder="Write your goal here..." required></textarea>
+                <button type="submit" class="modal-btn">Confirm</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        function openModal() {
+            document.getElementById('goalModal').classList.add('active');
+        }
+
+        function closeModal() {
+            document.getElementById('goalModal').classList.remove('active');
+        }
+
+        document.getElementById('goalModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeModal();
+            }
+        });
+    </script>
+</body>
+</html>

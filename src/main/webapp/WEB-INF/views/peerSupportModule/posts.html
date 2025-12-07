@@ -4,7 +4,7 @@
         <meta charset="UTF-8">
         <title>Peer Support Forum | MentalHub</title>
         
-        <link rel="stylesheet" th:href="@{/resources/css/nav-bar.css}" />
+        <link rel="stylesheet" th:href="@{/resources/css/nav-bar.css}" type="text/css"/>
 
         <style>
             body {
@@ -105,17 +105,7 @@
     </head>
 
     <body>
-        <header class="main-header">
-            <div class="logo">
-                <a th:href="@{/profile}"><img th:src="@{/resources/images/logo.png}" alt="MentalHub Logo" style="height: 80px;"></a>
-            </div>
-            
-            <nav class="user-nav">
-                <a th:href="@{/notifications}" class="notification-icon">🔔</a>
-                
-                <a th:href="@{/logout}">Logout</a>
-            </nav>
-        </header>
+        <div th:replace="~{_layout :: main-header}"></div>
 
         <main class="peer-feed-container">
 
@@ -123,7 +113,7 @@
             <h1>Peer Support Forum</h1>
             <p>Connect with other students and share your thoughts in a safe space.</p>
             
-            <a th:href="@{/peer/new}" class="new-post-btn">+ Start a New Conversation</a>
+            <a th:href="@{/peer/createPost}" class="new-post-btn">+ Start a New Conversation</a>
         </div>
         
         <section class="posts-list">

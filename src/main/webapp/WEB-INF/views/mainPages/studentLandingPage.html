@@ -98,18 +98,7 @@
     </style>
 </head>
 <body>
-    <div class="header">
-        <div class="logo-container">
-            <img th:src="@{/resources/images/logo.png}" alt="MentalHub Logo" class="logo-img">
-        </div>
-        <div class="header-right">
-            <a th:href="@{/logout}" class="logout-link">Logout</a>
-            <div class="notification-icon">
-                🔔
-                <div class="notification-badge">1</div>
-            </div>
-        </div>
-    </div>
+    <div th:replace="~{_layout :: main-header}"></div>
 
     <div class="container">
         <div class="welcome-section">

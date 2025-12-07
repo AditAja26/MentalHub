@@ -157,18 +157,7 @@
     </head>
 
     <body>
-        <header class="main-header">
-            <div class="logo">
-                <a th:href="@{/profile}"><img th:src="@{/resources/images/logo.png}" alt="MentalHub Logo" style="height: 80px;"></a>
-            </div>
-            
-            <nav class="user-nav">
-                <a th:href="@{/notifications}" class="notification-icon">🔔</a>
-                
-                <a th:href="@{/logout}">Logout</a>
-            </nav>
-        </header>
-
+        <div th:replace="~{_layout :: main-header}"></div>
 
         <main class="literacy-container">
         

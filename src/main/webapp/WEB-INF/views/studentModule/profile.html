@@ -101,18 +101,7 @@
     </style>
 </head>
 <body>
-    <div class="header">
-        <div class="logo-container">
-            <img th:src="@{/resources/images/logo.png}" alt="MentalHub Logo" class="logo-img">
-        </div>
-        <div class="nav-links">
-            <a th:href="@{/student/profile}" class="nav-link active">Profile</a>
-            <a href="#" class="nav-link">Awarness</a>
-            <a href="#" class="nav-link">Help-Seeking</a>
-            <a href="#" class="nav-link">Crisis Management</a>
-            <a href="#" class="nav-link">Support Services</a>
-        </div>
-    </div>
+    <div th:replace="~{_layout :: main-header}"></div>
 
     <div class="container">
         <div class="profile-layout">

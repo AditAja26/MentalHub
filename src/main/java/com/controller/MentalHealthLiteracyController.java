@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 public class MentalHealthLiteracyController{
     @GetMapping
     public String showLiteracyPage(Model model) {
-        return "Mental Health Literacy Module/literacyPage";
+        return "mentalHealthLiteracyModule/literacyPage";
     }
          
 }

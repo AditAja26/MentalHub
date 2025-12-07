@@ -19,7 +19,7 @@ public class PeerSupportController {
         return "peerSupportModule/createPost";
     }
 
-    @GetMapping("/reply")
+    @GetMapping("/reply/{postId}")
     public String showCommentPage(Model model){
         return "peerSupportModule/commentPost";
     }

@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+    <head>
+        <meta charset="UTF-8">
+        <title>Peer Support Forum | MentalHub</title>
+        
+        <link rel="stylesheet" th:href="@{/resources/css/nav-bar.css}" />
+
+       <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f0f2f5; /* Light grey background */
+        }
+        
+        .reply-container {
+            max-width: 800px;
+            margin: 40px auto;
+            padding: 0 20px;
+        }
+
+        h1 {
+            color: #333;
+            font-size: 2rem;
+            margin-bottom: 25px;
+        }
+
+        /* Styling for the Original Post Card */
+        .original-post-card {
+            background-color: #e9eefd; /* Light purple/blue background to differentiate */
+            border: 1px solid #c9d2f7;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 30px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+
+        .original-post-card .post-header {
+            border-bottom: 1px solid #d2d8f8;
+            padding-bottom: 8px;
+            margin-bottom: 15px;
+        }
+        
+        .original-post-card .username {
+            font-weight: bold;
+            color: #5d50c6;
+        }
+        
+        .original-post-card .timestamp {
+            float: right;
+            color: #888;
+            font-size: 0.9em;
+        }
+
+        .original-post-card .post-body p {
+            color: #333;
+            line-height: 1.6;
+            margin: 0;
+            font-style: italic;
+        }
+        
+        /* Styling for the Reply Form Section */
+        .reply-form-section {
+            background-color: white;
+            padding: 25px;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+
+        .reply-form-section h2 {
+            font-size: 1.5rem;
+            color: #444;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 10px;
+            margin-top: 0;
+            margin-bottom: 20px;
+        }
+
+        .reply-form-section label {
+            display: block;
+            font-weight: bold;
+            color: #444;
+            margin-bottom: 5px;
+        }
+
+        .reply-form-section textarea {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ced4da;
+            border-radius: 6px;
+            box-sizing: border-box;
+            font-size: 1rem;
+            font-family: inherit;
+            resize: vertical;
+        }
+
+        .form-actions {
+            margin-top: 20px;
+            display: flex;
+            justify-content: flex-end;
+            gap: 15px;
+        }
+
+        .submit-btn,
+        .cancel-btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 6px;
+            font-weight: bold;
+            cursor: pointer;
+            text-decoration: none;
+            text-align: center;
+            transition: background-color 0.2s;
+            font-size: 1rem;
+        }
+        
+        .submit-btn {
+            background-color: #7b68ee; /* Purple primary action */
+            color: white;
+        }
+        
+        .submit-btn:hover {
+            background-color: #6a5acd;
+        }
+        
+        .cancel-btn {
+            background-color: #f8f9fa;
+            color: #495057;
+            border: 1px solid #ced4da;
+            line-height: 1.5; /* Align text vertically in link */
+        }
+        
+        .cancel-btn:hover {
+            background-color: #e2e6ea;
+        }
+        </style>
+    </head>
+
+    <body>
+        <header class="main-header">
+            <div class="logo">
+                <a th:href="@{/profile}"><img th:src="@{/resources/images/logo.png}" alt="MentalHub Logo" style="height: 80px;"></a>
+            </div>
+            
+            <nav class="user-nav">
+                <a th:href="@{/notifications}" class="notification-icon">🔔</a>
+                
+                <a th:href="@{/logout}">Logout</a>
+            </nav>
+        </header>
+
+        <main class="reply-container">
+        
+        <h1>Reply to Conversation</h1>
+
+        <section class="original-post-card">
+            <div class="post-header">
+                <span class="username">Original Poster (Student XYZ)</span>
+                <span class="timestamp">2 hours ago</span>
+            </div>
+            <div class="post-body">
+                <p>Original Post: "I've been feeling really overwhelmed with my assignments lately. Does anyone else struggle with balancing academic pressure and personal life? Any tips would be appreciated!"</p>
+            </div>
+        </section>
+        
+        <section class="reply-form-section">
+            <h2>Add Your Reply</h2>
+            <form th:action="@{/peer/reply/submit}" method="post">
+                
+                <label for="replyContent">Your Reply (Anonymous)</label>
+                <textarea id="replyContent" name="replyContent" rows="5" required placeholder="Type your supportive comment or advice here..."></textarea>
+                
+                <div class="form-actions">
+                    <a th:href="@{/peer/posts}" class="cancel-btn">Back to Feed</a>
+                    <button type="submit" class="submit-btn">Submit Reply</button>
+                </div>
+            </form>
+        </section>
+        
+        </main>
+    </body>
+</html>

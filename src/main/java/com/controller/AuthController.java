@@ -44,5 +44,10 @@ public class AuthController {
     public String logout() {
         return "redirect:/login";
     }
+    
+      @GetMapping("/notification")
+    public String showNotificationPage(Model model) {
+        return "notificationModule/NotificationPage";
+    }
 }
 

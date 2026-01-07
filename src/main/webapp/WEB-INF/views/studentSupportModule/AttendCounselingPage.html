@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Attend Counseling - MentalHub</title>
+    <link th:href="@{/resources/css/nav-bar.css}" rel="stylesheet" type="text/css"/>
+    <style>
+        .container {
+            max-width: 800px;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: #f9f9f9;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #333;
+            text-align: center;
+        }
+        .session-list {
+            list-style: none;
+            padding: 0;
+        }
+        .session-item {
+            background-color: white;
+            margin: 10px 0;
+            padding: 15px;
+            border-radius: 6px;
+            border-left: 5px solid #4A90E2;
+        }
+        .session-title {
+            font-weight: bold;
+            color: #333;
+        }
+        .session-details {
+            color: #666;
+            margin-top: 5px;
+        }
+        .join-btn {
+            background-color: #4A90E2;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+        .join-btn:hover {
+            background-color: #357ABD;
+        }
+    </style>
+</head>
+<body>
+    <div th:replace="~{_layout :: main-header}"></div>
+
+    <div class="container">
+        <h1>Attend Counseling Sessions</h1>
+        <p>Join one of our scheduled counseling sessions to get support and guidance.</p>
+
+        <ul class="session-list">
+            <li class="session-item">
+                <div class="session-title">General Wellness Session</div>
+                <div class="session-details">Date: December 15, 2025 | Time: 10:00 AM | Counselor: Advisor 1</div>
+                <button class="join-btn">Join Session</button>
+            </li>
+            <li class="session-item">
+                <div class="session-title">Stress Management Workshop</div>
+                <div class="session-details">Date: December 16, 2025 | Time: 2:00 PM | Counselor: Advisor 2</div>
+                <button class="join-btn">Join Session</button>
+            </li>
+            <li class="session-item">
+                <div class="session-title">Academic Support Session</div>
+                <div class="session-details">Date: December 17, 2025 | Time: 11:00 AM | Counselor: Advisor 3</div>
+                <button class="join-btn">Join Session</button>
+            </li>
+        </ul>
+
+        <p>If you need immediate help, contact our support hotline at 1-800-HELP.</p>
+    </div>
+</body>
+</html>

@@ -1,11 +1,13 @@
 package com.controller;
 
-import com.model.User;
-import com.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+
+import com.model.User;
+import com.services.UserService;
 
 @Controller
 @RequestMapping("/student")
@@ -25,11 +27,11 @@ public class StudentController {
 
     @GetMapping("/appointment")
     public String showAppointment(Model model) {
-        return "redirect:/student";
+        return "studentSupportModule/BookAppointmentPage";
     }
 
     @GetMapping("/counseling")
     public String showCounseling(Model model) {
-        return "redirect:/student";
+        return "studentSupportModule/AttendCounselingPage";
     }
 }

@@ -192,7 +192,7 @@ When you complete a feature:
 
 This keeps the whole team aligned.
 
-**If your code was marked as 'Implemented' and it isn't, update it to say "Not Implemented" **
+**If your code was marked as 'Implemented' and it isn't, update it to say "Not Implemented"**
 
 ---
 

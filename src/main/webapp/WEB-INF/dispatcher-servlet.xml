@@ -15,11 +15,6 @@
   <context:component-scan base-package="com.services" />
   <mvc:annotation-driven />
 
-  <!-- <bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
-    <property name="prefix" value="/WEB-INF/views/" />
-    <property name="suffix" value=".jsp" />
-  </bean> -->
-
   <!-- ============================================================ -->
   <!-- 4. Configure static resource handling (CSS, JS, images, etc.) -->
   <!-- ============================================================ -->
@@ -27,16 +22,40 @@
 
   <!-- Database config -->
 
-  <!-- <bean id="dataSource" class="org.apache.tomcat.jdbc.pool.DataSource" destroy-method="close">
+  <bean id="dataSource" class="org.apache.tomcat.jdbc.pool.DataSource" destroy-method="close">
     <property name="driverClassName" value="com.mysql.cj.jdbc.Driver"/>
-    <property name="url" value="jdbc:mysql://localhost:3306/healthhubutm?useSSL=false&amp;serverTimezone=UTC"/>
+    <property name="url" value="jdbc:mysql://localhost:3306/mentalhub?useSSL=false&amp;serverTimezone=UTC"/>
     <property name="username" value="root"/>
     <property name="password" value=""/>
-  </bean> -->
+  </bean>
 
   <!-- <bean id="personDaoJdbc" class="com.secj3303.dao.PersonDaoJdbc">
       <constructor-arg ref="dataSource"/>
   </bean> -->
+
+
+  <!-- ========================= -->
+    <!--  Hibernate SessionFactory  -->
+    <!-- ========================= -->
+    <bean id="sessionFactory"
+          class="org.springframework.orm.hibernate5.LocalSessionFactoryBean">
+        <property name="dataSource" ref="dataSource" />
+        <!-- Scan for @Entity classes -->
+        <property name="packagesToScan" value="com.model" />
+        <property name="hibernateProperties">
+            <props>
+                <prop key="hibernate.dialect">org.hibernate.dialect.MySQL8Dialect</prop>
+                <prop key="hibernate.hbm2ddl.auto">update</prop>
+                <prop key="hibernate.show_sql">true</prop>
+                <prop key="hibernate.format_sql">true</prop>
+            </props>
+        </property>
+    </bean>
+
+    <bean id="transactionManager" class="org.springframework.orm.hibernate5.HibernateTransactionManager">
+        <property name="sessionFactory" ref="sessionFactory" />
+    </bean>
+
 
   <!-- Thymeleaf Config -->
   <bean id="templateResolver" class="org.thymeleaf.spring5.templateresolver.SpringResourceTemplateResolver">

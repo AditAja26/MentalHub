@@ -191,6 +191,7 @@ When you complete a feature:
    * Add notes if needed
 
 This keeps the whole team aligned.
+
 ** If your code was marked as 'Implemented' and it isn't, update it to say "Not Implemented" **
 
 ---

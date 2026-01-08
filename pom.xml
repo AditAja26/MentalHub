@@ -61,6 +61,21 @@
         <version>8.0.33</version>
     </dependency>
 
+    <!-- Spring ORM support -->
+    <dependency>
+        <groupId>org.springframework</groupId>
+        <artifactId>spring-orm</artifactId>
+        <version>5.3.39</version> <!-- match your other Spring libs -->
+    </dependency>
+
+    <!-- Hibernate core -->
+    <dependency>
+        <groupId>org.hibernate</groupId>
+        <artifactId>hibernate-core</artifactId>
+        <version>5.6.15.Final</version>
+    </dependency>
+
+
     <!-- Thymeleaf -->
     <dependency>
       <groupId>org.thymeleaf</groupId>

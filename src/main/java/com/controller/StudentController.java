@@ -4,9 +4,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import com.model.Appointment;
 import com.model.User;
+import com.services.AppointmentService;
 import com.services.UserService;
 
 @Controller
@@ -15,6 +19,9 @@ public class StudentController {
 
     @Autowired
     private UserService userService;
+
+    @Autowired 
+    private AppointmentService appointmentService;
 
     private static final Long CURRENT_USER_ID = 9L;
 
@@ -27,11 +34,18 @@ public class StudentController {
 
     @GetMapping("/appointment")
     public String showAppointment(Model model) {
+        model.addAttribute("appointment", new Appointment()); 
         return "studentSupportModule/BookAppointmentPage";
     }
 
     @GetMapping("/counseling")
     public String showCounseling(Model model) {
         return "studentSupportModule/AttendCounselingPage";
+    }
+
+    @PostMapping("/book-appointment")
+    public String bookAppointment(@ModelAttribute("appointment") Appointment appointment) {
+        appointmentService.saveAppointment(appointment);
+        return "redirect:/student/appointment?success";
     }
 }

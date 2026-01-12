@@ -164,29 +164,25 @@
         <section class="link-section">
             <h2>Mental Health Articles</h2>
             
-            <div class="article-card">
-                <a href="https://www.verywellmind.com/the-importance-of-mental-health-for-wellbeing-5207938"><h3>The Importance of Mental Health</h3></a>
-                <p>Learn why taking care of your mind is essential for academic success and overall well-being. </p>
-            </div>
-            
-            <div class="article-card">
-                <h3>Lorem Ipsum</h3>
-                <p>Placeholder content for a second article/resource link.</p>
+            <div th:if="${#lists.isEmpty(articles)}" style="text-align: center; padding: 20px; color: #888;">
+                <p>No resources available at the moment. Please check back later!</p>
             </div>
 
-            <div class="article-card">
-                <h3>Lorem Ipsum</h3>
-                <p>Placeholder content for a second article/resource link.</p>
-            </div>
+            <div class="article-card" th:each="article : ${articles}">
+                
+                <img th:if="${article.imageUrl != null and !#strings.isEmpty(article.imageUrl)}" 
+                     th:src="${article.imageUrl}" 
+                     alt="Article Preview" 
+                     style="width: 100%; height: 150px; object-fit: cover; border-radius: 4px; margin-bottom: 10px; display: block;"
+                     onerror="this.style.display='none'"/>
 
-            <div class="article-card">
-                <h3>Lorem Ipsum</h3>
-                <p>Placeholder content for a second article/resource link.</p>
-            </div>
+                <a th:href="${article.sourceUrl}" target="_blank">
+                    <h3 th:text="${article.title}" style="margin-top: 0; color: #007bff;">Article Title</h3>
+                </a>
 
-            <div class="article-card">
-                <h3>Lorem Ipsum</h3>
-                <p>Placeholder content for a second article/resource link.</p>
+                <p th:text="${article.description}" style="color: #555; font-size: 0.95rem;">
+                    Description placeholder...
+                </p>
             </div>
         </section>
 

@@ -16,10 +16,10 @@ public class Article {
     @Column(nullable = false, length = 500) 
     private String description;
 
-    @Column(nullable = false)
+    @Column(nullable = false, name = "source_url", columnDefinition = "TEXT")
     private String sourceUrl; 
 
-    @Column(name = "image_url") 
+    @Column(name = "image_url", columnDefinition = "TEXT") 
     private String imageUrl; 
 
     // CONSTRUCTORS

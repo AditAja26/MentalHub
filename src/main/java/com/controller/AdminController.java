@@ -11,10 +11,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.transaction.annotation.Transactional; // NEW IMPORT
 
 
 import java.util.List;
-import java.util.ArrayList;
 
 @Controller
 @RequestMapping("/admin")
@@ -42,12 +42,20 @@ public class AdminController {
         return "adminModule/usersList";
     }
 
+    // ADDED @Transactional TO PREVENT 500 ERROR
+    @Transactional(readOnly = true)
     @GetMapping("/users/{id}")
     public String showUserDetail(@PathVariable Long id, Model model) {
         User user = userService.getUserById(id);
         if (user == null) {
             return "redirect:/admin/users";
         }
+
+        // This line triggered the error; @Transactional fixes it
+        if (user.getGoals() != null) {
+            user.getGoals().size();
+        }
+
         model.addAttribute("user", user);
         return "adminModule/userDetail";
     }
@@ -55,9 +63,7 @@ public class AdminController {
     @GetMapping("/users/{id}/edit")
     public String showEditUser(@PathVariable Long id, Model model) {
         User user = userService.getUserById(id);
-        if (user == null) {
-            return "redirect:/admin/users";
-        }
+        if (user == null) return "redirect:/admin/users";
         model.addAttribute("user", user);
         return "adminModule/editUser";
     }
@@ -74,8 +80,6 @@ public class AdminController {
             user.setEmail(email);
             user.setPhone(phone);
             if (age != null) user.setAge(age);
-            
-            // Note: We don't touch goals here so they remain unchanged in the DB
             userService.updateUser(id, user);
         }
         return "redirect:/admin/users/" + id;
@@ -102,20 +106,14 @@ public class AdminController {
     @GetMapping("/content/{id}")
     public String showArticleView(@PathVariable Long id, Model model) {
         Article article = articleService.getArticleById(id);
-        if (article == null) {
-            return "redirect:/admin/content";
-        }
-        // If your sourceUrl is an external link, this works. 
-        // If it's internal, you might need a proper view.
+        if (article == null) return "redirect:/admin/content";
         return "redirect:" + article.getSourceUrl();
     }
 
     @GetMapping("/content/{id}/edit")
     public String showEditArticle(@PathVariable Long id, Model model) {
         Article article = articleService.getArticleById(id);
-        if (article == null) {
-            return "redirect:/admin/content";
-        }
+        if (article == null) return "redirect:/admin/content";
         model.addAttribute("article", article);
         return "adminModule/editArticle";
     }
@@ -132,7 +130,6 @@ public class AdminController {
             article.setDescription(description);
             article.setSourceUrl(sourceUrl); 
             article.setImageUrl(imageUrl);   
-            
             articleService.updateArticle(id, article);
         }
         return "redirect:/admin/content";
@@ -146,7 +143,6 @@ public class AdminController {
 
     @GetMapping("/content/add")
     public String showAddArticle(Model model) {
-        // Ensure Article has a no-args constructor
         model.addAttribute("article", new Article());
         return "adminModule/addArticle";
     }
@@ -156,10 +152,7 @@ public class AdminController {
                              @RequestParam("description") String description,
                              @RequestParam("sourceUrl") String sourceUrl, 
                              @RequestParam("imageUrl") String imageUrl) {
-        
-        // Ensure your Article model has this constructor!
         Article article = new Article(null, title, description, sourceUrl, imageUrl);
-        
         articleService.addArticle(article);
         return "redirect:/admin/content";
     }

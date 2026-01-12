@@ -3,6 +3,8 @@ package com.model;
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
 
 @Entity
 @Table(name = "users")
@@ -28,19 +30,29 @@ public class User {
     @Column(nullable = false)
     private String role;
 
-    // UPDATED: Changed from @ElementCollection to @OneToMany
-    // cascade = CascadeType.ALL means if you delete a user, their goals are deleted too.
-    // orphanRemoval = true means if you remove a goal from this list, it is deleted from the database.
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    /**
+     * FIX 1: Use mappedBy instead of @JoinTable.
+     * Your 'goals' table already has a 'user_id' column.
+     * This stops Hibernate from creating that broken 'user_goals' table.
+     */
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @Fetch(FetchMode.SUBSELECT)
     private List<Goal> goals = new ArrayList<>();
+
+    /**
+     * FIX 2: Keep SUBSELECT and EAGER.
+     * This ensures 'moodLogs' data is ready for the trend chart.
+     */
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @Fetch(FetchMode.SUBSELECT)
+    @OrderBy("id ASC") 
+    private List<MoodLog> moodLogs = new ArrayList<>();
 
     @OneToMany(mappedBy = "user")
     private List<ForumPost> forumPosts;
 
-    public User() {
-    }
+    public User() {}
 
-    // Constructor for registration/general use
     public User(Long id, String name, Integer age, String email, String phone, String password, String role) {
         this.id = id;
         this.name = name;
@@ -51,41 +63,25 @@ public class User {
         this.role = role;
     }
 
-    // UPDATED: Constructor updated to use List<Goal>
-    public User(Long id, String name, Integer age, String email, String phone, List<Goal> goals) {
-        this.id = id;
-        this.name = name;
-        this.age = age;
-        this.email = email;
-        this.phone = phone;
-        this.goals = goals != null ? goals : new ArrayList<>();
-    }
-
+    // Getters and Setters (Keep existing ones)
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
-
     public String getName() { return name; }
     public void setName(String name) { this.name = name; }
-
     public Integer getAge() { return age; }
     public void setAge(Integer age) { this.age = age; }
-
     public String getEmail() { return email; }
     public void setEmail(String email) { this.email = email; }
-
     public String getPhone() { return phone; }
     public void setPhone(String phone) { this.phone = phone; }
-
     public String getPassword() { return password; }
     public void setPassword(String password) { this.password = password; }
-
     public String getRole() { return role; }
     public void setRole(String role) { this.role = role; }
-
-    // UPDATED: Getter and Setter use List<Goal>
     public List<Goal> getGoals() { return goals; }
     public void setGoals(List<Goal> goals) { this.goals = goals; }
-
+    public List<MoodLog> getMoodLogs() { return moodLogs; }
+    public void setMoodLogs(List<MoodLog> moodLogs) { this.moodLogs = moodLogs; }
     public List<ForumPost> getForumPosts() { return forumPosts; }
     public void setForumPosts(List<ForumPost> forumPosts) { this.forumPosts = forumPosts; }
 }

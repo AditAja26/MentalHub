@@ -1,7 +1,6 @@
 package com.dao;
 
 import com.model.DailyQuiz;
-import java.util.Date;
 import java.util.List;
 
 public interface DailyQuizDao {

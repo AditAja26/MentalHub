@@ -28,10 +28,11 @@ public class User {
     @Column(nullable = false)
     private String role;
 
-    @ElementCollection(fetch = FetchType.EAGER)
-    @CollectionTable(name = "user_goals", joinColumns = @JoinColumn(name = "user_id"))
-    @Column(name = "goal")
-    private List<String> goals = new ArrayList<>();
+    // UPDATED: Changed from @ElementCollection to @OneToMany
+    // cascade = CascadeType.ALL means if you delete a user, their goals are deleted too.
+    // orphanRemoval = true means if you remove a goal from this list, it is deleted from the database.
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    private List<Goal> goals = new ArrayList<>();
 
     @OneToMany(mappedBy = "user")
     private List<ForumPost> forumPosts;
@@ -39,6 +40,7 @@ public class User {
     public User() {
     }
 
+    // Constructor for registration/general use
     public User(Long id, String name, Integer age, String email, String phone, String password, String role) {
         this.id = id;
         this.name = name;
@@ -49,7 +51,8 @@ public class User {
         this.role = role;
     }
 
-    public User(Long id, String name, Integer age, String email, String phone, List<String> goals) {
+    // UPDATED: Constructor updated to use List<Goal>
+    public User(Long id, String name, Integer age, String email, String phone, List<Goal> goals) {
         this.id = id;
         this.name = name;
         this.age = age;
@@ -79,8 +82,9 @@ public class User {
     public String getRole() { return role; }
     public void setRole(String role) { this.role = role; }
 
-    public List<String> getGoals() { return goals; }
-    public void setGoals(List<String> goals) { this.goals = goals; }
+    // UPDATED: Getter and Setter use List<Goal>
+    public List<Goal> getGoals() { return goals; }
+    public void setGoals(List<Goal> goals) { this.goals = goals; }
 
     public List<ForumPost> getForumPosts() { return forumPosts; }
     public void setForumPosts(List<ForumPost> forumPosts) { this.forumPosts = forumPosts; }

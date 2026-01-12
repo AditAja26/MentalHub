@@ -1,81 +1,51 @@
 package com.services;
 
+import com.dao.UserDAO;
 import com.model.User;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.context.event.ContextRefreshedEvent; // NEW IMPORT
+import org.springframework.context.event.EventListener;        // NEW IMPORT
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.atomic.AtomicLong;
 
 @Service
 public class UserService {
-    
-    private final ConcurrentHashMap<Long, User> users = new ConcurrentHashMap<>();
-    private final AtomicLong idGenerator = new AtomicLong(1);
-    private boolean initialized = false;
 
-    private void initIfNeeded() {
-        if (initialized) return;
-        initialized = true;
-        addUser(new User(null, "Bambang", 21, "bambang@yahoo.com", "082337729130", "password123", "student"));
-        addUser(new User(null, "Udin", 20, "udinudang@gmail.com", "082337729130", "password123", "student"));
-        addUser(new User(null, "Ahmad", 23, "ahmad@gmail.com", "082337729130", "password123", "student"));
-        addUser(new User(null, "Kadir", 22, "kadirgorengan@yahoo.com", "082337729130", "password123", "student"));
-        addUser(new User(null, "Mabrur", 21, "mabrurtelurdadar@gmail.com", "082337729130", "password123", "student"));
-        addUser(new User(null, "Ujang", 20, "ujangkedu@yahoo.com", "082337729130", "password123", "student"));
-        addUser(new User(null, "Khidr", 22, "khidrkarawita@yahoo.com", "082337729130", "password123", "student"));
-        addUser(new User(null, "Karawita", 21, "karawitakhidr@yahoo.com", "082337729130", "password123", "student"));
-        
-        User bambang = getUserById(1L);
-        if (bambang != null) {
-            bambang.setGoals(Arrays.asList("Read 2 articles on self reflection", "Complete 10 quiz", "Book an appointment"));
-        }
-        
-        User hakimi = new User(null, "Hakimi", 22, "hakimi@email.com", "082337729130", "password123", "student");
-        addUser(hakimi);
-    }
+    @Autowired
+    private UserDAO userDao;
 
+    @Transactional
     public User addUser(User user) {
-        initIfNeeded();
-        if (user.getId() == null) {
-            user.setId(idGenerator.getAndIncrement());
-        }
-        users.put(user.getId(), user);
+        userDao.save(user);
         return user;
     }
 
+    @Transactional(readOnly = true)
     public List<User> getAllUsers() {
-        initIfNeeded();
-        return new ArrayList<>(users.values());
+        return userDao.getAll();
     }
 
+    @Transactional(readOnly = true)
     public List<User> getUsersByRole(String role) {
-        List<User> result = new ArrayList<>();
-        for (User user : users.values()) {
-            if (role.equals(user.getRole())) {
-                result.add(user);
-            }
-        }
-        return result;
+        return userDao.getByRole(role);
     }
 
+    @Transactional(readOnly = true)
     public User getUserById(Long id) {
-        return users.get(id);
+        return userDao.getById(id);
     }
 
+    @Transactional(readOnly = true)
     public User getUserByEmail(String email) {
-        for (User user : users.values()) {
-            if (email.equals(user.getEmail())) {
-                return user;
-            }
-        }
-        return null;
+        return userDao.getByEmail(email);
     }
 
+    @Transactional
     public User updateUser(Long id, User updatedUser) {
-        User existing = users.get(id);
+        User existing = userDao.getById(id);
         if (existing != null) {
             if (updatedUser.getName() != null) existing.setName(updatedUser.getName());
             if (updatedUser.getAge() != null) existing.setAge(updatedUser.getAge());
@@ -85,16 +55,51 @@ public class UserService {
                 existing.setPassword(updatedUser.getPassword());
             }
             if (updatedUser.getGoals() != null) existing.setGoals(updatedUser.getGoals());
+            
+            userDao.update(existing);
             return existing;
         }
         return null;
     }
 
+    @Transactional
     public boolean deleteUser(Long id) {
-        return users.remove(id) != null;
+        if (userDao.getById(id) != null) {
+            userDao.delete(id);
+            return true;
+        }
+        return false;
     }
 
+    @Transactional(readOnly = true)
     public int getUserCount() {
-        return users.size();
+        return userDao.getAll().size();
+    }
+
+    /**
+     * FIX: Switched from @PostConstruct to @EventListener.
+     * This waits until the Transactional Proxy is ready, 
+     * preventing the "Could not obtain transaction-synchronized Session" error.
+     */
+    @EventListener(ContextRefreshedEvent.class)
+    @Transactional
+    public void seedDatabase() {
+        // We wrap in a try-catch just to be safe so a seeding error doesn't crash the whole app
+        try {
+            if (userDao.getAll().isEmpty()) {
+                System.out.println(">>> MENTALHUB: Database empty. Seeding initial students...");
+
+                User bambang = new User(null, "Bambang", 21, "bambang@yahoo.com", "082337729130", "password123", "student");
+                bambang.setGoals(Arrays.asList("Read 2 articles on self reflection", "Complete 10 quiz", "Book an appointment"));
+                userDao.save(bambang);
+
+                userDao.save(new User(null, "Udin", 20, "udinudang@gmail.com", "082337729130", "password123", "student"));
+                userDao.save(new User(null, "Hakimi", 22, "hakimi@email.com", "082337729130", "password123", "student"));
+                
+                System.out.println(">>> MENTALHUB: Seeding complete.");
+            }
+        } catch (Exception e) {
+            System.err.println(">>> MENTALHUB ERROR: Seeding failed - " + e.getMessage());
+        }
     }
 }

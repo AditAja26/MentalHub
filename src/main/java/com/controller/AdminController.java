@@ -3,6 +3,7 @@ package com.controller;
 import com.model.Article;
 import com.model.User;
 import com.model.DailyQuiz;
+import com.model.Goal; // Added this import
 import com.services.ArticleService;
 import com.services.UserService;
 import com.services.DailyQuizService;
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 
 
 import java.util.List;
+import java.util.ArrayList;
 
 @Controller
 @RequestMapping("/admin")
@@ -72,6 +74,8 @@ public class AdminController {
             user.setEmail(email);
             user.setPhone(phone);
             if (age != null) user.setAge(age);
+            
+            // Note: We don't touch goals here so they remain unchanged in the DB
             userService.updateUser(id, user);
         }
         return "redirect:/admin/users/" + id;
@@ -101,6 +105,8 @@ public class AdminController {
         if (article == null) {
             return "redirect:/admin/content";
         }
+        // If your sourceUrl is an external link, this works. 
+        // If it's internal, you might need a proper view.
         return "redirect:" + article.getSourceUrl();
     }
 
@@ -140,6 +146,7 @@ public class AdminController {
 
     @GetMapping("/content/add")
     public String showAddArticle(Model model) {
+        // Ensure Article has a no-args constructor
         model.addAttribute("article", new Article());
         return "adminModule/addArticle";
     }
@@ -150,7 +157,8 @@ public class AdminController {
                              @RequestParam("sourceUrl") String sourceUrl, 
                              @RequestParam("imageUrl") String imageUrl) {
         
-        Article article = new Article(title, description, sourceUrl, imageUrl);
+        // Ensure your Article model has this constructor!
+        Article article = new Article(null, title, description, sourceUrl, imageUrl);
         
         articleService.addArticle(article);
         return "redirect:/admin/content";

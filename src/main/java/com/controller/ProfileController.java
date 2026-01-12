@@ -21,15 +21,19 @@ public class ProfileController {
     @Autowired
     private GoalService goalService;
 
-    private static final Long CURRENT_USER_ID = 9L;
+    // Hardcoded for testing, though usually handled by session
+    private static final Long CURRENT_USER_ID = 1L; 
 
     @GetMapping("/profile")
     public String showProfile(Model model) {
         User user = userService.getUserById(CURRENT_USER_ID);
+        
+        // If user doesn't exist, create a default one
         if (user == null) {
-            user = new User(CURRENT_USER_ID, "Hakimi", 22, "hakimi@email.com", "082337729130", "password", "student");
+            user = new User(null, "Hakimi", 22, "hakimi@email.com", "082337729130", "password", "student");
             userService.addUser(user);
         }
+        
         model.addAttribute("user", user);
         return "studentModule/profile";
     }
@@ -43,9 +47,9 @@ public class ProfileController {
 
     @PostMapping("/profile/update")
     public String updateProfile(@RequestParam("name") String name,
-                               @RequestParam("email") String email,
-                               @RequestParam(value = "password", required = false) String password,
-                               @RequestParam("phone") String phone) {
+                                @RequestParam("email") String email,
+                                @RequestParam(value = "password", required = false) String password,
+                                @RequestParam("phone") String phone) {
         User user = userService.getUserById(CURRENT_USER_ID);
         if (user != null) {
             user.setName(name);
@@ -63,6 +67,7 @@ public class ProfileController {
     public String showGoals(Model model) {
         List<Goal> activeGoals = goalService.getActiveGoalsByUserId(CURRENT_USER_ID);
         List<Goal> completedGoals = goalService.getCompletedGoalsByUserId(CURRENT_USER_ID);
+        
         model.addAttribute("activeGoals", activeGoals);
         model.addAttribute("completedGoals", completedGoals);
         return "studentModule/goals";
@@ -70,8 +75,15 @@ public class ProfileController {
 
     @PostMapping("/goals/add")
     public String addGoal(@RequestParam("goalDescription") String description) {
-        Goal goal = new Goal(null, CURRENT_USER_ID, description, false);
-        goalService.addGoal(goal);
+        // FIX: We must fetch the User object first
+        User currentUser = userService.getUserById(CURRENT_USER_ID);
+        
+        if (currentUser != null) {
+            // FIX: Pass the 'currentUser' object, not just the ID
+            Goal goal = new Goal(currentUser, description, false);
+            goalService.addGoal(goal);
+        }
+        
         return "redirect:/student/goals";
     }
 
@@ -87,4 +99,3 @@ public class ProfileController {
         return "redirect:/student/goals";
     }
 }
-

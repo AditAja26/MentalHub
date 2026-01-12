@@ -1,5 +1,6 @@
 package com.controller;
 
+import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -25,7 +26,7 @@ public class StudentController {
 
     private static final Long CURRENT_USER_ID = 9L;
 
-    @GetMapping(value = {"", "/"})
+    @GetMapping(value = { "", "/" })
     public String showStudentLandingPage(Model model) {
         User user = userService.getUserById(CURRENT_USER_ID);
         model.addAttribute("studentName", user != null ? user.getName() : "Student");

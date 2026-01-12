@@ -10,7 +10,6 @@ import org.springframework.transaction.annotation.Transactional;
 import com.services.AppointmentService;
 import com.dao.AppointmentDao;
 import com.model.Appointment;
-import com.model.Article;
 
 
 @Service

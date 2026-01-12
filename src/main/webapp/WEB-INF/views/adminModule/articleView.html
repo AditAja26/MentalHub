@@ -21,25 +21,69 @@
             box-shadow: 0 4px 8px rgba(0,0,0,0.1);
         }
 
+        /* NEW: Style for the Article Image */
+        .preview-img {
+            width: 100%;
+            max-height: 400px;
+            object-fit: cover; /* Ensures image fills space without distorting */
+            border-radius: 12px;
+            margin-bottom: 25px;
+            display: block;
+        }
+
         .article-title {
             font-size: 32px;
             font-weight: 700;
             color: #333;
-            margin-bottom: 30px;
+            margin-bottom: 15px; /* Reduced slightly to fit category */
+        }
+
+        /* NEW: Style for Category Tag */
+        .article-category {
+            display: inline-block;
+            background-color: #f0f2f5;
+            color: #555;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 25px;
         }
 
         .article-body {
-            font-size: 16px;
-            line-height: 1.8;
-            color: #444;
+            font-size: 18px; /* Slightly larger for readability */
+            line-height: 1.6;
+            color: #555;
+            margin-bottom: 30px;
+            font-style: italic; /* Distinct style for description vs full content */
+        }
+
+        /* NEW: Style for the External Link Box */
+        .source-box {
+            background-color: #e8f4fd;
+            border-left: 5px solid #3498db;
+            padding: 15px;
             margin-bottom: 40px;
-            white-space: pre-wrap;
+            border-radius: 4px;
+        }
+        
+        .source-link {
+            color: #2980b9;
+            font-weight: bold;
+            text-decoration: none;
+            font-size: 16px;
+        }
+        .source-link:hover {
+            text-decoration: underline;
         }
 
         .article-actions {
             display: flex;
             justify-content: flex-end;
             gap: 15px;
+            margin-top: 20px;
+            border-top: 1px solid #eee; /* Visual separator */
+            padding-top: 20px;
         }
 
         .delete-btn {
@@ -82,10 +126,26 @@
 
     <div class="container">
         <div class="article-card">
+            
+            <img th:if="${article.imageUrl}" th:src="${article.imageUrl}" alt="Article Image" class="preview-img" onerror="this.style.display='none'"/>
+
             <h1 class="article-title" th:text="${article.title}">The Student's Guide to Taming Test Anxiety</h1>
-            <div class="article-body" th:text="${article.content}">Test anxiety is a specific type of performance anxiety...</div>
+            <div class="article-category" th:if="${article.category}" th:text="${article.category}">General</div>
+
+            <div class="article-body" th:text="${article.description}">
+                This is a short summary of the article that entices the user to click the link below...
+            </div>
+
+            <div class="source-box">
+                <p style="margin: 0;">Read the full article at the source: <br>
+                    <a th:href="${article.sourceUrl}" target="_blank" class="source-link" th:text="${article.sourceUrl}">
+                        http://example.com
+                    </a>
+                </p>
+            </div>
+
             <div class="article-actions">
-                <a th:href="@{/admin/content/{id}/delete(id=${article.id})}" class="delete-btn">Delete</a>
+                <a th:href="@{/admin/content/{id}/delete(id=${article.id})}" class="delete-btn" onclick="return confirm('Delete this article?')">Delete</a>
                 <a th:href="@{/admin/content/{id}/edit(id=${article.id})}" class="confirm-btn">Edit</a>
             </div>
         </div>

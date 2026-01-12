@@ -90,8 +90,7 @@ public class AdminController {
         if (article == null) {
             return "redirect:/admin/content";
         }
-        model.addAttribute("article", article);
-        return "adminModule/articleView";
+        return "redirect:" + article.getSourceUrl();
     }
 
     @GetMapping("/content/{id}/edit")
@@ -108,9 +107,8 @@ public class AdminController {
     public String updateArticle(@PathVariable Long id,
                                 @RequestParam("title") String title,
                                 @RequestParam("description") String description,
-                                @RequestParam("sourceUrl") String sourceUrl, // Was 'content'
-                                @RequestParam("imageUrl") String imageUrl,   // New field
-                                @RequestParam("category") String category) { // New field
+                                @RequestParam("sourceUrl") String sourceUrl, 
+                                @RequestParam("imageUrl") String imageUrl) { 
         Article article = articleService.getArticleById(id);
         if (article != null) {
             article.setTitle(title);
@@ -120,7 +118,7 @@ public class AdminController {
             
             articleService.updateArticle(id, article);
         }
-        return "redirect:/admin/content/" + id;
+        return "redirect:/admin/content";
     }
 
     @GetMapping("/content/{id}/delete")

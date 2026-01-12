@@ -2,6 +2,7 @@ package com.services;
 
 import com.dao.UserDAO;
 import com.model.Goal;
+import com.model.MoodLog;
 import com.model.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -10,7 +11,6 @@ import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.context.event.EventListener;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 @Service
@@ -53,16 +53,12 @@ public class UserService {
     public User updateUser(Long id, User updatedUser) {
         User existing = userDao.getById(id);
         if (existing != null) {
-            if (updatedUser.getName() != null)
-                existing.setName(updatedUser.getName());
-            if (updatedUser.getAge() != null)
-                existing.setAge(updatedUser.getAge());
-            if (updatedUser.getEmail() != null)
-                existing.setEmail(updatedUser.getEmail());
-            if (updatedUser.getPhone() != null)
-                existing.setPhone(updatedUser.getPhone());
-            if (updatedUser.getGoals() != null)
-                existing.setGoals(updatedUser.getGoals());
+            if (updatedUser.getName() != null) existing.setName(updatedUser.getName());
+            if (updatedUser.getAge() != null) existing.setAge(updatedUser.getAge());
+            if (updatedUser.getEmail() != null) existing.setEmail(updatedUser.getEmail());
+            if (updatedUser.getPhone() != null) existing.setPhone(updatedUser.getPhone());
+            if (updatedUser.getGoals() != null) existing.setGoals(updatedUser.getGoals());
+            if (updatedUser.getMoodLogs() != null) existing.setMoodLogs(updatedUser.getMoodLogs());
 
             userDao.update(existing);
             return existing;
@@ -74,35 +70,62 @@ public class UserService {
     @Transactional
     public void seedDatabase() {
         try {
-            if (userDao.getAll().isEmpty()) {
-                System.out.println(">>> MENTALHUB: Seeding database...");
+            // FIX: Instead of checking if empty, we check if specific data is missing
+            List<User> users = userDao.getAll();
+            
+            if (users.isEmpty()) {
+                System.out.println(">>> MENTALHUB: Database empty. Creating initial users...");
+                // 1. Create Bambang (Student)
+                User bambang = new User(null, "Bambang", 21, "bambang@yahoo.com", "082337729130", "password123", "student");
+                userDao.save(bambang);
+                seedUserData(bambang);
 
-                // 1. Create Bambang
-                User bambang = new User(null, "Bambang", 21, "bambang@yahoo.com", "082337729130", "password123",
-                        "student");
-                userDao.save(bambang); // Save first to get ID
-
-                // 2. Create Goal objects (NOT Strings)
-                List<Goal> bambangGoals = new ArrayList<>();
-                bambangGoals.add(new Goal(bambang, "Read 2 articles on self reflection", true));
-                bambangGoals.add(new Goal(bambang, "Complete 10 quiz", false));
-                bambangGoals.add(new Goal(bambang, "Book an appointment", false));
-
-                // 3. Link and Update
-                bambang.setGoals(bambangGoals);
-                userDao.update(bambang);
-
-                // Add Udin and Hakimi (simple versions)
-                userDao.save(
-                        new User(null, "Udin", 20, "udinudang@gmail.com", "082337729130", "password123", "student"));
-                userDao.save(
-                        new User(null, "Hakimi", 22, "hakimi@email.com", "082337729130", "password123", "student"));
-
-                System.out.println(">>> MENTALHUB: Seeding complete.");
+                // 2. Create Udin (Student)
+                User udin = new User(null, "Udin", 20, "udin@gmail.com", "0812345678", "password123", "student");
+                userDao.save(udin);
+                
+                // 3. Create Hakimi (Advisor)
+                User hakimi = new User(null, "Hakimi", 25, "hakimi@email.com", "0811223344", "password123", "advisor");
+                userDao.save(hakimi);
+            } else {
+                // If users exist but tables are empty, seed existing users
+                System.out.println(">>> MENTALHUB: Users exist. Checking for missing goal/mood data...");
+                for (User user : users) {
+                    if (user.getGoals().isEmpty() || user.getMoodLogs().isEmpty()) {
+                        seedUserData(user);
+                    }
+                }
             }
+            System.out.println(">>> MENTALHUB: Seeding check complete.");
         } catch (Exception e) {
-            System.err.println(">>> MENTALHUB ERROR: Seeding failed - " + e.getMessage());
+            System.err.println(">>> MENTALHUB ERROR: " + e.getMessage());
             e.printStackTrace();
+        }
+    }
+
+    // Helper method to keep code clean
+    private void seedUserData(User user) {
+        if ("student".equalsIgnoreCase(user.getRole())) {
+            System.out.println(">>> Seeding data for: " + user.getName());
+            
+            // Goals
+            List<Goal> goals = new ArrayList<>();
+            goals.add(new Goal(user, "Read 2 articles on self reflection", true));
+            goals.add(new Goal(user, "Complete 10 quizzes", false));
+            goals.add(new Goal(user, "Book an appointment", false));
+            user.setGoals(goals);
+
+            // Mood Logs for the Trend Chart
+            List<MoodLog> moods = new ArrayList<>();
+            moods.add(new MoodLog(user, 3.0, "W1"));
+            moods.add(new MoodLog(user, 3.8, "W2"));
+            moods.add(new MoodLog(user, 3.5, "W3"));
+            moods.add(new MoodLog(user, 4.2, "W4"));
+            moods.add(new MoodLog(user, 4.0, "W5"));
+            moods.add(new MoodLog(user, 4.5, "W6"));
+            user.setMoodLogs(moods);
+
+            userDao.update(user);
         }
     }
 }

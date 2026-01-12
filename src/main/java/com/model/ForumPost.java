@@ -14,68 +14,42 @@ public class ForumPost {
     @Column(nullable = false)
     private String title;
 
-    @Column(nullable = false, length = 1000) 
+    // Use columnDefinition="TEXT" to allow long paragraphs/stories
+    @Column(nullable = false, columnDefinition = "TEXT")
     private String content;
 
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date createdDate = new Date(); 
+    @Column(nullable = false)
+    private String author; // User enters their name or "Anonymous"
 
-    @ManyToOne
-    @JoinColumn(name = "user_id", nullable = false) 
-    private User user;
+    @Temporal(TemporalType.TIMESTAMP) // Stores Date AND Time (e.g., Jan 13, 14:30)
+    @Column(name = "created_at", nullable = false)
+    private Date createdAt;
 
-    // Constructors, Getters, and Setters...
-    public ForumPost(){
-
+    // --- CONSTRUCTORS ---
+    public ForumPost() {
+        this.createdAt = new Date(); // Automatically set time to NOW when created
     }
 
-    public ForumPost(Long id, String title, String content, Date createDate, User user){
-        this.id = id;
+    public ForumPost(String title, String content, String author) {
         this.title = title;
         this.content = content;
-        this.createdDate = createDate;
-        this.user = user;
+        this.author = author;
+        this.createdAt = new Date();
     }
 
-    public Long getId() {
-        return id;
-    }
+    // --- GETTERS AND SETTERS ---
+    public Long getId() { return id; }
+    public void setId(Long id) { this.id = id; }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
+    public String getTitle() { return title; }
+    public void setTitle(String title) { this.title = title; }
 
-    public String getTitle() {
-        return title;
-    }
+    public String getContent() { return content; }
+    public void setContent(String content) { this.content = content; }
 
-    public void setTitle(String title) {
-        this.title = title;
-    }
+    public String getAuthor() { return author; }
+    public void setAuthor(String author) { this.author = author; }
 
-    public String getContent() {
-        return content;
-    }
-
-    public void setContent(String content) {
-        this.content = content;
-    }
-
-    public Date getCreatedDate() {
-        return createdDate;
-    }
-
-    public void setCreatedDate(Date createdDate) {
-        this.createdDate = createdDate;
-    }
-
-    public User getUser() {
-        return user;
-    }
-
-    public void setUser(User user) {
-        this.user = user;
-    }
-
-    
+    public Date getCreatedAt() { return createdAt; }
+    public void setCreatedAt(Date createdAt) { this.createdAt = createdAt; }
 }

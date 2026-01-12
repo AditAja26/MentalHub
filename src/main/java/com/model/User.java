@@ -1,20 +1,42 @@
 package com.model;
 
+import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
 
+@Entity
+@Table(name = "users")
 public class User {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @Column(nullable = false)
     private String name;
+
     private Integer age;
+
+    @Column(nullable = false, unique = true)
     private String email;
+
     private String phone;
+
+    @Column(nullable = false)
     private String password;
+    
+    @Column(nullable = false)
     private String role;
-    private List<String> goals;
+
+    @ElementCollection(fetch = FetchType.EAGER)
+    @CollectionTable(name = "user_goals", joinColumns = @JoinColumn(name = "user_id"))
+    @Column(name = "goal")
+    private List<String> goals = new ArrayList<>();
+
+    @OneToMany(mappedBy = "user")
+    private List<ForumPost> forumPosts;
 
     public User() {
-        this.goals = new ArrayList<>();
     }
 
     public User(Long id, String name, Integer age, String email, String phone, String password, String role) {
@@ -25,7 +47,6 @@ public class User {
         this.phone = phone;
         this.password = password;
         this.role = role;
-        this.goals = new ArrayList<>();
     }
 
     public User(Long id, String name, Integer age, String email, String phone, List<String> goals) {
@@ -60,4 +81,7 @@ public class User {
 
     public List<String> getGoals() { return goals; }
     public void setGoals(List<String> goals) { this.goals = goals; }
+
+    public List<ForumPost> getForumPosts() { return forumPosts; }
+    public void setForumPosts(List<ForumPost> forumPosts) { this.forumPosts = forumPosts; }
 }

@@ -87,5 +87,16 @@ public class AppointmentDaoHibernate implements AppointmentDao {
             session.close();
             return count != null ? count.longValue() : 0;
         }
+        
+        @Override
+        public List<Appointment> findByAdvisor(String advisor) {    
+            Session session = openSession();
+            String sql = "SELECT * FROM appointments WHERE counselor = :advisor";
+            List<Appointment> list = session.createNativeQuery(sql, Appointment.class)
+                                            .setParameter("advisor", advisor)
+                                            .list();
+            session.close();
+            return list;
+        }
     }
 

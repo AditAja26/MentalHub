@@ -119,10 +119,11 @@
     <div th:replace="~{_layout :: main-header}"></div>
 
     <div class="container">
-        <h1 class="page-title">Add New Article</h1>
+        <h1 class="page-title">Add New Resource</h1>
         
         <div class="form-card">
             <form th:action="@{/admin/content/add}" method="post">
+                
                 <div class="form-group">
                     <label class="form-label">Title</label>
                     <input type="text" name="title" class="form-input" placeholder="Enter article title" required>
@@ -130,26 +131,28 @@
 
                 <div class="form-group">
                     <label class="form-label">Category</label>
-                    <select name="category" class="form-select">
-                        <option value="awareness">Awareness</option>
-                        <option value="help-seeking">Help-Seeking</option>
-                        <option value="crisis-management">Crisis Management</option>
-                        <option value="support-services">Support Services</option>
-                    </select>
+                    <input type="text" name="category" class="form-input" placeholder="e.g. Anxiety, Mindfulness, Sleep" required>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Source Link (URL)</label>
+                    <input type="url" name="sourceUrl" class="form-input" placeholder="https://www.example.com/article" required>
+                    <small style="color: #666; margin-top: 5px; display: block;">Paste the full link to the external article.</small>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Image Link (URL)</label>
+                    <input type="url" name="imageUrl" class="form-input" placeholder="https://www.example.com/image.jpg">
+                    <small style="color: #666; margin-top: 5px; display: block;">Right-click an image online and select "Copy Image Address".</small>
                 </div>
 
                 <div class="form-group">
                     <label class="form-label">Description</label>
-                    <textarea name="description" class="form-textarea" style="min-height: 100px;" placeholder="Enter a brief description" required></textarea>
-                </div>
-
-                <div class="form-group">
-                    <label class="form-label">Content</label>
-                    <textarea name="content" class="form-textarea" placeholder="Enter the full article content" required></textarea>
+                    <textarea name="description" class="form-textarea" placeholder="Enter a brief summary (1-2 sentences) to entice the student to read more." required></textarea>
                 </div>
 
                 <div class="button-group">
-                    <button type="submit" class="btn btn-primary">Add Article</button>
+                    <button type="submit" class="btn btn-primary">Add Resource</button>
                     <a th:href="@{/admin/content}" class="btn btn-secondary">Cancel</a>
                 </div>
             </form>

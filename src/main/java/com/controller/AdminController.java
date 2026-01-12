@@ -106,14 +106,18 @@ public class AdminController {
 
     @PostMapping("/content/{id}/update")
     public String updateArticle(@PathVariable Long id,
-                               @RequestParam("title") String title,
-                               @RequestParam("description") String description,
-                               @RequestParam("content") String content) {
+                                @RequestParam("title") String title,
+                                @RequestParam("description") String description,
+                                @RequestParam("sourceUrl") String sourceUrl, // Was 'content'
+                                @RequestParam("imageUrl") String imageUrl,   // New field
+                                @RequestParam("category") String category) { // New field
         Article article = articleService.getArticleById(id);
         if (article != null) {
             article.setTitle(title);
             article.setDescription(description);
-            article.setContent(content);
+            article.setSourceUrl(sourceUrl); // Set the link
+            article.setImageUrl(imageUrl);   // Set the image
+            
             articleService.updateArticle(id, article);
         }
         return "redirect:/admin/content/" + id;
@@ -133,10 +137,12 @@ public class AdminController {
 
     @PostMapping("/content/add")
     public String addArticle(@RequestParam("title") String title,
-                            @RequestParam("description") String description,
-                            @RequestParam("content") String content,
-                            @RequestParam(value = "category", required = false) String category) {
-        Article article = new Article(null, title, description, content, category);
+                             @RequestParam("description") String description,
+                             @RequestParam("sourceUrl") String sourceUrl, 
+                             @RequestParam("imageUrl") String imageUrl) {
+        
+        Article article = new Article(title, description, sourceUrl, imageUrl);
+        
         articleService.addArticle(article);
         return "redirect:/admin/content";
     }

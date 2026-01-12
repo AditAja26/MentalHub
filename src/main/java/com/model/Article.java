@@ -1,27 +1,36 @@
 package com.model;
 
+import javax.persistence.*;
+
+@Entity
+@Table(name = "articles")
 public class Article {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @Column(nullable = false)
     private String title;
+
+    @Column(nullable = false, length = 500) 
     private String description;
-    private String content;
-    private String category;
 
-    public Article() {}
+    @Column(nullable = false)
+    private String sourceUrl; 
 
-    public Article(Long id, String title, String description, String content) {
-        this.id = id;
-        this.title = title;
-        this.description = description;
-        this.content = content;
+    @Column(name = "image_url") 
+    private String imageUrl; 
+
+    // CONSTRUCTORS
+    public Article() {
     }
 
-    public Article(Long id, String title, String description, String content, String category) {
-        this.id = id;
+    public Article(String title, String description, String sourceUrl, String imageUrl) {
         this.title = title;
         this.description = description;
-        this.content = content;
-        this.category = category;
+        this.sourceUrl = sourceUrl;
+        this.imageUrl = imageUrl;
     }
 
     public Long getId() { return id; }
@@ -33,9 +42,9 @@ public class Article {
     public String getDescription() { return description; }
     public void setDescription(String description) { this.description = description; }
 
-    public String getContent() { return content; }
-    public void setContent(String content) { this.content = content; }
+    public String getSourceUrl() { return sourceUrl; }
+    public void setSourceUrl(String sourceUrl) { this.sourceUrl = sourceUrl; }
 
-    public String getCategory() { return category; }
-    public void setCategory(String category) { this.category = category; }
+    public String getImageUrl() { return imageUrl; }
+    public void setImageUrl(String imageUrl) { this.imageUrl = imageUrl; }
 }

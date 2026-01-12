@@ -4,7 +4,6 @@ import com.model.Article;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
-import org.hibernate.query.NativeQuery; // Import for Native SQL
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
@@ -77,11 +76,10 @@ public class ArticleDaoHibernate implements ArticleDao {
         try {
             tx = session.beginTransaction();
             
-            // NATIVE SQL for Delete
             String sql = "DELETE FROM articles WHERE id = :id";
             session.createNativeQuery(sql)
                    .setParameter("id", id)
-                   .executeUpdate(); // Use executeUpdate() for DELETE/UPDATE
+                   .executeUpdate(); 
             
             tx.commit();
         } catch (Exception e) {

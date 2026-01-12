@@ -113,8 +113,8 @@ public class AdminController {
         if (article != null) {
             article.setTitle(title);
             article.setDescription(description);
-            article.setSourceUrl(sourceUrl); // Set the link
-            article.setImageUrl(imageUrl);   // Set the image
+            article.setSourceUrl(sourceUrl); 
+            article.setImageUrl(imageUrl);   
             
             articleService.updateArticle(id, article);
         }

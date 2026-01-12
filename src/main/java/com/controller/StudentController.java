@@ -45,7 +45,7 @@ public class StudentController {
 
     @PostMapping("/book-appointment")
     public String bookAppointment(@ModelAttribute("appointment") Appointment appointment) {
-        appointmentService.saveAppointment(appointment);
+        appointmentService.addAppointment(appointment);
         return "redirect:/student/appointment?success";
     }
 }

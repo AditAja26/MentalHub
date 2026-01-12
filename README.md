@@ -118,7 +118,7 @@ Expected tables (minimum):
 
 | UC ID | Use Case                  | Description             | Status                                 |
 | ----- | ------------------------- | ----------------------- | -------------------------------------- |
-| UC003 | Book Appointment          | Book counseling session | UI Implemented / Logic Partial         |
+| UC003 | Book Appointment          | Book counseling session | Implemented                            |
 | UC004 | Attend Virtual Counseling | Join counseling session | UI Implemented / Logic Not Implemented |
 
 **Controller:** `StudentController`

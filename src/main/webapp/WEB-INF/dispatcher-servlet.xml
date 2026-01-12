@@ -2,6 +2,7 @@
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:context="http://www.springframework.org/schema/context"
        xmlns:mvc="http://www.springframework.org/schema/mvc"
+       xmlns:tx="http://www.springframework.org/schema/tx"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xsi:schemaLocation="
          http://www.springframework.org/schema/beans
@@ -9,15 +10,21 @@
          http://www.springframework.org/schema/context
          https://www.springframework.org/schema/context/spring-context.xsd
          http://www.springframework.org/schema/mvc
-         https://www.springframework.org/schema/mvc/spring-mvc.xsd">
+         https://www.springframework.org/schema/mvc/spring-mvc.xsd
+         http://www.springframework.org/schema/tx
+         https://www.springframework.org/schema/tx/spring-tx.xsd">
 
   <context:component-scan base-package="com.controller" />
   <context:component-scan base-package="com.services" />
+  <context:component-scan base-package="com.dao" />
+  
   <mvc:annotation-driven />
 
   <!-- ============================================================ -->
   <!-- 4. Configure static resource handling (CSS, JS, images, etc.) -->
   <!-- ============================================================ -->
+  <tx:annotation-driven transaction-manager="transactionManager" />
+
   <mvc:resources mapping="/resources/**" location="/resources/" />
 
   <!-- Database config -->
@@ -38,18 +45,17 @@
     <!--  Hibernate SessionFactory  -->
     <!-- ========================= -->
     <bean id="sessionFactory"
-          class="org.springframework.orm.hibernate5.LocalSessionFactoryBean">
-        <property name="dataSource" ref="dataSource" />
-        <!-- Scan for @Entity classes -->
-        <property name="packagesToScan" value="com.model" />
-        <property name="hibernateProperties">
-            <props>
-                <prop key="hibernate.dialect">org.hibernate.dialect.MySQL8Dialect</prop>
-                <prop key="hibernate.hbm2ddl.auto">update</prop>
-                <prop key="hibernate.show_sql">true</prop>
-                <prop key="hibernate.format_sql">true</prop>
-            </props>
-        </property>
+        class="org.springframework.orm.hibernate5.LocalSessionFactoryBean">
+      <property name="dataSource" ref="dataSource" />
+      <property name="packagesToScan" value="com.model" />
+      <property name="hibernateProperties">
+          <props>
+              <prop key="hibernate.dialect">org.hibernate.dialect.MySQL8Dialect</prop>
+              <prop key="hibernate.hbm2ddl.auto">update</prop>
+              <prop key="hibernate.show_sql">true</prop>
+              <prop key="hibernate.format_sql">true</prop>
+          </props>
+      </property>
     </bean>
 
     <bean id="transactionManager" class="org.springframework.orm.hibernate5.HibernateTransactionManager">
@@ -73,6 +79,7 @@
   <bean class="org.thymeleaf.spring5.view.ThymeleafViewResolver">
     <property name="templateEngine" ref="templateEngine" />
     <property name="characterEncoding" value="UTF-8" />
+    <property name="order" value="1" />
   </bean>
 
 </beans>

@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manage Quizzes - MentalHub</title>
+    <link th:href="@{/resources/css/nav-bar.css}" rel="stylesheet" type="text/css"/>
+    <style>
+        /* General Reset */
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f8f9fa;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 40px auto;
+            padding: 0 20px;
+        }
+
+        /* Header Section */
+        .panel-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+
+        .panel-title {
+            font-size: 32px;
+            font-weight: 700;
+            color: #333;
+            margin: 0;
+        }
+
+        .add-btn {
+            background-color: #7b68ee; /* Purple to match quiz theme */
+            color: white;
+            padding: 12px 25px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: background-color 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .add-btn:hover {
+            background-color: #6a5acd;
+        }
+
+        /* List & Card Styling */
+        .quiz-list {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .quiz-card {
+            background-color: white;
+            border-radius: 12px;
+            padding: 25px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            border: 1px solid #eee;
+            transition: transform 0.2s, box-shadow 0.2s;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .quiz-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+        }
+
+        .quiz-content {
+            flex: 1;
+            padding-right: 20px;
+        }
+
+        /* Date Badge */
+        .date-badge {
+            display: inline-block;
+            background-color: #e8eaf6;
+            color: #3f51b5;
+            font-size: 13px;
+            font-weight: 700;
+            padding: 4px 10px;
+            border-radius: 20px;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+        }
+
+        .quiz-question {
+            font-size: 20px;
+            font-weight: 700;
+            color: #333;
+            margin: 0 0 10px 0;
+        }
+
+        .correct-answer {
+            color: #27ae60; /* Green for correct answer */
+            font-weight: 600;
+            font-size: 15px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        /* Action Buttons */
+        .quiz-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .edit-btn {
+            background-color: #f0f2f5;
+            color: #333;
+            padding: 8px 20px;
+            border-radius: 6px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: background-color 0.2s;
+        }
+
+        .edit-btn:hover {
+            background-color: #e4e6eb;
+        }
+
+        .delete-btn {
+            background-color: #fee2e2;
+            color: #dc2626;
+            padding: 8px 20px;
+            border-radius: 6px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: background-color 0.2s;
+        }
+
+        .delete-btn:hover {
+            background-color: #fecaca;
+        }
+    </style>
+</head>
+<body>
+    <div th:replace="~{_layout :: main-header}"></div>
+
+    <div class="container">
+        <div class="panel-header">
+            <h1 class="panel-title">Manage Daily Quizzes</h1>
+            <a th:href="@{/admin/quiz/add}" class="add-btn">+ Add Quiz</a>
+        </div>
+
+        <div class="quiz-list">
+            
+            <div th:if="${#lists.isEmpty(quizzes)}" style="text-align: center; padding: 40px; color: #888; background: white; border-radius: 12px;">
+                No quizzes found. Start by adding a quiz for today!
+            </div>
+
+            <div class="quiz-card" th:each="quiz : ${quizzes}">
+                <div class="quiz-content">
+                    <span class="date-badge" th:text="${#dates.format(quiz.quizDate, 'dd MMM yyyy')}">12 JAN 2026</span>
+                    
+                    <h2 class="quiz-question" th:text="${quiz.question}">What is the benefit of sleep?</h2>
+                    
+                    <div class="correct-answer">
+                        <span>✓ Answer:</span>
+                        <span th:text="${quiz.correctAnswer}">Improves memory</span>
+                    </div>
+                </div>
+
+                <div class="quiz-actions">
+                    <a th:href="@{/admin/quiz/{id}/edit(id=${quiz.id})}" class="edit-btn">Edit</a>
+                    <a th:href="@{/admin/quiz/{id}/delete(id=${quiz.id})}" class="delete-btn" 
+                       onclick="return confirm('Delete this quiz? This cannot be undone.')">Delete</a>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</body>
+</html>

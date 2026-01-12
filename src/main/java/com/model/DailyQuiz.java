@@ -15,7 +15,7 @@ public class DailyQuiz {
     // Stores only the date (e.g., 2026-01-12) to assign this question to a specific day
     @Temporal(TemporalType.DATE)
     @DateTimeFormat(pattern = "yyyy-MM-dd") // Helps input from HTML forms
-    @Column(name = "quiz_date", nullable = false, unique = true) // unique=true prevents duplicate quizzes for the same day
+    @Column(name = "quiz_date", nullable = false) // unique=true prevents duplicate quizzes for the same day
     private Date quizDate;
 
     @Column(nullable = false, length = 500) 

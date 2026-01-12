@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Daily Quiz - MentalHub</title>
+    <link th:href="@{/resources/css/nav-bar.css}" rel="stylesheet" type="text/css"/>
+    <style>
+        /* [ ... Same CSS as your Article forms for consistency ... ] */
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f8f9fa; margin: 0; padding: 0; }
+        .container { max-width: 800px; margin: 40px auto; padding: 0 20px; }
+        
+        .page-title { font-size: 28px; font-weight: 700; color: #333; margin-bottom: 30px; }
+        
+        .form-card { background-color: white; border-radius: 16px; padding: 40px; box-shadow: 0 4px 8px rgba(0,0,0,0.05); }
+        
+        .form-group { margin-bottom: 25px; }
+        .form-label { display: block; font-size: 16px; font-weight: 600; color: #333; margin-bottom: 8px; }
+        
+        .form-input { width: 100%; padding: 12px 15px; border: 2px solid #E8E4F0; border-radius: 8px; font-size: 16px; transition: border-color 0.3s; box-sizing: border-box; }
+        .form-input:focus { outline: none; border-color: #7b68ee; }
+        
+        .form-textarea { width: 100%; padding: 12px 15px; border: 2px solid #E8E4F0; border-radius: 8px; font-size: 16px; min-height: 100px; resize: vertical; font-family: inherit; box-sizing: border-box; }
+        .form-textarea:focus { outline: none; border-color: #7b68ee; }
+
+        /* Specific styling for Answer sections to differentiate them */
+        .answer-section {
+            background-color: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 25px;
+            border-left: 5px solid #ccc;
+        }
+
+        .correct-section {
+            border-left-color: #27ae60; /* Green for correct */
+            background-color: #eafaf1;
+        }
+
+        .wrong-section {
+            border-left-color: #e74c3c; /* Red for wrong */
+        }
+
+        .section-header {
+            font-size: 14px;
+            text-transform: uppercase;
+            font-weight: 700;
+            margin-bottom: 15px;
+            letter-spacing: 0.5px;
+        }
+
+        .button-group { display: flex; gap: 15px; margin-top: 30px; }
+        .btn { padding: 15px 30px; border: none; border-radius: 8px; font-size: 16px; font-weight: 600; cursor: pointer; text-decoration: none; display: inline-block; text-align: center; }
+        .btn-primary { background-color: #7b68ee; color: white; }
+        .btn-primary:hover { background-color: #6a5acd; }
+        .btn-secondary { background-color: #95a5a6; color: white; }
+        .btn-secondary:hover { background-color: #7f8c8d; }
+    </style>
+</head>
+<body>
+    <div th:replace="~{_layout :: main-header}"></div>
+
+    <div class="container">
+        <h1 class="page-title">Add New Daily Quiz</h1>
+        
+        <div class="form-card">
+            <form th:action="@{/admin/quiz/add}" method="post" th:object="${quiz}">
+                
+                <div class="form-group">
+                    <label class="form-label">Quiz Date</label>
+                    <input type="date" th:field="*{quizDate}" class="form-input" required>
+                    <small style="color: #666; display: block; margin-top: 5px;">Select the day this quiz will appear to students.</small>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Question</label>
+                    <textarea th:field="*{question}" class="form-textarea" placeholder="Type the quiz question here..." required></textarea>
+                </div>
+
+                <hr style="border: 0; border-top: 1px solid #eee; margin: 30px 0;">
+
+                <div class="answer-section correct-section">
+                    <div class="section-header" style="color: #27ae60;">Correct Answer</div>
+                    <div class="form-group" style="margin-bottom: 0;">
+                        <input type="text" th:field="*{correctAnswer}" class="form-input" placeholder="Enter the correct answer" required>
+                    </div>
+                </div>
+
+                <div class="answer-section wrong-section">
+                    <div class="section-header" style="color: #c0392b;">Distractors (Wrong Answers)</div>
+                    
+                    <div class="form-group">
+                        <label class="form-label" style="font-size: 14px;">Wrong Option 1</label>
+                        <input type="text" th:field="*{wrongAnswer1}" class="form-input" placeholder="Wrong answer 1" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" style="font-size: 14px;">Wrong Option 2</label>
+                        <input type="text" th:field="*{wrongAnswer2}" class="form-input" placeholder="Wrong answer 2" required>
+                    </div>
+
+                    <div class="form-group" style="margin-bottom: 0;">
+                        <label class="form-label" style="font-size: 14px;">Wrong Option 3</label>
+                        <input type="text" th:field="*{wrongAnswer3}" class="form-input" placeholder="Wrong answer 3" required>
+                    </div>
+                </div>
+
+                <div class="button-group">
+                    <button type="submit" class="btn btn-primary">Save Quiz</button>
+                    <a th:href="@{/admin/quiz}" class="btn btn-secondary">Cancel</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</body>
+</html>

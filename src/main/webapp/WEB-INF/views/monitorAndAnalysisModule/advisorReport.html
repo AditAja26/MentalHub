@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Advisor Report</title>
+</head>
+<body style="padding: 60px; max-width: 800px; margin: auto; background: white;">
+    <div style="text-align: center; border-bottom: 2px solid #4A90E2;">
+        <h1>Mental Health Literacy Report</h1>
+        <p>Generated on: <span th:text="${#dates.format(reportDate, 'dd-MM-yyyy HH:mm')}">Date</span></p>
+    </div>
+
+    <div style="margin-top: 30px;">
+        <p><strong>Student:</strong> Hakimi</p>
+        <p><strong>Score:</strong> <span th:text="${stats.percentage}">0</span>%</p>
+        <p><strong>Analysis:</strong> <span th:text="${stats.status}">Status</span></p>
+    </div>
+</body>
+</html>

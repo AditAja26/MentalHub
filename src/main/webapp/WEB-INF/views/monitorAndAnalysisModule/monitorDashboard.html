@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Monitor Dashboard</title>
+</head>
+<body style="padding: 50px; background: #F8F9FD; font-family: sans-serif;">
+    <h1>Student Progress Monitor</h1>
+    
+    <div style="background: white; padding: 30px; border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.05);">
+        <p>Total Goals: <span th:text="${stats.total}">0</span></p>
+        <p>Completion: <span th:text="${stats.percentage}">0</span>%</p>
+        
+        <div style="width: 100%; background: #EEE; border-radius: 10px; height: 10px;">
+            <div th:style="'width:' + ${stats.percentage} + '%; background: #4CAF50; height: 100%; border-radius: 10px;'"></div>
+        </div>
+        
+        <h3>Status: <span th:text="${stats.status}">Unknown</span></h3>
+    </div>
+</body>
+</html>

@@ -2,7 +2,6 @@ package com.services;
 
 import com.dao.ArticleDao;
 import com.model.Article;
-import com.services.ArticleService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

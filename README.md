@@ -94,11 +94,11 @@ Expected tables (minimum):
 
 ### Authentication Module
 
-| UC ID | Use Case | Description             | Status      |
-| ----- | -------- | ----------------------- | ----------- |
-| UC006 | Login    | User authentication     | Implemented |
-| UC007 | Logout   | End user session        | Implemented |
-| UC008 | Register | Create new user account | Implemented |
+| UC ID | Use Case | Description             | Status          |
+| ----- | -------- | ----------------------- | --------------- |
+| UC006 | Login    | User authentication     | Not Implemented |
+| UC007 | Logout   | End user session        | Not Implemented |
+| UC008 | Register | Create new user account | Not Implemented |
 
 **Controller:** `AuthController`
 
@@ -127,10 +127,10 @@ Expected tables (minimum):
 
 ### Monitoring & Analysis Module
 
-| UC ID | Use Case          | Description           | Status          |
-| ----- | ----------------- | --------------------- | --------------- |
-| UC002 | Monitor Dashboard | View student progress | Not Implemented |
-| UC010 | Generate Report   | Advisor reports       | Not Implemented |
+| UC ID | Use Case          | Description           | Status      |
+| ----- | ----------------- | --------------------- | ----------- |
+| UC002 | Monitor Dashboard | View student progress | Implemented |
+| UC010 | Generate Report   | Advisor reports       | Implemented |
 
 **Controller:** `AdvisorController`
 

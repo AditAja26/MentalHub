@@ -2,6 +2,7 @@ package com.controller;
 
 import com.model.Article;
 import com.model.User;
+import com.model.Goal; // Added this import
 import com.services.ArticleService;
 import com.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,6 +11,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.ArrayList;
 
 @Controller
 @RequestMapping("/admin")
@@ -66,6 +68,8 @@ public class AdminController {
             user.setEmail(email);
             user.setPhone(phone);
             if (age != null) user.setAge(age);
+            
+            // Note: We don't touch goals here so they remain unchanged in the DB
             userService.updateUser(id, user);
         }
         return "redirect:/admin/users/" + id;
@@ -90,8 +94,9 @@ public class AdminController {
         if (article == null) {
             return "redirect:/admin/content";
         }
-        model.addAttribute("article", article);
-        return "adminModule/articleView";
+        // If your sourceUrl is an external link, this works. 
+        // If it's internal, you might need a proper view.
+        return "redirect:" + article.getSourceUrl();
     }
 
     @GetMapping("/content/{id}/edit")
@@ -106,17 +111,20 @@ public class AdminController {
 
     @PostMapping("/content/{id}/update")
     public String updateArticle(@PathVariable Long id,
-                               @RequestParam("title") String title,
-                               @RequestParam("description") String description,
-                               @RequestParam("content") String content) {
+                                @RequestParam("title") String title,
+                                @RequestParam("description") String description,
+                                @RequestParam("sourceUrl") String sourceUrl, 
+                                @RequestParam("imageUrl") String imageUrl) { 
         Article article = articleService.getArticleById(id);
         if (article != null) {
             article.setTitle(title);
             article.setDescription(description);
-            article.setContent(content);
+            article.setSourceUrl(sourceUrl); 
+            article.setImageUrl(imageUrl);   
+            
             articleService.updateArticle(id, article);
         }
-        return "redirect:/admin/content/" + id;
+        return "redirect:/admin/content";
     }
 
     @GetMapping("/content/{id}/delete")
@@ -127,16 +135,20 @@ public class AdminController {
 
     @GetMapping("/content/add")
     public String showAddArticle(Model model) {
+        // Ensure Article has a no-args constructor
         model.addAttribute("article", new Article());
         return "adminModule/addArticle";
     }
 
     @PostMapping("/content/add")
     public String addArticle(@RequestParam("title") String title,
-                            @RequestParam("description") String description,
-                            @RequestParam("content") String content,
-                            @RequestParam(value = "category", required = false) String category) {
-        Article article = new Article(null, title, description, content, category);
+                             @RequestParam("description") String description,
+                             @RequestParam("sourceUrl") String sourceUrl, 
+                             @RequestParam("imageUrl") String imageUrl) {
+        
+        // Ensure your Article model has this constructor!
+        Article article = new Article(null, title, description, sourceUrl, imageUrl);
+        
         articleService.addArticle(article);
         return "redirect:/admin/content";
     }

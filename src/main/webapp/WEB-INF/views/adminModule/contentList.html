@@ -148,6 +148,11 @@
                     <div class="article-content">
                         <h2 class="article-title" th:text="${article.title}">The Student's Guide to Taming Test Anxiety</h2>
                         <p class="article-description" th:text="${article.description}">Do your palms sweat just thinking about an exam? You're not alone. This guide breaks down why test anxiety happens</p>
+                        <img th:if="${article.imageUrl != null and !#strings.isEmpty(article.imageUrl)}" 
+                        th:src="${article.imageUrl}" 
+                        alt="Article Preview" 
+                        style="width: 100%; height: 200px; object-fit: cover; border-radius: 8px; margin-top: 15px; display: block;"
+                        onerror="this.style.display='none'"/>
                     </div>
                     <a th:href="@{/admin/content/{id}(id=${article.id})}" class="article-arrow">→</a>
                     <div class="article-actions">

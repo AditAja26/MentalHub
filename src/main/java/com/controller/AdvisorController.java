@@ -1,6 +1,7 @@
 package com.controller;
 
 import java.util.Map;
+import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -10,6 +11,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.services.AnalysisService;
+import com.services.UserService;
+import com.model.User;
 
 @Controller
 @RequestMapping("/advisor")
@@ -18,40 +21,54 @@ public class AdvisorController {
     @Autowired
     private AnalysisService analysisService;
 
-    // UC000: Advisor Landing Page (The Card View)
+    @Autowired
+    private UserService userService; // Added this to fetch student lists
+
+    // UC000: Advisor Landing Page
     @GetMapping(value = { "", "/", "/home" })
     public String showAdvisorLandingPage(Model model) {
+        // Optional: Pass the advisor's name to the landing page
+        model.addAttribute("advisorName", "Hakimi"); 
         return "mainPages/advisorLandingPage";
     }
 
-    // UC002: Monitor Dashboard (Table View of Student Progress)
+    // UC002: Monitor Dashboard (Shows the list of all students)
     @GetMapping("/monitor")
-    public String showMonitorDashboard(@RequestParam(name = "studentId", defaultValue = "9") Long studentId,
-            Model model) {
-        Map<String, Object> analysis = analysisService.analyzeUserProgress(studentId);
-        model.addAttribute("stats", analysis);
+    public String showMonitorDashboard(Model model) {
+        // Fetch all students from your service
+        List<User> students = userService.getUsersByRole("student");
+        
+        // Pass the list to the HTML (Thymeleaf uses 'users')
+        model.addAttribute("users", students);
+        
         return "monitorAndAnalysisModule/monitorDashboard";
     }
 
-    // UC010: Generate Report (Formal Report View)
+    // UC010: Generate Report (Shows details for ONE specific student)
     @GetMapping("/report")
-    public String showReport(@RequestParam(name = "studentId", defaultValue = "9") Long studentId,
-            Model model) {
+    public String showReport(@RequestParam(name = "studentId") Long studentId, Model model) {
+        // 1. Get the specific student info
+        User student = userService.getUserById(studentId);
+        
+        // 2. Get the analysis/stats for this student
         Map<String, Object> analysis = analysisService.analyzeUserProgress(studentId);
-        model.addAttribute("stats", analysis);
+        
+        // 3. Add everything to the model
+        model.addAttribute("user", student); // Used for name/ID in report
+        model.addAttribute("stats", analysis); // Used for mood/stress stats
         model.addAttribute("reportDate", new java.util.Date());
+        
         return "monitorAndAnalysisModule/advisorReport";
     }
 
     @GetMapping("/appointment")
     public String showAppointment() {
-        // Redirecting to the student support module views
         return "studentSupportModule/appointmentPage";
     }
 
     @GetMapping("/test")
     @ResponseBody
     public String testConnection() {
-        return "<h1>Controller is ALIVE!</h1><p>If you see this, the problem is your HTML file path.</p>";
+        return "<h1>Controller is ALIVE!</h1><p>Paths are working correctly.</p>";
     }
 }

@@ -1,16 +1,31 @@
 package com.model;
 
+import javax.persistence.*;
+
+@Entity
+@Table(name = "goals")
 public class Goal {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private Long userId;
+
+    // This defines the relationship: Many goals belong to one User
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
+
+    @Column(name = "description")
     private String description;
+
+    @Column(name = "completed")
     private boolean completed;
 
     public Goal() {}
 
-    public Goal(Long id, Long userId, String description, boolean completed) {
-        this.id = id;
-        this.userId = userId;
+    // Updated constructor to take a User object instead of just an ID
+    public Goal(User user, String description, boolean completed) {
+        this.user = user;
         this.description = description;
         this.completed = completed;
     }
@@ -18,8 +33,8 @@ public class Goal {
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
 
-    public Long getUserId() { return userId; }
-    public void setUserId(Long userId) { this.userId = userId; }
+    public User getUser() { return user; }
+    public void setUser(User user) { this.user = user; }
 
     public String getDescription() { return description; }
     public void setDescription(String description) { this.description = description; }

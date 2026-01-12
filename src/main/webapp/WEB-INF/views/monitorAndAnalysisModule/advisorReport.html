@@ -1,18 +1,161 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-    <title>Advisor Report</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MentalHub - Analysis Report</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; background-color: #E8EEF2; }
+        .report-card { background-color: #ffffff; border-radius: 24px; }
+        .accent-blue { color: #4A90E2; }
+        @media print {
+            .no-print { display: none; }
+            body { background-color: white; }
+            .report-card { border: none; shadow: none; }
+        }
+    </style>
 </head>
-<body style="padding: 60px; max-width: 800px; margin: auto; background: white;">
-    <div style="text-align: center; border-bottom: 2px solid #4A90E2;">
-        <h1>Mental Health Literacy Report</h1>
-        <p>Generated on: <span th:text="${#dates.format(reportDate, 'dd-MM-yyyy HH:mm')}">Date</span></p>
-    </div>
+<body class="min-h-screen pb-12">
 
-    <div style="margin-top: 30px;">
-        <p><strong>Student:</strong> Hakimi</p>
-        <p><strong>Score:</strong> <span th:text="${stats.percentage}">0</span>%</p>
-        <p><strong>Analysis:</strong> <span th:text="${stats.status}">Status</span></p>
-    </div>
+    <header class="w-full bg-white/50 backdrop-blur-sm py-4 px-6 md:px-12 flex items-center justify-between sticky top-0 z-10 no-print">
+        <div class="flex items-center gap-3">
+            <div class="w-10 h-10 border-2 border-[#4A90E2] flex items-center justify-center relative">
+                <span class="text-[#4A90E2] font-bold text-xl">M</span>
+                <div class="absolute -top-1 -right-1 bg-white">
+                    <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#4A90E2" stroke-width="4"><path d="M12 5V19M5 12H19"/></svg>
+                </div>
+            </div>
+            <span class="text-[#4A90E2] font-bold text-xl tracking-tight">MentalHub</span>
+        </div>
+        <nav class="hidden md:flex items-center gap-8">
+            <a href="/mentalhub/advisor/" class="text-gray-500 hover:text-gray-900 font-medium">Home</a>
+            <a href="#" class="text-gray-800 font-semibold border-b-2 border-gray-800 pb-1">Generate report</a>
+            <a href="/mentalhub/advisor/monitor" class="text-gray-500 hover:text-gray-900 font-medium">Monitor dashboard</a>
+        </nav>
+        <button onclick="window.print()" class="bg-[#4A90E2] text-white px-4 py-2 rounded-lg text-sm font-bold shadow-sm hover:bg-blue-600">
+            Print PDF
+        </button>
+    </header>
+
+    <main class="max-w-4xl mx-auto px-4 mt-8">
+        <div class="report-card shadow-xl p-8 md:p-12 overflow-hidden">
+            
+            <div class="flex flex-col md:flex-row justify-between items-start border-b border-gray-100 pb-8 mb-8">
+                <div>
+                    <h1 class="text-4xl font-extrabold text-gray-900 tracking-tight">Student Analysis Report</h1>
+                    <p class="text-gray-500 mt-2 font-medium">
+                        Generated on: <span class="text-gray-800" th:text="${#dates.format(reportDate, 'dd MMMM yyyy')}">31 March 2022</span>
+                    </p>
+                </div>
+                <div class="mt-4 md:mt-0 text-right">
+                    <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold bg-blue-50 text-blue-600 uppercase tracking-wider">
+                        Confidential
+                    </span>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-10">
+                <div class="bg-[#C5D9E8]/30 rounded-2xl p-6">
+                    <h3 class="text-sm font-bold text-gray-400 uppercase tracking-widest mb-4">Student Details</h3>
+                    <div class="flex items-center gap-4">
+                        <img th:src="${'https://ui-avatars.com/api/?name=Student&background=4A90E2&color=fff'}" class="w-16 h-16 rounded-full border-2 border-white shadow-sm">
+                        <div>
+                            <p class="text-xl font-bold text-gray-900" th:text="${'Student #' + param.studentId}">Student Name</p>
+                            <p class="text-gray-600 font-medium">Mental Health Literacy Program</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-[#FF8C42]/10 rounded-2xl p-6">
+                    <h3 class="text-sm font-bold text-[#FF8C42] uppercase tracking-widest mb-4">Assessment Summary</h3>
+                    <div class="space-y-2">
+                        <div class="flex justify-between">
+                            <span class="text-gray-600 font-medium">Mood Average:</span>
+                            <span class="text-gray-900 font-bold" th:text="${stats.moodAvg}">4.5 / 5.0</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-gray-600 font-medium">Stress Level:</span>
+                            <span class="text-gray-900 font-bold" th:text="${stats.stressLevel}">Low</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mb-10">
+                <h3 class="text-lg font-bold text-gray-900 mb-6 flex items-center gap-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 accent-blue" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M7 12l3-3 3 3 4-4M8 21l4-4 4 4M3 4h18M4 4h16v12a1 1 0 01-1 1H5a1 1 0 01-1-1V4z" />
+                    </svg>
+                    Weekly Well-being Trend
+                </h3>
+                <div class="relative h-80 w-full bg-gray-50 rounded-3xl p-6">
+                    <canvas id="trendChart"></canvas>
+                </div>
+            </div>
+
+            <div class="border-t border-gray-100 pt-8">
+                <h3 class="text-lg font-bold text-gray-900 mb-4">Advisor Recommendations</h3>
+                <div class="prose prose-blue text-gray-600 leading-relaxed">
+                    <p>Based on the analyzed data, the student maintains a consistent well-being trend. It is recommended to continue the current peer support sessions once a week. Monitor stress levels during the upcoming examination period (Week 12).</p>
+                </div>
+            </div>
+
+            <div class="mt-12 pt-8 border-t border-gray-100 flex justify-between items-center opacity-50 text-[10px] uppercase font-bold tracking-widest text-gray-400">
+                <span>MentalHub Advisor Tool v1.0</span>
+                <span>System Generated Report</span>
+            </div>
+        </div>
+    </main>
+
+    <script th:inline="javascript">
+        const ctx = document.getElementById('trendChart').getContext('2d');
+        
+        // Creating gradients to match your style
+        let moodGradient = ctx.createLinearGradient(0, 0, 0, 300);
+        moodGradient.addColorStop(0, 'rgba(74, 144, 226, 0.2)');
+        moodGradient.addColorStop(1, 'rgba(74, 144, 226, 0)');
+
+        new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: ['Week 1', 'Week 2', 'Week 3', 'Week 4', 'Week 5', 'Week 6'],
+                datasets: [{
+                    label: 'Mood Progress',
+                    data: [3.2, 3.5, 4.0, 3.8, 4.5, 4.2],
+                    borderColor: '#4A90E2',
+                    backgroundColor: moodGradient,
+                    fill: true,
+                    tension: 0.4,
+                    borderWidth: 3,
+                    pointRadius: 4,
+                    pointBackgroundColor: '#fff',
+                    pointBorderColor: '#4A90E2',
+                    pointBorderWidth: 2
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { display: false }
+                },
+                scales: {
+                    y: { 
+                        beginAtZero: true, 
+                        max: 5,
+                        grid: { color: '#f0f0f0' },
+                        ticks: { font: { weight: '600' } }
+                    },
+                    x: { 
+                        grid: { display: false },
+                        ticks: { font: { weight: '600' } }
+                    }
+                }
+            }
+        });
+    </script>
 </body>
 </html>

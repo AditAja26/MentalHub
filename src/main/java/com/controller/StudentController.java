@@ -5,16 +5,19 @@ import javax.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.model.Appointment;
-import com.model.User;
+import com.model.CounsellingSession;
 import com.model.MoodLog;
+import com.model.User;
 import com.services.AppointmentService;
+import com.services.CounsellingSessionService;
 import com.services.UserService;
 import com.services.NotificationService;
-
-import javax.servlet.http.HttpSession;
 
 @Controller
 @RequestMapping("/student")
@@ -27,12 +30,14 @@ public class StudentController {
     private AppointmentService appointmentService;
 
     @Autowired
-    private NotificationService notificationService;
+    private CounsellingSessionService counsellingSessionService;
 
     // Helper to get the user from session safely
     private User getSessionUser(HttpSession session) {
         return (User) session.getAttribute("loggedInUser");
     }
+
+    
 
     @GetMapping(value = { "", "/" })
     public String showStudentLandingPage(Model model, HttpSession session) {
@@ -103,6 +108,13 @@ public class StudentController {
         return "studentSupportModule/BookAppointmentPage";
     }
 
+    @GetMapping("/counseling")
+    public String showCounseling(Model model) {
+        List<CounsellingSession> sessions = counsellingSessionService.getAllSessions(); 
+        model.addAttribute("sessions", sessions);
+        return "studentSupportModule/AttendCounselingPage";
+    }
+
     @PostMapping("/book-appointment")
     public String bookAppointment(@ModelAttribute("appointment") Appointment appointment, HttpSession session) {
         // Save the appointment
@@ -142,9 +154,4 @@ public class StudentController {
         return "redirect:/student/appointment?success";
     }
 
-    @GetMapping("/counseling")
-    public String showCounseling(HttpSession session) {
-        if (getSessionUser(session) == null) return "redirect:/login";
-        return "studentSupportModule/AttendCounselingPage";
-    }
 }

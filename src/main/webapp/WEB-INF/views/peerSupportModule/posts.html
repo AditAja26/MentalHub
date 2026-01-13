@@ -73,7 +73,7 @@
                             Reply (<span th:text="${post.comments.size()}">0</span>)
                         </a>
                         
-                        <form th:if="${session.loggedInUser != null and session.loggedInUser.role == 'ADMIN'}" 
+                        <form th:if="${session.loggedInUser != null and session.loggedInUser.role == 'admin'}" 
                             th:action="@{/admin/deletePost/{id}(id=${post.id})}" 
                             method="post" 
                             style="display:inline; margin-left: 15px;"

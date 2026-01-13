@@ -3,11 +3,11 @@ package com.services;
 import java.util.List;
 
 import javax.annotation.PostConstruct;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.services.AppointmentService;
 import com.dao.AppointmentDao;
 import com.model.Appointment;
 
@@ -24,7 +24,7 @@ class AppointmentServiceImpl implements AppointmentService {
         if (appointmentDao.count() == 0) {
             Appointment appointment = new Appointment();
             appointment.setId(1L);
-            appointment.setCounselor("Dr. Smith");
+            appointment.setAdvisor("Dr. Smith");
             appointment.setDate("2024-07-15");
             appointment.setTime("10:00");
             appointment.setReason("Completed");
@@ -57,9 +57,9 @@ class AppointmentServiceImpl implements AppointmentService {
         Appointment existing = appointmentDao.findById(id);
         
         if (existing != null) {
-            if (updatedAppointment.getCounselor() != null) 
-                existing.setCounselor(updatedAppointment.getCounselor());
-            
+            if (updatedAppointment.getAdvisor() != null) 
+                existing.setAdvisor(updatedAppointment.getAdvisor());
+
             if (updatedAppointment.getDate() != null) 
                 existing.setDate(updatedAppointment.getDate());
             

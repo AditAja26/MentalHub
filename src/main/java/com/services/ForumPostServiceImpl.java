@@ -69,17 +69,17 @@ public class ForumPostServiceImpl implements ForumPostService {
                 // Check if any user exists; if not, create a "System Bot"
                 User author = (User) session.createQuery("FROM User").setMaxResults(1).uniqueResult();
                 
-                if (author == null) {
-                    author = new User();
-                    author.setName("MentalHub Community");
-                    author.setEmail("community@mentalhub.com");
-                    author.setPassword("dummyPass123"); // Dummy password
-                    author.setRole("ADMIN");
-                    author.setPhone("0000000000");
-                    author.setAge(99);
-                    session.save(author);
-                    System.out.println("--- Created Dummy User for Forum Posts ---");
-                }
+                // if (author == null) {
+                //     author = new User();
+                //     author.setName("MentalHub Community");
+                //     author.setEmail("community@mentalhub.com");
+                //     author.setPassword("dummyPass123"); // Dummy password
+                //     author.setRole("ADMIN");
+                //     author.setPhone("0000000000");
+                //     author.setAge(99);
+                //     session.save(author);
+                //     System.out.println("--- Created Dummy User for Forum Posts ---");
+                // }
 
                 // 2. Create Post 1: Anxiety Topic (Anonymous)
                 ForumPost post1 = new ForumPost(

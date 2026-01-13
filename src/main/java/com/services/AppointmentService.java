@@ -1,7 +1,8 @@
 package com.services;
 
-import com.model.Appointment;
 import java.util.List;
+
+import com.model.Appointment;
 
 public interface AppointmentService {
     Appointment addAppointment(Appointment appointment);

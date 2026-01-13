@@ -31,14 +31,25 @@ public class StudentController {
     }
 
     @GetMapping(value = { "", "/" })
-    public String showStudentLandingPage(HttpSession session, Model model) {
-        User user = getSessionUser(session);
-        if (user == null) {
-            return "redirect:/login"; 
+    public String showStudentLandingPage(Model model, HttpSession session) {
+        Long userId = (Long) session.getAttribute("userId");
+        String userRole = (String) session.getAttribute("userRole");
+        
+        if (userId == null) {
+            return "redirect:/login";
         }
-
-        // Fixes the "Welcome Back" name issue
-        model.addAttribute("studentName", user.getName());
+        
+        // Redirect non-students to their appropriate dashboard
+        if (userRole != null && !userRole.equalsIgnoreCase("student")) {
+            if (userRole.equalsIgnoreCase("admin")) {
+                return "redirect:/admin";
+            } else if (userRole.equalsIgnoreCase("advisor")) {
+                return "redirect:/advisor";
+            }
+        }
+        
+        User user = userService.getUserById(userId);
+        model.addAttribute("studentName", user != null ? user.getName() : "Student");
         return "mainPages/studentLandingPage";
     }
 

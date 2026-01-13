@@ -69,30 +69,37 @@ public class AuthController {
      * Registers a new user including Age and Phone from the form.
      */
     @PostMapping("/register")
-    public String processRegister(@ModelAttribute("user") User user, 
-                                 @RequestParam("confirmPassword") String confirmPassword, 
-                                 Model model) {
+    public String processRegister(@RequestParam("name") String name,
+                                  @RequestParam("email") String email,
+                                  @RequestParam("password") String password,
+                                  @RequestParam("role") String role,
+                                  @RequestParam(value = "phone", required = false) String phone,
+                                  @RequestParam(value = "age", required = false) Integer age,
+                                  Model model) {
+        // Check if email already exists
+        List<User> allUsers = userService.getAllUsers();
+        for (User existingUser : allUsers) {
+            if (existingUser.getEmail().equals(email)) {
+                model.addAttribute("error", "Email already registered. Please login or use a different email.");
+                return "authenticationModule/registerpage";
+            }
+        }
         
-        // 1. Check if passwords match
-        if (!user.getPassword().equals(confirmPassword)) {
-            model.addAttribute("error", "Passwords do not match!");
-            return "authenticationModule/registerpage";
-        }
-
-        // 2. Set default role if not provided
-        if (user.getRole() == null || user.getRole().isEmpty()) {
-            user.setRole("student");
-        }
-
-        // 3. Save the user (UserService handles the Hibernate save)
-        User registeredUser = userService.registerUser(user);
+        // Create new user
+        User newUser = new User();
+        newUser.setName(name);
+        newUser.setEmail(email);
+        newUser.setPassword(password);
+        newUser.setRole(role.toLowerCase()); // Normalize role to lowercase
+        newUser.setPhone(phone != null ? phone : "");
+        newUser.setAge(age);
         
-        if (registeredUser != null) {
-            return "redirect:/login?registered=true";
-        } else {
-            model.addAttribute("error", "Registration failed. This email is already registered.");
-            return "authenticationModule/registerpage";
-        }
+        // Save to database
+        userService.addUser(newUser);
+        
+        // Redirect to login with success message
+        model.addAttribute("success", "Registration successful! Please login.");
+        return "redirect:/login?registered=true";
     }
 
     /**

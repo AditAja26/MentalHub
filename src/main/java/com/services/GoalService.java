@@ -1,95 +1,82 @@
 package com.services;
 
+import com.dao.GoalDAO;
 import com.model.Goal;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Collectors;
 
 @Service
 public class GoalService {
     
-    private final ConcurrentHashMap<Long, Goal> goals = new ConcurrentHashMap<>();
-    private final AtomicLong idGenerator = new AtomicLong(1);
-    private boolean initialized = false;
+    @Autowired
+    private GoalDAO goalDao;
 
-    private void initIfNeeded() {
-        if (initialized) return;
-        initialized = true;
-        Long hakimiUserId = 9L;
-        
-        addGoal(new Goal(null, hakimiUserId, "Read 2 articles on stress management this month.", false));
-        addGoal(new Goal(null, hakimiUserId, "Book a counseling appointment by the end of the week.", false));
-        
-        addGoal(new Goal(null, hakimiUserId, "Read 2 articles on self reflection", true));
-        addGoal(new Goal(null, hakimiUserId, "Watch 3 videos on 'Understanding Anxiety'.", true));
-        addGoal(new Goal(null, hakimiUserId, "Complete 10 quiz", true));
-        addGoal(new Goal(null, hakimiUserId, "Book my first counseling appointment.", true));
-    }
-
+    @Transactional
     public Goal addGoal(Goal goal) {
-        initIfNeeded();
-        if (goal.getId() == null) {
-            goal.setId(idGenerator.getAndIncrement());
-        }
-        goals.put(goal.getId(), goal);
+        // Hibernate handles ID generation automatically now
+        goalDao.save(goal);
         return goal;
     }
 
-    public List<Goal> getAllGoals() {
-        initIfNeeded();
-        return new ArrayList<>(goals.values());
-    }
-
+    @Transactional(readOnly = true)
     public List<Goal> getGoalsByUserId(Long userId) {
-        return goals.values().stream()
-            .filter(goal -> userId.equals(goal.getUserId()))
-            .collect(Collectors.toList());
+        return goalDao.getByUserId(userId);
     }
 
+    @Transactional(readOnly = true)
     public List<Goal> getActiveGoalsByUserId(Long userId) {
-        return goals.values().stream()
-            .filter(goal -> userId.equals(goal.getUserId()) && !goal.isCompleted())
+        return goalDao.getByUserId(userId).stream()
+            .filter(goal -> !goal.isCompleted())
             .collect(Collectors.toList());
     }
 
+    @Transactional(readOnly = true)
     public List<Goal> getCompletedGoalsByUserId(Long userId) {
-        return goals.values().stream()
-            .filter(goal -> userId.equals(goal.getUserId()) && goal.isCompleted())
+        return goalDao.getByUserId(userId).stream()
+            .filter(Goal::isCompleted)
             .collect(Collectors.toList());
     }
 
+    @Transactional(readOnly = true)
     public Goal getGoalById(Long id) {
-        return goals.get(id);
+        return goalDao.getById(id);
     }
 
+    @Transactional
     public Goal updateGoal(Long id, Goal updatedGoal) {
-        Goal existing = goals.get(id);
+        Goal existing = goalDao.getById(id);
         if (existing != null) {
-            if (updatedGoal.getDescription() != null) existing.setDescription(updatedGoal.getDescription());
+            if (updatedGoal.getDescription() != null) {
+                existing.setDescription(updatedGoal.getDescription());
+            }
             existing.setCompleted(updatedGoal.isCompleted());
+            goalDao.update(existing);
             return existing;
         }
         return null;
     }
 
+    @Transactional
     public Goal completeGoal(Long id) {
-        Goal existing = goals.get(id);
+        Goal existing = goalDao.getById(id);
         if (existing != null) {
             existing.setCompleted(true);
+            goalDao.update(existing);
             return existing;
         }
         return null;
     }
 
+    @Transactional
     public boolean deleteGoal(Long id) {
-        return goals.remove(id) != null;
-    }
-
-    public int getGoalCount() {
-        return goals.size();
+        if (goalDao.getById(id) != null) {
+            goalDao.delete(id);
+            return true;
+        }
+        return false;
     }
 }

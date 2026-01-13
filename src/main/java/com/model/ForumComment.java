@@ -2,29 +2,31 @@ package com.model;
 
 import javax.persistence.*;
 import java.util.Date;
-import java.util.ArrayList; 
-import java.util.List;
 
 @Entity
-@Table(name = "forum_posts")
-public class ForumPost {
+@Table(name = "forum_comments")
+public class ForumComment {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false)
-    private String title;
-
-    // "TEXT" allows for long posts (more than 255 characters)
     @Column(nullable = false, columnDefinition = "TEXT")
     private String content;
 
-    // --- RELATIONSHIP: Many Posts belong to One User ---
-    @ManyToOne(fetch = FetchType.LAZY) // Lazy fetch improves performance
-    @JoinColumn(name = "user_id", nullable = false) // Foreign key in DB
+    // --- RELATIONSHIPS ---
+    
+    // Link to the Post being commented on
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "post_id", nullable = false)
+    private ForumPost post;
+
+    // Link to the User who wrote the comment
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
+    // --- PRIVACY ---
     @Column(name = "is_anonymous")
     private boolean isAnonymous;
 
@@ -32,32 +34,28 @@ public class ForumPost {
     @Column(name = "created_at", nullable = false)
     private Date createdAt;
 
-    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
-    @OrderBy("createdAt ASC") // Oldest comments at the top (like a conversation)
-    private List<ForumComment> comments = new ArrayList<>();
-
     // --- CONSTRUCTORS ---
-    public ForumPost() {
-        this.createdAt = new Date(); // Sets time to NOW automatically
+    public ForumComment() {
+        this.createdAt = new Date();
     }
 
-    public ForumPost(String title, String content, User user, boolean isAnonymous) {
-        this.title = title;
+    public ForumComment(String content, ForumPost post, User user, boolean isAnonymous) {
         this.content = content;
+        this.post = post;
         this.user = user;
         this.isAnonymous = isAnonymous;
         this.createdAt = new Date();
     }
 
-    // --- GETTERS AND SETTERS ---
+    // --- GETTERS & SETTERS ---
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
 
-    public String getTitle() { return title; }
-    public void setTitle(String title) { this.title = title; }
-
     public String getContent() { return content; }
     public void setContent(String content) { this.content = content; }
+
+    public ForumPost getPost() { return post; }
+    public void setPost(ForumPost post) { this.post = post; }
 
     public User getUser() { return user; }
     public void setUser(User user) { this.user = user; }
@@ -68,16 +66,11 @@ public class ForumPost {
     public Date getCreatedAt() { return createdAt; }
     public void setCreatedAt(Date createdAt) { this.createdAt = createdAt; }
 
-    public List<ForumComment> getComments() {return comments;}
-    public void setComments(List<ForumComment> comments) {this.comments = comments;}
-
-    // --- HELPER METHOD FOR HTML VIEW ---
-    // In Thymeleaf, you can just use ${post.displayAuthor}
+    // --- HELPER ---
     public String getDisplayAuthor() {
         if (this.isAnonymous) {
-            return "Anonymous";
+            return "Anonymous Student";
         }
-        // Returns the user's real name from the User entity
         return (user != null) ? user.getName() : "Unknown User";
     }
 }

@@ -42,7 +42,7 @@
         }
 
         .feature-card {
-            background-color: #D8D4E0;
+            background-color: #D8D4E0; /* Light purple for all cards */
             border-radius: 16px;
             padding: 25px;
             display: flex;
@@ -58,15 +58,7 @@
         .feature-card:hover {
             transform: translateY(-5px);
             box-shadow: 0 8px 20px rgba(0,0,0,0.15);
-        }
-
-        .feature-card.highlighted {
-            background-color: #7B6B8D;
-            border: 3px solid #4A90E2;
-        }
-
-        .feature-card.highlighted .card-title {
-            color: white;
+            background-color: #CFC9DB; /* Slightly darker purple on hover */
         }
 
         .card-image {
@@ -123,7 +115,7 @@
                 </div>
             </a>
 
-            <a th:href="@{/literacy}" class="feature-card highlighted">
+            <a th:href="@{/literacy}" class="feature-card">
                 <div class="card-image">🧘</div>
                 <div class="card-content">
                     <h2 class="card-title">Mental Health<br>Literacy</h2>

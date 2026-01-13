@@ -6,19 +6,17 @@ import javax.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.services.AnalysisService;
 import com.services.UserService;
 import com.services.AppointmentService;
 import com.services.NotificationService;
+import com.services.CounselingSessionService;
 import com.model.User;
+import com.model.Appointment;
+import com.model.CounselingSession;
 
 @Controller
 @RequestMapping("/advisor")
@@ -36,25 +34,22 @@ public class AdvisorController {
     @Autowired
     private NotificationService notificationService;
 
+    @Autowired
+    private CounselingSessionService sessionService;
+
     /**
      * UC000: Advisor Landing Page
-     * Pulls Ahmed Ali's name (or whoever is logged in) from the session.
      */
     @GetMapping(value = { "", "/", "/home" })
     public String showAdvisorLandingPage(HttpSession session, Model model) {
         User user = (User) session.getAttribute("loggedInUser");
-        
         if (user == null) {
             return "redirect:/login";
         }
 
-        // Dynamically set the name from the logged-in user object
         model.addAttribute("advisorName", user.getName());
-        
-        // Add unread notification count to session
         long unreadCount = notificationService.getUnreadCount(user.getId());
         session.setAttribute("unreadCount", unreadCount);
-        
         return "mainPages/advisorLandingPage";
     }
 
@@ -66,36 +61,24 @@ public class AdvisorController {
         if (session.getAttribute("loggedInUser") == null) {
             return "redirect:/login";
         }
-
         List<User> students = userService.getUsersByRole("student");
         model.addAttribute("users", students);
-        
         return "monitorAndAnalysisModule/monitorDashboard";
     }
 
     /**
      * UC010: Generate Report for a specific student
-     * Optimized to use efficient JOIN FETCH query
      */
     @Transactional(readOnly = true)
     @GetMapping("/report")
     public String showReport(@RequestParam(name = "studentId") Long studentId, 
                              HttpSession session, 
                              Model model) {
-        
-        if (session.getAttribute("loggedInUser") == null) {
-            return "redirect:/login";
-        }
+        if (session.getAttribute("loggedInUser") == null) return "redirect:/login";
 
-        // Use optimized method that fetches everything in one query
         User student = userService.getUserByIdWithDetails(studentId);
-        
-        if (student == null) {
-            return "redirect:/advisor/monitor";
-        }
+        if (student == null) return "redirect:/advisor/monitor";
 
-        // No need to manually trigger lazy loading - everything is already loaded!
-        
         Map<String, Object> analysis = analysisService.analyzeUserProgress(studentId);
         
         model.addAttribute("user", student); 
@@ -106,89 +89,131 @@ public class AdvisorController {
         return "monitorAndAnalysisModule/advisorReport";
     }
 
+    /**
+     * View Appointments
+     */
     @GetMapping("/appointment")
     public String showAppointment(HttpSession session, Model model) {
         User user = (User) session.getAttribute("loggedInUser");
-        if (user == null) {
-            return "redirect:/login";
-        }
+        if (user == null) return "redirect:/login";
         
-        // Get all appointments for this advisor
         String advisorName = user.getName();
-        List<com.model.Appointment> appointments = appointmentService.getAppointmentsByAdvisor(advisorName);
+        List<Appointment> appointments = appointmentService.getAppointmentsByAdvisor(advisorName);
         
-        // Calculate statistics
         int totalAppointments = appointments.size();
-        int todayAppointments = 0; // Can be enhanced to filter by today's date
-        int upcomingAppointments = appointments.size(); // Can be enhanced to filter future dates
+        int upcomingAppointments = 0;
+        
+        for(Appointment appt : appointments) {
+            if(!"COMPLETED".equals(appt.getStatus()) && !"REJECTED".equals(appt.getStatus())) {
+                upcomingAppointments++;
+            }
+        }
         
         model.addAttribute("appointments", appointments);
         model.addAttribute("totalAppointments", totalAppointments);
-        model.addAttribute("todayAppointments", todayAppointments);
+        model.addAttribute("todayAppointments", 0); 
         model.addAttribute("upcomingAppointments", upcomingAppointments);
         
         return "advisorModule/appointmentManagement";
     }
 
+    /**
+     * Accept or Reject Appointment
+     */
+    @PostMapping("/appointment/update-status")
+    public String updateAppointmentStatus(@RequestParam("appointmentId") Long appointmentId, 
+                                          @RequestParam("status") String status,
+                                          HttpSession session) {
+        User advisor = (User) session.getAttribute("loggedInUser");
+        if (advisor == null) return "redirect:/login";
+
+        Appointment appointment = appointmentService.getAppointmentById(appointmentId);
+        
+        if (appointment != null) {
+            appointment.setStatus(status);
+            appointmentService.addAppointment(appointment);
+            
+            User student = appointment.getStudent();
+            if (student != null) {
+                String message = "ACCEPTED".equalsIgnoreCase(status) 
+                    ? "Good news! Your appointment with " + advisor.getName() + " has been confirmed."
+                    : "Update: Your appointment with " + advisor.getName() + " was declined.";
+                
+                notificationService.createNotification(student.getId(), "Appointment Update", message, "appointment");
+            }
+        }
+        return "redirect:/advisor/appointment";
+    }
+
     @GetMapping("/appointment/complete/{id}")
     public String completeAppointment(@PathVariable Long id, HttpSession session) {
-        User user = (User) session.getAttribute("loggedInUser");
-        if (user == null) {
-            return "redirect:/login";
-        }
-        
-        // In a full implementation, you might want to update status instead of deleting
-        // For now, we'll delete the appointment as "completed"
+        if (session.getAttribute("loggedInUser") == null) return "redirect:/login";
         appointmentService.deleteAppointment(id);
-        
         return "redirect:/advisor/appointment?completed=true";
     }
 
     @GetMapping("/appointment/cancel/{id}")
     public String cancelAppointment(@PathVariable Long id, HttpSession session) {
-        User user = (User) session.getAttribute("loggedInUser");
-        if (user == null) {
-            return "redirect:/login";
-        }
-        
+        if (session.getAttribute("loggedInUser") == null) return "redirect:/login";
         appointmentService.deleteAppointment(id);
-        
         return "redirect:/advisor/appointment?cancelled=true";
     }
 
-    @GetMapping("/test")
-    @ResponseBody
-    public String testConnection() {
-        return "<h1>Controller is ALIVE!</h1><p>Ahmed Ali's Advisor Dashboard is ready.</p>";
+    // ==========================================
+    //       COUNSELING SESSION MANAGEMENT
+    // ==========================================
+
+    @GetMapping("/sessions")
+    public String manageSessions(HttpSession session, Model model) {
+        // 1. Get Session User
+        User sessionUser = (User) session.getAttribute("loggedInUser");
+        if (sessionUser == null) return "redirect:/login";
+
+        // 2. REFRESH User from DB (Fixes 'Detached Entity' issues)
+        User advisor = userService.getUserById(sessionUser.getId());
+        
+        // 3. Get Sessions
+        List<CounselingSession> mySessions = sessionService.getSessionsByAdvisor(advisor);
+        
+        model.addAttribute("sessions", mySessions);
+        return "advisorModule/sessionManagement";
+    }
+
+    @GetMapping("/sessions/create")
+    public String createSessionForm(HttpSession session, Model model) {
+        if (session.getAttribute("loggedInUser") == null) return "redirect:/login";
+        model.addAttribute("counselingSession", new CounselingSession());
+        return "advisorModule/createSession";
+    }
+
+    @PostMapping("/sessions/save")
+    public String saveSession(@ModelAttribute CounselingSession counselingSession, HttpSession session) {
+        User sessionUser = (User) session.getAttribute("loggedInUser");
+        if (sessionUser == null) return "redirect:/login";
+
+        // Refresh user to be safe
+        User advisor = userService.getUserById(sessionUser.getId());
+
+        counselingSession.setAdvisor(advisor);
+        sessionService.createSession(counselingSession);
+        return "redirect:/advisor/sessions";
+    }
+
+    @GetMapping("/sessions/delete/{id}")
+    public String deleteSession(@PathVariable Long id) {
+        sessionService.deleteSession(id);
+        return "redirect:/advisor/sessions";
     }
 
     // ==========================================
-    //           ADVISOR PROFILE MANAGEMENT
+    //          ADVISOR PROFILE MANAGEMENT
     // ==========================================
 
     @GetMapping("/profile")
     public String showProfile(Model model, HttpSession session) {
         Long userId = (Long) session.getAttribute("userId");
-        String userRole = (String) session.getAttribute("userRole");
-        
-        if (userId == null) {
-            return "redirect:/login";
-        }
-        
-        // Redirect non-advisors to their appropriate dashboard
-        if (userRole != null && !userRole.equalsIgnoreCase("advisor")) {
-            if (userRole.equalsIgnoreCase("admin")) {
-                return "redirect:/admin";
-            } else if (userRole.equalsIgnoreCase("student")) {
-                return "redirect:/student";
-            }
-        }
-        
+        if (userId == null) return "redirect:/login";
         User user = userService.getUserById(userId);
-        if (user == null) {
-            return "redirect:/login";
-        }
-        
         model.addAttribute("user", user);
         return "advisorModule/profile";
     }
@@ -196,10 +221,7 @@ public class AdvisorController {
     @GetMapping("/profile/edit")
     public String showEditProfile(Model model, HttpSession session) {
         Long userId = (Long) session.getAttribute("userId");
-        if (userId == null) {
-            return "redirect:/login";
-        }
-        
+        if (userId == null) return "redirect:/login";
         User user = userService.getUserById(userId);
         model.addAttribute("user", user);
         return "advisorModule/editProfile";
@@ -212,11 +234,8 @@ public class AdvisorController {
                                 @RequestParam("phone") String phone,
                                 HttpSession session) {
         Long userId = (Long) session.getAttribute("userId");
-        if (userId == null) {
-            return "redirect:/login";
-        }
+        if (userId == null) return "redirect:/login";
         
-        // Create a partial user object with only the fields to update
         User updatedUser = new User();
         updatedUser.setName(name);
         updatedUser.setEmail(email);
@@ -225,15 +244,11 @@ public class AdvisorController {
             updatedUser.setPassword(password);
         }
         
-        // Update the user - this will fetch the existing user internally
         User user = userService.updateUser(userId, updatedUser);
-        
         if (user != null) {
-            // Update session attributes to reflect the changes
             session.setAttribute("userName", name);
             session.setAttribute("loggedInUser", user);
         }
         return "redirect:/advisor";
     }
 }
-

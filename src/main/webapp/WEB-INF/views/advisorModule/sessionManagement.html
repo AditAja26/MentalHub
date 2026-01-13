@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Manage Sessions - MentalHub</title>
+    <link th:href="@{/resources/css/nav-bar.css}" rel="stylesheet" type="text/css"/>
+    <style>
+        .container { max-width: 1000px; margin: 40px auto; padding: 20px; font-family: 'Segoe UI', sans-serif; }
+        
+        .header-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; }
+        .page-title { color: #333; font-size: 28px; font-weight: 700; margin: 0; }
+        
+        .btn-create {
+            background: #6C63FF; color: white; padding: 12px 20px; 
+            text-decoration: none; border-radius: 8px; font-weight: 600;
+            transition: 0.3s;
+        }
+        .btn-create:hover { background: #5a52d5; }
+
+        .session-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 25px; }
+
+        .card {
+            background: white; border-radius: 12px; padding: 20px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08); border: 1px solid #eee;
+            transition: transform 0.2s;
+        }
+        .card:hover { transform: translateY(-3px); box-shadow: 0 6px 15px rgba(0,0,0,0.12); }
+
+        .card-date { 
+            background: #e3f2fd; color: #1565c0; padding: 4px 12px; 
+            border-radius: 20px; font-size: 13px; font-weight: 700; display: inline-block; margin-bottom: 10px;
+        }
+        
+        .card-title { font-size: 18px; font-weight: 700; margin: 10px 0; color: #222; }
+        .card-desc { color: #666; font-size: 14px; margin-bottom: 15px; line-height: 1.5; min-height: 40px;}
+        
+        .meta-info { font-size: 13px; color: #555; margin-bottom: 15px; border-top: 1px solid #eee; padding-top: 10px;}
+        .meta-row { display: flex; justify-content: space-between; margin-bottom: 5px; }
+
+        .btn-delete {
+            display: block; width: 100%; text-align: center;
+            background: #ffebee; color: #c62828; padding: 10px;
+            border-radius: 6px; text-decoration: none; font-weight: 600; font-size: 14px;
+            border: 1px solid #ffcdd2; transition: 0.2s;
+        }
+        .btn-delete:hover { background: #ffcdd2; }
+
+        .empty-state { grid-column: 1/-1; text-align: center; padding: 50px; color: #888; background: #f9f9f9; border-radius: 12px; }
+    </style>
+</head>
+<body>
+    <div th:replace="~{_layout :: main-header}"></div>
+
+    <div class="container">
+        <div class="header-row">
+            <div>
+                <h1 class="page-title">My Counseling Sessions</h1>
+                <p style="color: #666; margin-top: 5px;">Manage your group workshops and therapy sessions.</p>
+            </div>
+            <a th:href="@{/advisor/sessions/create}" class="btn-create">+ Create New Session</a>
+        </div>
+
+        <div class="session-grid">
+            <div th:if="${#lists.isEmpty(sessions)}" class="empty-state">
+                <h3>No sessions found</h3>
+                <p>Click the button above to create your first group session.</p>
+            </div>
+
+            <div th:each="cSession : ${sessions}" class="card">
+                <div>
+                    <span class="card-date" th:text="${cSession.date}">2023-10-15</span>
+                    <span style="float: right; font-weight: 600; color: #555; font-size: 13px;" th:text="${cSession.time}">10:00 AM</span>
+                </div>
+
+                <h3 class="card-title" th:text="${cSession.title}">Stress Workshop</h3>
+                <p class="card-desc" th:text="${cSession.description}">Description of the session...</p>
+
+                <div class="meta-info">
+                    <div class="meta-row">
+                        <span>📍 Location</span>
+                        <span th:text="${cSession.meetingLink}">Room 101</span>
+                    </div>
+                    <div class="meta-row">
+                        <span>👥 Attendees</span>
+                        <span th:text="${cSession.attendees != null ? cSession.attendees.size() : 0} + ' / ' + ${cSession.maxCapacity}">0 / 10</span>
+                    </div>
+                </div>
+
+                <a th:href="@{/advisor/sessions/delete/{id}(id=${cSession.id})}" 
+                   class="btn-delete"
+                   onclick="return confirm('Are you sure you want to delete this session?');">
+                   Cancel Session
+                </a>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

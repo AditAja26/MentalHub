@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.context.event.EventListener;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,6 +20,8 @@ public class UserService {
     @Autowired
     private UserDAO userDao;
 
+    @Autowired 
+    private PasswordEncoder passwordEncoder;
     // --- NEW: AUTHENTICATION METHODS ---
 
     /**
@@ -45,6 +48,8 @@ public class UserService {
         if (userDao.getByEmail(user.getEmail()) != null) {
             return null; // Email already exists
         }
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
+
         userDao.save(user);
         return user;
     }
@@ -58,6 +63,7 @@ public class UserService {
 
     @Transactional
     public User addUser(User user) {
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
         userDao.save(user);
         return user;
     }
@@ -113,17 +119,17 @@ public class UserService {
             
             if (users.isEmpty()) {
                 System.out.println(">>> MENTALHUB: Database empty. Creating initial users...");
-                User bambang = new User(null, "Bambang", 21, "bambang@yahoo.com", "082337729130", "password123", "student");
-                userDao.save(bambang);
-                seedUserData(bambang);
+                User student = new User(null, "Student", 21, "student@gmail.com", "082337729130", passwordEncoder.encode("student123"), "student");
+                userDao.save(student);
+                seedUserData(student);
 
-                User udin = new User(null, "Udin", 20, "udin@gmail.com", "0812345678", "password123", "student");
+                User udin = new User(null, "Udin", 20, "udin@gmail.com", "0812345678", passwordEncoder.encode("password123"), "student");
                 userDao.save(udin);
                 
-                User hakimi = new User(null, "Hakimi", 25, "hakimi@email.com", "0811223344", "password123", "advisor");
-                userDao.save(hakimi);
+                User advisor = new User(null, "Advisor", 25, "advisor@gmail.com", "0811223344", passwordEncoder.encode("advisor123"), "advisor");
+                userDao.save(advisor);
 
-                User admin = new User(null, "Admin", 20, "admin@gmail.com", "0123456789", "password123", "admin");
+                User admin = new User(null, "Admin", 20, "admin@gmail.com", "0123456789", passwordEncoder.encode("admin123"), "admin");
                 userDao.save(admin);
                 
             } else {

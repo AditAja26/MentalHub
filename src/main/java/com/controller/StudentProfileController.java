@@ -5,6 +5,7 @@ import com.model.User;
 import com.services.GoalService;
 import com.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -21,6 +22,9 @@ public class StudentProfileController {
 
     @Autowired
     private GoalService goalService;
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
     @GetMapping("/profile")
     public String showProfile(Model model, HttpSession session) {
@@ -78,7 +82,7 @@ public class StudentProfileController {
         updatedUser.setEmail(email);
         updatedUser.setPhone(phone);
         if (password != null && !password.isEmpty()) {
-            updatedUser.setPassword(password);
+            updatedUser.setPassword(passwordEncoder.encode(password));
         }
         
         // Update the user - this will fetch the existing user internally

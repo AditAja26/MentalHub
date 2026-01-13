@@ -22,7 +22,7 @@ public class ForumComment {
     private ForumPost post;
 
     // Link to the User who wrote the comment
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
@@ -69,7 +69,7 @@ public class ForumComment {
     // --- HELPER ---
     public String getDisplayAuthor() {
         if (this.isAnonymous) {
-            return "Anonymous Student";
+            return "Anonymous";
         }
         return (user != null) ? user.getName() : "Unknown User";
     }

@@ -102,4 +102,22 @@ public class PeerSupportController {
         // Redirect back to the same page so they see their new comment
         return "redirect:/peer/reply/" + postId;
     }
+
+    
+    @GetMapping(value = { "", "/" })
+    public String showLandingPage(Model model, HttpSession session) {
+        Long userId = (Long) session.getAttribute("userId");
+        String userRole = (String) session.getAttribute("userRole");
+        
+        if (userId == null) {
+            return "redirect:/login";
+        }
+            if (userRole.equalsIgnoreCase("admin")) {
+                return "redirect:/admin";
+            } else if (userRole.equalsIgnoreCase("advisor")) {
+                return "redirect:/advisor";
+            } else {
+                return "redirect:/student";
+            }
+    }
 }

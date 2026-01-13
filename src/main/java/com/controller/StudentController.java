@@ -31,6 +31,8 @@ public class StudentController {
 
     @Autowired
     private CounsellingSessionService counsellingSessionService;
+
+    @Autowired
     private NotificationService notificationService;
 
     // Helper to get the user from session safely

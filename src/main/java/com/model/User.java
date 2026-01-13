@@ -48,8 +48,11 @@ public class User {
     @OrderBy("id ASC") 
     private List<MoodLog> moodLogs = new ArrayList<>();
 
-    @OneToMany(mappedBy = "user")
+    @OneToMany(mappedBy = "author", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ForumPost> forumPosts;
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<ForumComment> forumComments;
 
     public User() {}
 

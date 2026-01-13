@@ -8,6 +8,10 @@ import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.event.ContextRefreshedEvent;
+import org.springframework.context.event.EventListener;
+import org.springframework.core.Ordered;
+import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -51,7 +55,8 @@ public class ForumPostServiceImpl implements ForumPostService {
 
 
     // --- AUTO-INITIALIZE DATA ---
-    @PostConstruct
+    @EventListener(ContextRefreshedEvent.class)
+    @Order(Ordered.LOWEST_PRECEDENCE)
     public void init() {
         // Only run if the forum is empty
         if (forumDao.findAll().isEmpty()) {

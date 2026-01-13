@@ -47,7 +47,7 @@ public class SecurityConfig {
                 .requestMatchers("/advisor/**").hasRole("ADVISOR")
                 .requestMatchers("/student/**").hasRole("STUDENT")
                 // Shared pages
-                .requestMatchers("/peer/**", "/literacy/**").authenticated()
+                .requestMatchers("/peer/**", "/literacy/**", "/notifications/**").authenticated()
                 // Everything else requires login
                 .anyRequest().authenticated()
             )

@@ -11,7 +11,16 @@
         .welcome-section { margin-bottom: 30px; }
         .welcome-text { font-size: 32px; color: #333; font-weight: 500; }
         /* Ahmed Ali's name will appear here in blue italics */
-        .welcome-name { color: #4A90E2; font-style: italic; text-decoration: none; }
+        .welcome-name { 
+            color: #4A90E2; 
+            font-style: italic; 
+            text-decoration: none;
+            transition: all 0.3s;
+        }
+        .welcome-name:hover {
+            text-decoration: underline;
+            opacity: 0.8;
+        }
         .subtitle { font-size: 18px; color: #666; margin-top: 8px; }
         
         .cards-grid { 
@@ -69,7 +78,7 @@
     <div class="container">
         <div class="welcome-section">
             <h1 class="welcome-text">
-                Welcome Back, <span class="welcome-name" th:text="${advisorName}">Advisor</span>
+                Welcome Back, <a th:href="@{/advisor/profile}" class="welcome-name" th:text="${advisorName}">Advisor</a>
             </h1>
             <p class="subtitle">Select a module to manage student wellness.</p>
         </div>

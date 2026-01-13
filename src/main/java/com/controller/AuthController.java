@@ -46,8 +46,11 @@ public class AuthController {
         User user = userService.authenticate(email, password);
 
         if (user != null) {
-            // IMPORTANT: Store the user in the session for the whole team to use
+            // Store all necessary session attributes
             session.setAttribute("loggedInUser", user);
+            session.setAttribute("userId", user.getId());
+            session.setAttribute("userName", user.getName());
+            session.setAttribute("userRole", user.getRole());
             
             // Redirect based on the role stored in the database
             String role = user.getRole().toLowerCase();

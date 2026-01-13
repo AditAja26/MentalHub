@@ -14,7 +14,7 @@ import java.util.List;
 
 @Controller
 @RequestMapping("/student")
-public class ProfileController {
+public class StudentProfileController {
 
     @Autowired
     private UserService userService;
@@ -72,17 +72,24 @@ public class ProfileController {
             return "redirect:/login";
         }
         
-        User user = userService.getUserById(userId);
-        if (user != null) {
-            user.setName(name);
-            user.setEmail(email);
-            user.setPhone(phone);
-            if (password != null && !password.isEmpty()) {
-                user.setPassword(password);
-            }
-            userService.updateUser(userId, user);
+        // Create a partial user object with only the fields to update
+        User updatedUser = new User();
+        updatedUser.setName(name);
+        updatedUser.setEmail(email);
+        updatedUser.setPhone(phone);
+        if (password != null && !password.isEmpty()) {
+            updatedUser.setPassword(password);
         }
-        return "redirect:/student/profile";
+        
+        // Update the user - this will fetch the existing user internally
+        User user = userService.updateUser(userId, updatedUser);
+        
+        if (user != null) {
+            // Update session attributes to reflect the changes
+            session.setAttribute("userName", name);
+            session.setAttribute("loggedInUser", user);
+        }
+        return "redirect:/student";
     }
 
     @GetMapping("/goals")
@@ -139,3 +146,4 @@ public class ProfileController {
         return "redirect:/student/goals";
     }
 }
+

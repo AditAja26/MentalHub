@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="en">
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Notifications</title>
+    <title>Notifications - MentalHub</title>
     <link th:href="@{/resources/css/nav-bar.css}" rel="stylesheet" type="text/css"/>
     <style>
         body {
@@ -82,45 +82,34 @@
         
         <div class="indicators">
             <div class="indicator">
-                <div class="indicator-number">24</div>
+                <div class="indicator-number" th:text="${totalMessages}">0</div>
                 <div class="indicator-label">Total Messages</div>
             </div>
             <div class="indicator">
-                <div class="indicator-number">5</div>
+                <div class="indicator-number" th:text="${unreadMessages}">0</div>
                 <div class="indicator-label">Unread Messages</div>
             </div>
             <div class="indicator">
-                <div class="indicator-number">3</div>
+                <div class="indicator-number" th:text="${directMessages}">0</div>
                 <div class="indicator-label">Direct Messages</div>
             </div>
         </div>
 
         <div class="notifications-list">
-            <div class="notification-item unread">
-                <div class="notification-title">New Message from John</div>
-                <div class="notification-message">Hey, how are you doing today?</div>
-                <div class="notification-time">2 minutes ago</div>
+            <div th:if="${#lists.isEmpty(notifications)}" style="text-align: center; padding: 40px; color: #999;">
+                <div style="font-size: 48px; margin-bottom: 10px;">📭</div>
+                <p>No notifications yet.</p>
             </div>
-            <div class="notification-item unread">
-                <div class="notification-title">System Notification</div>
-                <div class="notification-message">Your appointment is confirmed for tomorrow at 3 PM</div>
-                <div class="notification-time">1 hour ago</div>
-            </div>
-            <div class="notification-item">
-                <div class="notification-title">Message from Sarah</div>
-                <div class="notification-message">Thanks for your help yesterday!</div>
-                <div class="notification-time">3 hours ago</div>
-            </div>
-            <div class="notification-item unread">
-                <div class="notification-title">Group Chat Update</div>
-                <div class="notification-message">You were added to "Wellness Group"</div>
-                <div class="notification-time">5 hours ago</div>
-            </div>
-            <div class="notification-item">
-                <div class="notification-title">Reminder</div>
-                <div class="notification-message">Time for your daily check-in</div>
-                <div class="notification-time">Yesterday at 9 AM</div>
-            </div>
+            
+            <a th:each="notification : ${notifications}" 
+               th:href="@{/notifications/mark-read/{id}(id=${notification.id})}"
+               class="notification-item" 
+               th:classappend="${!notification.read} ? 'unread' : ''"
+               style="text-decoration: none; display: block;">
+                <div class="notification-title" th:text="${notification.title}">Notification Title</div>
+                <div class="notification-message" th:text="${notification.message}">Notification message</div>
+                <div class="notification-time" th:text="${#temporals.format(notification.createdAt, 'MMM dd, yyyy HH:mm')}">Time</div>
+            </a>
         </div>
     </div>
 </body>

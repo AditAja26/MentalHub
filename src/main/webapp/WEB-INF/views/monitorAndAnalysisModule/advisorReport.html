@@ -148,8 +148,11 @@
     </div>
 
     <script th:inline="javascript">
-        /* Pull the list from the Spring Model */
-        const dynamicData = [[$,{chartData}]]; 
+        /* Safely extract chart data with fallback for cross-platform compatibility */
+        const chartDataRaw = /*[[${chartData}]]*/ [];
+        const dynamicData = Array.isArray(chartDataRaw) && chartDataRaw.length > 0 
+            ? chartDataRaw 
+            : [0, 0, 0, 0, 0, 0];
 
         const ctx = document.getElementById('dynamicTrendChart').getContext('2d');
         new Chart(ctx, {

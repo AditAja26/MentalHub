@@ -63,15 +63,25 @@ public class AuthController {
     }
 
     /**
-     * Registers a new user and saves them to the database.
+     * Registers a new user including Age and Phone from the form.
      */
     @PostMapping("/register")
-    public String processRegister(@ModelAttribute("user") User user, Model model) {
-        // Set default role if not provided by form
+    public String processRegister(@ModelAttribute("user") User user, 
+                                 @RequestParam("confirmPassword") String confirmPassword, 
+                                 Model model) {
+        
+        // 1. Check if passwords match
+        if (!user.getPassword().equals(confirmPassword)) {
+            model.addAttribute("error", "Passwords do not match!");
+            return "authenticationModule/registerpage";
+        }
+
+        // 2. Set default role if not provided
         if (user.getRole() == null || user.getRole().isEmpty()) {
             user.setRole("student");
         }
 
+        // 3. Save the user (UserService handles the Hibernate save)
         User registeredUser = userService.registerUser(user);
         
         if (registeredUser != null) {
@@ -87,13 +97,12 @@ public class AuthController {
      */
     @GetMapping("/logout")
     public String logout(HttpSession session) {
-        session.invalidate(); // Destroys the session securely
+        session.invalidate(); 
         return "redirect:/login?logout=true";
     }
     
     @GetMapping("/notification")
     public String showNotificationPage(HttpSession session, Model model) {
-        // Example of how to protect a page using the session
         User user = (User) session.getAttribute("loggedInUser");
         if (user == null) {
             return "redirect:/login"; 

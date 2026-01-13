@@ -1,6 +1,7 @@
 package com.controller;
 
 import java.util.List;
+import javax.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -22,56 +23,68 @@ public class StudentController {
     @Autowired 
     private AppointmentService appointmentService;
 
-    // Use User ID 1 (Bambang) for testing since he has data in your screenshot
-    private static final Long CURRENT_USER_ID = 1L; 
+    // Helper to get the user from session safely
+    private User getSessionUser(HttpSession session) {
+        return (User) session.getAttribute("loggedInUser");
+    }
 
     @GetMapping(value = { "", "/" })
-    public String showStudentLandingPage(Model model) {
-        User user = userService.getUserById(CURRENT_USER_ID);
-        model.addAttribute("studentName", user != null ? user.getName() : "Student");
+    public String showStudentLandingPage(HttpSession session, Model model) {
+        User user = getSessionUser(session);
+        if (user == null) {
+            return "redirect:/login"; 
+        }
+
+        // Fixes the "Welcome Back" name issue
+        model.addAttribute("studentName", user.getName());
         return "mainPages/studentLandingPage";
     }
 
-    /**
-     * This method fixes the blank "Student Analysis" page.
-     * It fetches the user, their goals, and their trend data.
-     */
     @GetMapping("/analysis")
-    public String showStudentAnalysis(Model model) {
-        User user = userService.getUserById(CURRENT_USER_ID);
-        
-        if (user != null) {
-            // 1. Calculate Mood Average for the blue box
+    public String showStudentAnalysis(HttpSession session, Model model) {
+        User user = getSessionUser(session);
+        if (user == null) return "redirect:/login";
+
+        // Fetch fresh data for the logged-in user
+        User currentUser = userService.getUserById(user.getId());
+
+        if (currentUser != null) {
             double average = 0.0;
-            List<MoodLog> moods = user.getMoodLogs();
+            List<MoodLog> moods = currentUser.getMoodLogs();
             if (moods != null && !moods.isEmpty()) {
                 average = moods.stream().mapToDouble(MoodLog::getScore).average().orElse(0.0);
             }
 
-            // 2. Add data to the page model
-            model.addAttribute("user", user);
-            model.addAttribute("goals", user.getGoals()); // Accessed via user_goals join table
+            model.addAttribute("user", currentUser);
+            model.addAttribute("goals", currentUser.getGoals());
             model.addAttribute("moodAverage", String.format("%.1f", average));
-            model.addAttribute("moodLogs", moods); // Data for the trend chart
+            model.addAttribute("moodLogs", moods);
+            
+            String stress = (average > 3.5) ? "LOW" : (average > 2.5) ? "MODERATE" : "HIGH";
+            model.addAttribute("stressLevel", stress);
         }
 
-        return "mainPages/studentAnalysisPage"; // Ensure this matches your JSP file name
+        return "mainPages/studentAnalysisPage";
     }
 
     @GetMapping("/appointment")
-    public String showAppointment(Model model) {
+    public String showAppointment(HttpSession session, Model model) {
+        if (getSessionUser(session) == null) return "redirect:/login";
         model.addAttribute("appointment", new Appointment()); 
         return "studentSupportModule/BookAppointmentPage";
     }
 
-    @GetMapping("/counseling")
-    public String showCounseling(Model model) {
-        return "studentSupportModule/AttendCounselingPage";
-    }
-
     @PostMapping("/book-appointment")
     public String bookAppointment(@ModelAttribute("appointment") Appointment appointment) {
+        // We removed appointment.setUser(user) to avoid the merge errors for now.
+        // This will save the appointment to the DB, but it won't be "owned" by a user yet.
         appointmentService.saveAppointment(appointment);
         return "redirect:/student/appointment?success";
+    }
+
+    @GetMapping("/counseling")
+    public String showCounseling(HttpSession session) {
+        if (getSessionUser(session) == null) return "redirect:/login";
+        return "studentSupportModule/AttendCounselingPage";
     }
 }

@@ -2,6 +2,7 @@ package com.controller;
 
 import java.util.Map;
 import java.util.List;
+import javax.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -25,66 +26,83 @@ public class AdvisorController {
     @Autowired
     private UserService userService;
 
-    // UC000: Advisor Landing Page
+    /**
+     * UC000: Advisor Landing Page
+     * Pulls Ahmed Ali's name (or whoever is logged in) from the session.
+     */
     @GetMapping(value = { "", "/", "/home" })
-    public String showAdvisorLandingPage(Model model) {
-        model.addAttribute("advisorName", "Hakimi"); 
+    public String showAdvisorLandingPage(HttpSession session, Model model) {
+        User user = (User) session.getAttribute("loggedInUser");
+        
+        if (user == null) {
+            return "redirect:/login";
+        }
+
+        // Dynamically set the name from the logged-in user object
+        model.addAttribute("advisorName", user.getName()); 
         return "mainPages/advisorLandingPage";
     }
 
-    // UC002: Monitor Dashboard (Shows the list of all students)
+    /**
+     * UC002: Monitor Dashboard
+     */
     @GetMapping("/monitor")
-    public String showMonitorDashboard(Model model) {
-        // Fetch all students from your service
+    public String showMonitorDashboard(HttpSession session, Model model) {
+        if (session.getAttribute("loggedInUser") == null) {
+            return "redirect:/login";
+        }
+
         List<User> students = userService.getUsersByRole("student");
-        
-        // Pass the list to the HTML
         model.addAttribute("users", students);
         
         return "monitorAndAnalysisModule/monitorDashboard";
     }
 
-    // UC010: Generate Report (Shows details for ONE specific student)
-    // @Transactional ensures the database session stays open to load Lazy collections (Goals)
+    /**
+     * UC010: Generate Report for a specific student
+     */
     @Transactional(readOnly = true)
     @GetMapping("/report")
-    public String showReport(@RequestParam(name = "studentId") Long studentId, Model model) {
-        // 1. Get the specific student info
+    public String showReport(@RequestParam(name = "studentId") Long studentId, 
+                             HttpSession session, 
+                             Model model) {
+        
+        if (session.getAttribute("loggedInUser") == null) {
+            return "redirect:/login";
+        }
+
         User student = userService.getUserById(studentId);
         
         if (student == null) {
             return "redirect:/advisor/monitor";
         }
 
-        // 2. Force load the Goals list (Lazy Loading Fix)
+        // Lazy Loading Fix for Goals
         if (student.getGoals() != null) {
             student.getGoals().size(); 
         }
         
-        // 3. Get the analysis/stats for this specific student
         Map<String, Object> analysis = analysisService.analyzeUserProgress(studentId);
         
-        // 4. Add everything to the model
         model.addAttribute("user", student); 
         model.addAttribute("stats", analysis);
-        
-        // 5. EXTRACT CHART DATA: This makes the graph unique per student
-        // 'weeklyMoods' must be the key used in your AnalysisService
         model.addAttribute("chartData", analysis.get("weeklyMoods")); 
-        
         model.addAttribute("reportDate", new java.util.Date());
         
         return "monitorAndAnalysisModule/advisorReport";
     }
 
     @GetMapping("/appointment")
-    public String showAppointment() {
+    public String showAppointment(HttpSession session) {
+        if (session.getAttribute("loggedInUser") == null) {
+            return "redirect:/login";
+        }
         return "studentSupportModule/appointmentPage";
     }
 
     @GetMapping("/test")
     @ResponseBody
     public String testConnection() {
-        return "<h1>Controller is ALIVE!</h1><p>Paths are working correctly.</p>";
+        return "<h1>Controller is ALIVE!</h1><p>Ahmed Ali's Advisor Dashboard is ready.</p>";
     }
 }

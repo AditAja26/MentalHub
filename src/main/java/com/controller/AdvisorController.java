@@ -15,6 +15,8 @@ import com.services.AnalysisService;
 import com.services.UserService;
 import com.model.User;
 
+import javax.servlet.http.HttpSession;
+
 @Controller
 @RequestMapping("/advisor")
 public class AdvisorController {
@@ -27,8 +29,12 @@ public class AdvisorController {
 
     // UC000: Advisor Landing Page
     @GetMapping(value = { "", "/", "/home" })
-    public String showAdvisorLandingPage(Model model) {
-        model.addAttribute("advisorName", "Hakimi"); 
+    public String showAdvisorLandingPage(Model model, HttpSession session) {
+        String userName = (String) session.getAttribute("userName");
+        if (userName == null) {
+            return "redirect:/login";
+        }
+        model.addAttribute("advisorName", userName); 
         return "mainPages/advisorLandingPage";
     }
 

@@ -12,6 +12,8 @@ import com.model.MoodLog;
 import com.services.AppointmentService;
 import com.services.UserService;
 
+import javax.servlet.http.HttpSession;
+
 @Controller
 @RequestMapping("/student")
 public class StudentController {
@@ -22,12 +24,14 @@ public class StudentController {
     @Autowired 
     private AppointmentService appointmentService;
 
-    // Use User ID 1 (Bambang) for testing since he has data in your screenshot
-    private static final Long CURRENT_USER_ID = 1L; 
-
     @GetMapping(value = { "", "/" })
-    public String showStudentLandingPage(Model model) {
-        User user = userService.getUserById(CURRENT_USER_ID);
+    public String showStudentLandingPage(Model model, HttpSession session) {
+        Long userId = (Long) session.getAttribute("userId");
+        if (userId == null) {
+            return "redirect:/login";
+        }
+        
+        User user = userService.getUserById(userId);
         model.addAttribute("studentName", user != null ? user.getName() : "Student");
         return "mainPages/studentLandingPage";
     }
@@ -37,8 +41,13 @@ public class StudentController {
      * It fetches the user, their goals, and their trend data.
      */
     @GetMapping("/analysis")
-    public String showStudentAnalysis(Model model) {
-        User user = userService.getUserById(CURRENT_USER_ID);
+    public String showStudentAnalysis(Model model, HttpSession session) {
+        Long userId = (Long) session.getAttribute("userId");
+        if (userId == null) {
+            return "redirect:/login";
+        }
+        
+        User user = userService.getUserById(userId);
         
         if (user != null) {
             // 1. Calculate Mood Average for the blue box

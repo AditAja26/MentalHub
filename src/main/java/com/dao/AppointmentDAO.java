@@ -1,20 +1,15 @@
 package com.dao;
 
-import org.hibernate.Session;
-import org.hibernate.SessionFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Repository;
+import java.util.List;
 
 import com.model.Appointment;
 
-@Repository 
-public class AppointmentDAO {
-
-    @Autowired
-    private SessionFactory sessionFactory;
-
-    public void save(Appointment appointment) {
-        Session currentSession = sessionFactory.getCurrentSession();
-        currentSession.save(appointment);
-    }
+public interface AppointmentDao {
+    Appointment save(Appointment appointment);
+    List<Appointment> findAll();
+    Appointment findById(Long id);
+    List<Appointment> findByAdvisor(String advisor);
+    void deleteById(Long id);
+    long count();
 }
+

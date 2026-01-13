@@ -7,14 +7,19 @@ import com.model.Goal; // Added this import
 import com.services.ArticleService;
 import com.services.UserService;
 import com.services.DailyQuizService;
+import com.services.ForumPostService;
+import com.services.ForumCommentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.transaction.annotation.Transactional; // NEW IMPORT
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;import org.springframework.transaction.annotation.Transactional; // NEW IMPORT
 
 
 import java.util.List;
+
+import javax.servlet.http.HttpSession;
+
 
 @Controller
 @RequestMapping("/admin")
@@ -28,6 +33,12 @@ public class AdminController {
 
     @Autowired
     private DailyQuizService dailyQuizService;
+
+    @Autowired
+    private ForumPostService forumPostService;
+
+    @Autowired
+    private ForumCommentService forumCommentService;
 
     @GetMapping(value = {"", "/"})
     public String showAdminLandingPage(Model model) {
@@ -211,5 +222,31 @@ public class AdminController {
         return "redirect:/admin/quiz";
     }
 
+
+    // ==========================================
+    //           FORUM MANAGEMENT
+    // ==========================================
+
+    @PostMapping("/deletePost/{id}")
+    public String deletePost(@PathVariable Long id, 
+                             HttpSession session, 
+                             RedirectAttributes redirectAttributes) {
+
+        forumPostService.deletePost(id);
+        
+        redirectAttributes.addFlashAttribute("successMessage", "Post deleted by Admin.");
+        return "redirect:/peer/posts";
+    }
+
+    @PostMapping("/deleteComment")
+    public String deleteComment(@RequestParam("commentId") Long commentId, 
+                                @RequestParam("postId") Long postId,
+                                HttpSession session,
+                                RedirectAttributes redirectAttributes) {
+
+        forumCommentService.deleteComment(commentId);
+        
+        return "redirect:/peer/reply/" + postId;
+    }
 
 }

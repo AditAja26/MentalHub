@@ -7,100 +7,28 @@
         <link rel="stylesheet" th:href="@{/resources/css/nav-bar.css}" type="text/css"/>
 
         <style>
-            body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-            background-color: #f0f2f5; /* Light grey background */
-        }
-        
-        .peer-feed-container {
-            max-width: 800px; 
-            margin: 40px auto; 
-            padding: 0 20px;
-        }
-
-        .feed-header {
-            text-align: center; 
-            margin-bottom: 30px;
-        }
-
-        .feed-header h1 {
-            color: #333; 
-            font-size: 2.2rem; 
-            margin-bottom: 5px;
-        }
-
-        .feed-header p {
-            color: #666; 
-            font-size: 1.1rem;
-        }
-
-        .new-post-btn {
-            display: inline-block; 
-            margin-top: 15px; 
-            padding: 10px 20px; 
-            background-color: #7b68ee; /* Purple accent */
-            color: white; 
-            text-decoration: none; 
-            border-radius: 8px; 
-            font-weight: bold; 
-            transition: background-color 0.2s;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
-        }
-
-        .new-post-btn:hover {
-            background-color: #6a5acd;
-        }
-
-        /* Post Card Styling */
-        .post-card {
-            background-color: white; 
-            border-radius: 10px; 
-            padding: 20px; 
-            margin-bottom: 20px; 
-            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-        }
-
-        .post-header {
-            border-bottom: 1px solid #eee; 
-            padding-bottom: 8px; 
-            margin-bottom: 10px;
-        }
-        
-        .username {
-            font-weight: bold; 
-            color: #444;
-        }
-        
-        .timestamp {
-            float: right; 
-            color: #888; 
-            font-size: 0.9em;
-        }
-
-        .post-body p {
-            color: #333; 
-            line-height: 1.5; 
-            margin: 0 0 15px 0;
-        }
-        
-        .post-actions {
-            font-size: 0.9em; 
-            color: #555;
-        }
-
-        .post-actions a {
-            color: #007bff; 
-            text-decoration: none; 
-            font-weight: bold; 
-            margin-right: 15px;
-        }
-
-        .post-actions span:last-child {
-            border-left: 1px solid #ccc; 
-            padding-left: 15px;
-        }
+            /* [ ... YOUR EXISTING CSS (Unchanged) ... ] */
+            body { font-family: Arial, sans-serif; margin: 0; padding: 0; background-color: #f0f2f5; }
+            .peer-feed-container { max-width: 800px; margin: 40px auto; padding: 0 20px; }
+            .feed-header { text-align: center; margin-bottom: 30px; }
+            .feed-header h1 { color: #333; font-size: 2.2rem; margin-bottom: 5px; }
+            .feed-header p { color: #666; font-size: 1.1rem; }
+            .new-post-btn { display: inline-block; margin-top: 15px; padding: 10px 20px; background-color: #7b68ee; color: white; text-decoration: none; border-radius: 8px; font-weight: bold; transition: background-color 0.2s; box-shadow: 0 2px 4px rgba(0,0,0,0.2); }
+            .new-post-btn:hover { background-color: #6a5acd; }
+            
+            /* Post Card Styling */
+            .post-card { background-color: white; border-radius: 10px; padding: 20px; margin-bottom: 20px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+            .post-header { border-bottom: 1px solid #eee; padding-bottom: 8px; margin-bottom: 10px; }
+            .username { font-weight: bold; color: #444; }
+            .timestamp { float: right; color: #888; font-size: 0.9em; }
+            .post-body p { color: #333; line-height: 1.5; margin: 0 0 15px 0; }
+            
+            /* NEW: Style for the Title since your Entity has a title */
+            .post-title { font-size: 1.1rem; color: #222; margin: 0 0 8px 0; display: block; }
+            
+            .post-actions { font-size: 0.9em; color: #555; }
+            .post-actions a { color: #007bff; text-decoration: none; font-weight: bold; margin-right: 15px; }
+            .post-actions span:last-child { border-left: 1px solid #ccc; padding-left: 15px; }
         </style>
     </head>
 
@@ -110,50 +38,55 @@
         <main class="peer-feed-container">
 
             <div class="feed-header">
-            <h1>Peer Support Forum</h1>
-            <p>Connect with other students and share your thoughts in a safe space.</p>
-            
-            <a th:href="@{/peer/createPost}" class="new-post-btn">+ Start a New Conversation</a>
-        </div>
-        
-        <section class="posts-list">
-            
-            <div class="post-card">
+                <h1>Peer Support Forum</h1>
+                <p>Connect with other students and share your thoughts in a safe space.</p>
                 
-                <div class="post-header">
-                    <span class="username">Student XYZ</span>
-                    <span class="timestamp">2 hours ago</span>
+                <div th:if="${successMessage}" style="background-color: #d4edda; color: #155724; padding: 10px; border-radius: 5px; margin-top: 15px;">
+                    <span th:text="${successMessage}"></span>
                 </div>
-                
-                <div class="post-body">
-                    <p>I've been feeling really overwhelmed with my assignments lately. Does anyone else struggle with balancing academic pressure and personal life? Any tips would be appreciated!</p>
-                </div>
-                
-                <div class="post-actions">
-                    <a th:href="@{/peer/reply/1}" class="reply-link">Reply (5)</a>
-                    <span>12 Likes</span>
-                </div>
-            </div>
 
-            <div class="post-card">
-                
-                <div class="post-header">
-                    <span class="username">HappyStudent</span>
-                    <span class="timestamp">Yesterday</span>
-                </div>
-                
-                <div class="post-body">
-                    <p>Just wanted to share a good resource I found on mindfulness techniques. It helped me a lot this week!</p>
-                </div>
-                
-                <div class="post-actions">
-                    <a th:href="@{/peer/reply/2}" class="reply-link">Reply (10)</a>
-                    <span>25 Likes</span>
-                </div>
+                <a th:href="@{/peer/createPost}" class="new-post-btn">+ Start a New Conversation</a>
             </div>
+        
+            <section class="posts-list">
+                
+                <div th:if="${#lists.isEmpty(posts)}" style="text-align: center; color: #888; margin-top: 40px;">
+                    <p>No conversations yet. Be the first to start one!</p>
+                </div>
+
+                <div class="post-card" th:each="post : ${posts}">
+                    
+                    <div class="post-header">
+                        <span class="username" th:text="${post.displayAuthor}">User Name</span>
+                        
+                        <span class="timestamp" th:text="${#dates.format(post.createdAt, 'dd MMM, HH:mm')}">Date</span>
+                    </div>
+                    
+                    <div class="post-body">
+                        <strong class="post-title" th:text="${post.title}">Post Title</strong>
+                        
+                        <p th:text="${post.content}">Post content goes here...</p>
+                    </div>
+                    
+                    <div class="post-actions">
+                        <a th:href="@{/peer/reply/{id}(id=${post.id})}" class="reply-link">
+                            Reply (<span th:text="${post.comments.size()}">0</span>)
+                        </a>
+                        
+                        <form th:if="${session.loggedInUser != null and session.loggedInUser.role == 'ADMIN'}" 
+                            th:action="@{/admin/deletePost/{id}(id=${post.id})}" 
+                            method="post" 
+                            style="display:inline; margin-left: 15px;"
+                            onsubmit="return confirm('Are you sure you want to delete this post?');">
+                            
+                            <button type="submit" style="background:none; border:none; color:red; cursor:pointer; font-weight:bold;">
+                                Delete Post (Admin)
+                            </button>
+                        </form>
+                    </div>
+                </div>
             
-        </section>
+            </section>
         </main>
     </body>
-
 </html>

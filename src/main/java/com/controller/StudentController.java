@@ -76,9 +76,7 @@ public class StudentController {
 
     @PostMapping("/book-appointment")
     public String bookAppointment(@ModelAttribute("appointment") Appointment appointment) {
-        // We removed appointment.setUser(user) to avoid the merge errors for now.
-        // This will save the appointment to the DB, but it won't be "owned" by a user yet.
-        appointmentService.saveAppointment(appointment);
+        appointmentService.addAppointment(appointment);
         return "redirect:/student/appointment?success";
     }
 

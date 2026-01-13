@@ -75,7 +75,7 @@
                         <span class="comment-date" th:text="${#dates.format(comment.createdAt, 'dd MMM, HH:mm')}">Time</span>
                     </div>
 
-                    <form th:if="${session.loggedInUser != null and session.loggedInUser.role == 'ADMIN'}"
+                    <form th:if="${session.loggedInUser != null and session.loggedInUser.role == 'admin'}"
                         th:action="@{/admin/deleteComment}" 
                         method="post" 
                         style="display:inline; float:right;"

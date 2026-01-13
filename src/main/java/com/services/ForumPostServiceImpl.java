@@ -1,7 +1,6 @@
 package com.services;
 
 import com.dao.ForumPostDao;
-import com.dao.ForumCommentDao;
 import com.model.ForumPost;
 import com.model.ForumComment;
 import com.model.User;
@@ -9,6 +8,10 @@ import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.event.ContextRefreshedEvent;
+import org.springframework.context.event.EventListener;
+import org.springframework.core.Ordered;
+import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -22,9 +25,6 @@ public class ForumPostServiceImpl implements ForumPostService {
 
     @Autowired
     private ForumPostDao forumDao;
-
-    @Autowired
-    private ForumCommentDao forumCommentDao;
 
     @Autowired
     private SessionFactory sessionFactory;
@@ -55,7 +55,8 @@ public class ForumPostServiceImpl implements ForumPostService {
 
 
     // --- AUTO-INITIALIZE DATA ---
-    @PostConstruct
+    @EventListener(ContextRefreshedEvent.class)
+    @Order(Ordered.LOWEST_PRECEDENCE)
     public void init() {
         // Only run if the forum is empty
         if (forumDao.findAll().isEmpty()) {
@@ -69,17 +70,17 @@ public class ForumPostServiceImpl implements ForumPostService {
                 // Check if any user exists; if not, create a "System Bot"
                 User author = (User) session.createQuery("FROM User").setMaxResults(1).uniqueResult();
                 
-                if (author == null) {
-                    author = new User();
-                    author.setName("MentalHub Community");
-                    author.setEmail("community@mentalhub.com");
-                    author.setPassword("dummyPass123"); // Dummy password
-                    author.setRole("ADMIN");
-                    author.setPhone("0000000000");
-                    author.setAge(99);
-                    session.save(author);
-                    System.out.println("--- Created Dummy User for Forum Posts ---");
-                }
+                // if (author == null) {
+                //     author = new User();
+                //     author.setName("MentalHub Community");
+                //     author.setEmail("community@mentalhub.com");
+                //     author.setPassword("dummyPass123"); // Dummy password
+                //     author.setRole("ADMIN");
+                //     author.setPhone("0000000000");
+                //     author.setAge(99);
+                //     session.save(author);
+                //     System.out.println("--- Created Dummy User for Forum Posts ---");
+                // }
 
                 // 2. Create Post 1: Anxiety Topic (Anonymous)
                 ForumPost post1 = new ForumPost(

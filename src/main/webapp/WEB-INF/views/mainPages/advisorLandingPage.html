@@ -10,6 +10,7 @@
         .container { max-width: 1000px; margin: 50px auto; padding: 0 20px; }
         .welcome-section { margin-bottom: 30px; }
         .welcome-text { font-size: 32px; color: #333; font-weight: 500; }
+        /* Ahmed Ali's name will appear here in blue italics */
         .welcome-name { color: #4A90E2; font-style: italic; text-decoration: none; }
         .subtitle { font-size: 18px; color: #666; margin-top: 8px; }
         
@@ -20,7 +21,6 @@
             margin-top: 30px; 
         }
         
-        /* Unified card style */
         .feature-card { 
             background-color: #D8D4E0; 
             border-radius: 16px; 
@@ -38,7 +38,7 @@
         .feature-card:hover { 
             transform: translateY(-5px); 
             box-shadow: 0 8px 20px rgba(0,0,0,0.15); 
-            background-color: #CDC9D5; /* Slight darken on hover for feedback */
+            background-color: #CDC9D5; 
         }
 
         .card-image { 
@@ -69,7 +69,7 @@
     <div class="container">
         <div class="welcome-section">
             <h1 class="welcome-text">
-                Welcome Back, <span class="welcome-name" th:text="${advisorName ?: 'Advisor'}">Advisor</span>
+                Welcome Back, <span class="welcome-name" th:text="${advisorName}">Advisor</span>
             </h1>
             <p class="subtitle">Select a module to manage student wellness.</p>
         </div>

@@ -30,6 +30,7 @@ public class AnalysisService {
         
         int total = allGoals.size();
         long completed = allGoals.stream().filter(Goal::isCompleted).count();
+        long pending = total - completed; // Goals that are not completed yet
         
         // 2. Calculate Progress Percentage
         double percentage = total == 0 ? 0 : ((double) completed / total) * 100;
@@ -42,10 +43,20 @@ public class AnalysisService {
         Map<String, Object> report = new HashMap<>();
         report.put("total", total);
         report.put("completed", completed);
+        report.put("pending", pending);              // Goals not yet completed
+        report.put("incomplete", pending);           // Alias for pending
         report.put("percentage", roundedPercentage); // Used for progress bars
         report.put("status", status);                // Used for the "Summary" section
         
-        // 5. Add Mood & Stress (Logic can be expanded later)
+        // 5. Add detailed goal lists for the report
+        List<Goal> completedGoals = allGoals.stream().filter(Goal::isCompleted).toList();
+        List<Goal> pendingGoals = allGoals.stream().filter(g -> !g.isCompleted()).toList();
+        
+        report.put("completedGoals", completedGoals);
+        report.put("pendingGoals", pendingGoals);
+        report.put("allGoals", allGoals);
+        
+        // 6. Add Mood & Stress (Logic can be expanded later)
         // If progress is high, we can assume lower stress for now
         report.put("moodAvg", (roundedPercentage / 20.0)); // e.g., 80% = 4.0/5.0
         report.put("stressLevel", percentage >= 70 ? "Low" : "Moderate");

@@ -25,8 +25,19 @@ public class ProfileController {
     @GetMapping("/profile")
     public String showProfile(Model model, HttpSession session) {
         Long userId = (Long) session.getAttribute("userId");
+        String userRole = (String) session.getAttribute("userRole");
+        
         if (userId == null) {
             return "redirect:/login";
+        }
+        
+        // Redirect non-students to their appropriate dashboard
+        if (userRole != null && !userRole.equalsIgnoreCase("student")) {
+            if (userRole.equalsIgnoreCase("admin")) {
+                return "redirect:/admin";
+            } else if (userRole.equalsIgnoreCase("advisor")) {
+                return "redirect:/advisor";
+            }
         }
         
         User user = userService.getUserById(userId);
@@ -77,8 +88,19 @@ public class ProfileController {
     @GetMapping("/goals")
     public String showGoals(Model model, HttpSession session) {
         Long userId = (Long) session.getAttribute("userId");
+        String userRole = (String) session.getAttribute("userRole");
+        
         if (userId == null) {
             return "redirect:/login";
+        }
+        
+        // Redirect non-students to their appropriate dashboard
+        if (userRole != null && !userRole.equalsIgnoreCase("student")) {
+            if (userRole.equalsIgnoreCase("admin")) {
+                return "redirect:/admin";
+            } else if (userRole.equalsIgnoreCase("advisor")) {
+                return "redirect:/advisor";
+            }
         }
         
         List<Goal> activeGoals = goalService.getActiveGoalsByUserId(userId);

@@ -30,13 +30,26 @@
         .main-container { display: flex; max-width: 1400px; margin: 0 auto; padding: 40px 50px; gap: 60px; align-items: center; }
         .left-section { flex: 1.2; }
         .main-heading { font-size: 48px; font-weight: 700; color: #4A90E2; line-height: 1.2; margin-bottom: 30px; }
-        .register-cta { color: #4A90E2; font-weight: 600; font-size: 18px; text-decoration: none; display: inline-block; margin-bottom: 40px; }
         .illustration-img { height: 280px; width: auto; }
         .stats-bar { background: white; border-radius: 20px; padding: 25px 50px; display: flex; justify-content: space-around; box-shadow: 0 10px 40px rgba(0,0,0,0.08); margin-top: 30px; }
         .stat-number { font-size: 28px; font-weight: 700; color: #4A90E2; }
         .stat-label { font-size: 14px; color: #666; }
         .right-section { flex: 0.8; max-width: 420px; }
         .welcome-text { font-size: 32px; font-weight: 700; color: #333; margin-bottom: 30px; text-align: center; }
+        
+        /* NEW: Error Message Styling */
+        .error-box {
+            background-color: #ffeeee;
+            color: #d9534f;
+            padding: 12px;
+            border-radius: 10px;
+            border: 1px solid #ebccd1;
+            margin-bottom: 20px;
+            font-size: 14px;
+            text-align: center;
+            font-weight: 500;
+        }
+
         .form-group { margin-bottom: 15px; }
         .form-input, .form-select {
             width: 100%;
@@ -83,21 +96,25 @@
             <div class="register-card" id="register-form">
                 <h2 class="welcome-text">Create Account</h2>
                 
+                <div th:if="${error}" class="error-box">
+                    <span th:text="${error}"></span>
+                </div>
+                
                 <form th:action="@{/register}" method="post">
                     <div class="form-group">
-                        <input type="text" name="name" class="form-input" placeholder="Full Name" required>
+                        <input type="text" name="name" class="form-input" placeholder="Full Name" th:value="${typedName}" required>
                     </div>
 
                     <div class="form-group">
-                        <input type="number" name="age" class="form-input" placeholder="Age" min="13" max="100" required>
+                        <input type="number" name="age" class="form-input" placeholder="Age" min="13" max="100" th:value="${typedAge}" required>
                     </div>
 
                     <div class="form-group">
-                        <input type="tel" name="phone" class="form-input" placeholder="Phone Number (e.g. 012-3456789)" required>
+                        <input type="tel" name="phone" class="form-input" placeholder="Phone Number" th:value="${typedPhone}" required>
                     </div>
 
                     <div class="form-group">
-                        <input type="email" name="email" class="form-input" placeholder="Email" required>
+                        <input type="email" name="email" class="form-input" placeholder="Email" th:value="${typedEmail}" required>
                     </div>
                     
                     <div class="form-group">

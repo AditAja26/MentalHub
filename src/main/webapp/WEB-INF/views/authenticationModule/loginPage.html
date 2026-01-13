@@ -111,33 +111,6 @@
             width: auto;
         }
 
-        .stats-bar {
-            background: white;
-            border-radius: 20px;
-            padding: 25px 50px;
-            display: flex;
-            justify-content: space-around;
-            align-items: center;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.08);
-            margin-top: 30px;
-        }
-
-        .stat-item {
-            text-align: center;
-        }
-
-        .stat-number {
-            font-size: 28px;
-            font-weight: 700;
-            color: #4A90E2;
-        }
-
-        .stat-label {
-            font-size: 14px;
-            color: #666;
-            margin-top: 5px;
-        }
-
         .right-section {
             flex: 0.8;
             max-width: 420px;
@@ -153,6 +126,34 @@
             color: #333;
             margin-bottom: 30px;
             text-align: center;
+        }
+
+        /* Styling for the Alert Messages */
+        .alert {
+            padding: 12px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            text-align: center;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .alert-error {
+            color: #721c24;
+            background-color: #f8d7da;
+            border: 1px solid #f5c6cb;
+        }
+
+        .alert-success {
+            color: #155724;
+            background-color: #d4edda;
+            border: 1px solid #c3e6cb;
+        }
+
+        .alert-info {
+            color: #004085;
+            background-color: #cce5ff;
+            border: 1px solid #b8daff;
         }
 
         .form-group {
@@ -250,12 +251,23 @@
             <div class="illustration-container">
                 <img th:src="@{/resources/images/Sitting.png}" alt="Person sitting" class="illustration-img">
             </div>
-
         </section>
 
         <section class="right-section">
             <div class="login-card" id="login-form">
                 <h2 class="welcome-text">Welcome Back</h2>
+
+                <div th:if="${error}" class="alert alert-error">
+                    <span th:text="${error}">Invalid email or password.</span>
+                </div>
+
+                <div th:if="${param.registered}" class="alert alert-success">
+                    Registration successful! Please sign in.
+                </div>
+
+                <div th:if="${param.logout}" class="alert alert-info">
+                    You have been logged out.
+                </div>
                 
                 <form th:action="@{/login}" method="post">
                     <div class="form-group">

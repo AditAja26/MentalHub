@@ -14,8 +14,6 @@ import com.services.AppointmentService;
 import com.services.UserService;
 import com.services.NotificationService;
 
-import javax.servlet.http.HttpSession;
-
 @Controller
 @RequestMapping("/student")
 public class StudentController {
@@ -103,39 +101,49 @@ public class StudentController {
         return "studentSupportModule/BookAppointmentPage";
     }
 
+    // --- UPDATED METHOD ---
     @PostMapping("/book-appointment")
     public String bookAppointment(@ModelAttribute("appointment") Appointment appointment, HttpSession session) {
-        // Save the appointment
-        appointmentService.addAppointment(appointment);
-        
-        // Get the student who made the appointment
+        // 1. Get the student FIRST
         User student = getSessionUser(session);
         
-        if (student != null) {
-            // Create notification for the student
-            String studentMessage = String.format("Your appointment with %s on %s at %s has been successfully booked.", 
-                appointment.getCounselor(), appointment.getDate(), appointment.getTime());
-            notificationService.createNotification(
-                student.getId(), 
-                "Appointment Confirmed", 
-                studentMessage, 
-                "appointment"
-            );
-            
-            // Find the advisor and create notification for them
-            List<User> advisors = userService.getUsersByRole("advisor");
-            for (User advisor : advisors) {
-                if (advisor.getName().equals(appointment.getCounselor())) {
-                    String advisorMessage = String.format("New appointment request from %s on %s at %s. Reason: %s", 
-                        student.getName(), appointment.getDate(), appointment.getTime(), appointment.getReason());
-                    notificationService.createNotification(
-                        advisor.getId(), 
-                        "New Appointment Booked", 
-                        advisorMessage, 
-                        "appointment"
-                    );
-                    break;
-                }
+        if (student == null) {
+            return "redirect:/login";
+        }
+        
+        // 2. Set the missing fields BEFORE saving
+        appointment.setStudent(student);        // <--- Links the appointment to this student
+        appointment.setStatus("PENDING");       // <--- Sets status so Advisor can Accept/Reject later
+        
+        // 3. NOW Save the appointment
+        appointmentService.addAppointment(appointment);
+        
+        // 4. Create notification for the student
+        String studentMessage = String.format("Your appointment with %s on %s at %s has been successfully booked.", 
+            appointment.getCounselor(), appointment.getDate(), appointment.getTime());
+        
+        notificationService.createNotification(
+            student.getId(), 
+            "Appointment Confirmed", 
+            studentMessage, 
+            "appointment"
+        );
+        
+        // 5. Find the advisor and create notification for them
+        List<User> advisors = userService.getUsersByRole("advisor");
+        for (User advisor : advisors) {
+            // Check if names match (assuming 'counselor' is the name string)
+            if (advisor.getName().equals(appointment.getCounselor())) {
+                String advisorMessage = String.format("New appointment request from %s on %s at %s. Reason: %s", 
+                    student.getName(), appointment.getDate(), appointment.getTime(), appointment.getReason());
+                
+                notificationService.createNotification(
+                    advisor.getId(), 
+                    "New Appointment Booked", 
+                    advisorMessage, 
+                    "appointment"
+                );
+                break; // Stop loop once advisor is found
             }
         }
         

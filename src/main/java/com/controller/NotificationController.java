@@ -37,6 +37,6 @@ public class NotificationController {
         theModel.addAttribute("unreadCount", notificationService.getUnreadCount(notifications));
         theModel.addAttribute("directCount", notificationService.getDirectCount(notifications));
         
-        return "Notification"; 
+        return "notificationModule/NotificationPage"; 
     }
 }

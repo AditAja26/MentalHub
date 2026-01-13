@@ -5,7 +5,6 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
-
 @Entity
 @Table(name = "appointments") // SQL table name
 public class Appointment {
@@ -15,16 +14,17 @@ public class Appointment {
 
     private String date;
     private String time;
-    private String counselor;
+    private String advisor;
     private String reason;
+
 
     // Constructors
     public Appointment() {}
 
-    public Appointment(String date, String time, String counselor, String reason) {
+    public Appointment(String date, String time, String avisor, String reason) {
         this.date = date;
         this.time = time;
-        this.counselor = counselor;
+        this.advisor = avisor;
         this.reason = reason;
     }
 
@@ -38,8 +38,8 @@ public class Appointment {
     public String getTime() { return time; }
     public void setTime(String time) { this.time = time; }
     
-    public String getCounselor() { return counselor; }
-    public void setCounselor(String counselor) { this.counselor = counselor; }
+    public String getAdvisor() { return advisor; }
+    public void setAdvisor(String avisor) { this.advisor = avisor; }
     
     public String getReason() { return reason; }
     public void setReason(String reason) { this.reason = reason; }

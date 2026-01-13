@@ -41,8 +41,12 @@ public class AdminController {
     private ForumCommentService forumCommentService;
 
     @GetMapping(value = {"", "/"})
-    public String showAdminLandingPage(Model model) {
-        model.addAttribute("adminName", "Hakimi");
+    public String showAdminLandingPage(Model model, HttpSession session) {
+        String userName = (String) session.getAttribute("userName");
+        if (userName == null) {
+            return "redirect:/login";
+        }
+        model.addAttribute("adminName", userName);
         return "mainPages/adminLandingPage";
     }
 

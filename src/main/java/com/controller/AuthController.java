@@ -1,53 +1,103 @@
 package com.controller;
 
+import javax.servlet.http.HttpSession;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
+
+import com.model.User;
+import com.services.UserService;
 
 @Controller
 public class AuthController {
 
+    @Autowired
+    private UserService userService;
+
     @GetMapping("/login")
-    public String showLoginPage(Model model) {
+    public String showLoginPage(@RequestParam(value = "logout", required = false) String logout,
+                                Model model) {
+        if (logout != null) {
+            model.addAttribute("message", "You have been logged out successfully.");
+        }
         return "authenticationModule/loginPage";
     }
 
     @GetMapping("/register")
     public String showRegisterPage(Model model) {
+        // Prepare an empty user object for the registration form
+        model.addAttribute("user", new User());
         return "authenticationModule/registerpage";
     }
 
+    /**
+     * Authenticates the user and starts a session.
+     */
     @PostMapping("/login")
     public String processLogin(@RequestParam("email") String email,
-                               @RequestParam("password") String password) {
-        // For now, redirect based on simple logic
-        // In a real app, you'd validate credentials against database
-        if (email.contains("admin")) {
-            return "redirect:/admin";
+                               @RequestParam("password") String password,
+                               HttpSession session,
+                               Model model) {
+        
+        User user = userService.authenticate(email, password);
+
+        if (user != null) {
+            // IMPORTANT: Store the user in the session for the whole team to use
+            session.setAttribute("loggedInUser", user);
+            
+            // Redirect based on the role stored in the database
+            String role = user.getRole().toLowerCase();
+            if ("admin".equals(role)) {
+                return "redirect:/admin";
+            } else if ("advisor".equals(role)) {
+                return "redirect:/advisor";
+            } else {
+                return "redirect:/student";
+            }
         }
-        return "redirect:/student";
+
+        // If authentication fails
+        model.addAttribute("error", "Invalid email or password.");
+        return "authenticationModule/loginPage";
     }
 
+    /**
+     * Registers a new user and saves them to the database.
+     */
     @PostMapping("/register")
-    public String processRegister(@RequestParam("name") String name,
-                                  @RequestParam("email") String email,
-                                  @RequestParam("password") String password,
-                                  @RequestParam("role") String role) {
-        // In a real app, you'd save user to database
-        // For now, redirect to login
-        return "redirect:/login";
+    public String processRegister(@ModelAttribute("user") User user, Model model) {
+        // Set default role if not provided by form
+        if (user.getRole() == null || user.getRole().isEmpty()) {
+            user.setRole("student");
+        }
+
+        User registeredUser = userService.registerUser(user);
+        
+        if (registeredUser != null) {
+            return "redirect:/login?registered=true";
+        } else {
+            model.addAttribute("error", "Registration failed. This email is already registered.");
+            return "authenticationModule/registerpage";
+        }
     }
 
+    /**
+     * Clears the session and logs the user out.
+     */
     @GetMapping("/logout")
-    public String logout() {
-        return "redirect:/login";
+    public String logout(HttpSession session) {
+        session.invalidate(); // Destroys the session securely
+        return "redirect:/login?logout=true";
     }
     
-      @GetMapping("/notification")
-    public String showNotificationPage(Model model) {
+    @GetMapping("/notification")
+    public String showNotificationPage(HttpSession session, Model model) {
+        // Example of how to protect a page using the session
+        User user = (User) session.getAttribute("loggedInUser");
+        if (user == null) {
+            return "redirect:/login"; 
+        }
         return "notificationModule/NotificationPage";
     }
 }
-

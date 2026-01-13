@@ -108,9 +108,4 @@ public class StudentController {
         return "redirect:/student/appointment?success";
     }
 
-    @GetMapping("/counseling")
-    public String showCounseling(HttpSession session) {
-        if (getSessionUser(session) == null) return "redirect:/login";
-        return "studentSupportModule/AttendCounselingPage";
-    }
 }

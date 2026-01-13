@@ -25,7 +25,7 @@ public class User {
 
     @Column(nullable = false)
     private String password;
-    
+
     @Column(nullable = false)
     private String role;
 
@@ -35,23 +35,23 @@ public class User {
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Goal> goals = new ArrayList<>();
 
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @OrderBy("id ASC") 
+    /**
+     * FIX 2: Keep SUBSELECT and EAGER.
+     * This ensures 'moodLogs' data is ready for the trend chart.
+     */
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @Fetch(FetchMode.SUBSELECT)
+    @OrderBy("id ASC")
     private List<MoodLog> moodLogs = new ArrayList<>();
 
-    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
-    private List<ForumPost> forumPosts = new ArrayList<>();
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<ForumPost> forumPosts;
 
-    // NEW: For Advisors to see sessions they created
-    @OneToMany(mappedBy = "advisor", fetch = FetchType.LAZY)
-    private List<CounselingSession> advisedSessions = new ArrayList<>();
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<ForumComment> forumComments;
 
-    // NEW: For Students to see sessions they joined
-    @ManyToMany(mappedBy = "attendees", fetch = FetchType.LAZY)
-    private List<CounselingSession> joinedSessions = new ArrayList<>();
-
-    // --- CONSTRUCTORS ---
-    public User() {}
+    public User() {
+    }
 
     public User(Long id, String name, Integer age, String email, String phone, String password, String role) {
         this.id = id;

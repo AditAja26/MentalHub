@@ -10,9 +10,9 @@
             
             <nav class="header-right">
                 <a th:href="@{/logout}" class="logout-link">Logout</a>
-                <a th:href="@{/notification}" class="notification-icon">
+                <a th:href="@{/notifications}" class="notification-icon">
                     🔔
-                    <div class="notification-badge">1</div>
+                    <div class="notification-badge" th:if="${session.unreadCount != null and session.unreadCount > 0}" th:text="${session.unreadCount}">0</div>
                 </a>
             </nav>
         </header>

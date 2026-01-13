@@ -41,6 +41,16 @@
         button:hover {
             background-color: #357ABD;
         }
+        .success-message {
+            background-color: #d4edda;
+            color: #155724;
+            padding: 15px;
+            border-radius: 8px;
+            border: 1px solid #c3e6cb;
+            margin-bottom: 20px;
+            text-align: center;
+            font-weight: 600;
+        }
     </style>
 </head>
 <body>
@@ -49,6 +59,10 @@
     <div class="container">
         <h1>Book an Appointment</h1>
         <p>Schedule a counseling session with one of our advisors.</p>
+
+        <div th:if="${param.success}" class="success-message">
+            ✓ Appointment booked successfully! Your counselor will contact you soon.
+        </div>
 
         <form action="#" th:action="@{/student/book-appointment}" th:object="${appointment}" method="post">
             <label for="date">Preferred Date:</label>
@@ -68,9 +82,9 @@
             <label for="counselor">Counselor:</label>
             <select id="counselor" th:field="*{counselor}" required>
             <option value="">Select a counselor</option>
-            <option value="advisor1">Advisor 1</option>
-            <option value="advisor2">Advisor 2</option>
-            <option value="advisor3">Advisor 3</option>
+            <option th:each="advisor : ${advisors}" 
+                    th:value="${advisor.name}" 
+                    th:text="${advisor.name}">Advisor Name</option>
             </select>
 
             <label for="reason">Reason for Appointment:</label>

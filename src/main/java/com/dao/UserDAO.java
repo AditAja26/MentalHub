@@ -6,6 +6,7 @@ import java.util.List;
 public interface UserDAO {
     void save(User user);
     User getById(Long id);
+    User getByIdWithDetails(Long id); // Optimized fetch with goals and moods
     User getByEmail(String email);
     List<User> getAll();
     List<User> getByRole(String role);

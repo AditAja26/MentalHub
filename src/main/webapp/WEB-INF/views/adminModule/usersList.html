@@ -81,6 +81,32 @@
             color: #666;
         }
 
+        .user-role {
+            min-width: 120px;
+            display: flex;
+            align-items: center;
+        }
+
+        .role-badge {
+            display: inline-block;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .role-student {
+            background-color: #E3F2FD;
+            color: #1976D2;
+        }
+
+        .role-advisor {
+            background-color: #F3E5F5;
+            color: #7B1FA2;
+        }
+
         .manage-btn {
             background-color: #FFC107;
             color: #333;
@@ -118,6 +144,11 @@
                         <div class="user-contact">
                             <div class="user-email" th:text="${user.email}">bambang@yahoo.com</div>
                             <div class="user-phone" th:text="${user.phone}">082337729130</div>
+                        </div>
+                        <div class="user-role">
+                            <span class="role-badge" 
+                                  th:classappend="${#strings.equalsIgnoreCase(user.role, 'student')} ? 'role-student' : 'role-advisor'"
+                                  th:text="${#strings.capitalize(user.role)}">Student</span>
                         </div>
                     </div>
                     <a th:href="@{/admin/users/{id}(id=${user.id})}" class="manage-btn">Manage</a>

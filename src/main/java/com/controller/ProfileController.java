@@ -9,6 +9,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpSession;
 import java.util.List;
 
 @Controller
@@ -21,17 +22,16 @@ public class ProfileController {
     @Autowired
     private GoalService goalService;
 
-    // Hardcoded for testing, though usually handled by session
-    private static final Long CURRENT_USER_ID = 1L; 
-
     @GetMapping("/profile")
-    public String showProfile(Model model) {
-        User user = userService.getUserById(CURRENT_USER_ID);
+    public String showProfile(Model model, HttpSession session) {
+        Long userId = (Long) session.getAttribute("userId");
+        if (userId == null) {
+            return "redirect:/login";
+        }
         
-        // If user doesn't exist, create a default one
+        User user = userService.getUserById(userId);
         if (user == null) {
-            user = new User(null, "Hakimi", 22, "hakimi@email.com", "082337729130", "password", "student");
-            userService.addUser(user);
+            return "redirect:/login";
         }
         
         model.addAttribute("user", user);
@@ -39,8 +39,13 @@ public class ProfileController {
     }
 
     @GetMapping("/profile/edit")
-    public String showEditProfile(Model model) {
-        User user = userService.getUserById(CURRENT_USER_ID);
+    public String showEditProfile(Model model, HttpSession session) {
+        Long userId = (Long) session.getAttribute("userId");
+        if (userId == null) {
+            return "redirect:/login";
+        }
+        
+        User user = userService.getUserById(userId);
         model.addAttribute("user", user);
         return "studentModule/editProfile";
     }
@@ -49,8 +54,14 @@ public class ProfileController {
     public String updateProfile(@RequestParam("name") String name,
                                 @RequestParam("email") String email,
                                 @RequestParam(value = "password", required = false) String password,
-                                @RequestParam("phone") String phone) {
-        User user = userService.getUserById(CURRENT_USER_ID);
+                                @RequestParam("phone") String phone,
+                                HttpSession session) {
+        Long userId = (Long) session.getAttribute("userId");
+        if (userId == null) {
+            return "redirect:/login";
+        }
+        
+        User user = userService.getUserById(userId);
         if (user != null) {
             user.setName(name);
             user.setEmail(email);
@@ -58,15 +69,20 @@ public class ProfileController {
             if (password != null && !password.isEmpty()) {
                 user.setPassword(password);
             }
-            userService.updateUser(CURRENT_USER_ID, user);
+            userService.updateUser(userId, user);
         }
         return "redirect:/student/profile";
     }
 
     @GetMapping("/goals")
-    public String showGoals(Model model) {
-        List<Goal> activeGoals = goalService.getActiveGoalsByUserId(CURRENT_USER_ID);
-        List<Goal> completedGoals = goalService.getCompletedGoalsByUserId(CURRENT_USER_ID);
+    public String showGoals(Model model, HttpSession session) {
+        Long userId = (Long) session.getAttribute("userId");
+        if (userId == null) {
+            return "redirect:/login";
+        }
+        
+        List<Goal> activeGoals = goalService.getActiveGoalsByUserId(userId);
+        List<Goal> completedGoals = goalService.getCompletedGoalsByUserId(userId);
         
         model.addAttribute("activeGoals", activeGoals);
         model.addAttribute("completedGoals", completedGoals);
@@ -74,12 +90,14 @@ public class ProfileController {
     }
 
     @PostMapping("/goals/add")
-    public String addGoal(@RequestParam("goalDescription") String description) {
-        // FIX: We must fetch the User object first
-        User currentUser = userService.getUserById(CURRENT_USER_ID);
+    public String addGoal(@RequestParam("goalDescription") String description, HttpSession session) {
+        Long userId = (Long) session.getAttribute("userId");
+        if (userId == null) {
+            return "redirect:/login";
+        }
         
+        User currentUser = userService.getUserById(userId);
         if (currentUser != null) {
-            // FIX: Pass the 'currentUser' object, not just the ID
             Goal goal = new Goal(currentUser, description, false);
             goalService.addGoal(goal);
         }

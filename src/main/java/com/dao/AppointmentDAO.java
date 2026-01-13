@@ -12,4 +12,3 @@ public interface AppointmentDao {
     void deleteById(Long id);
     long count();
 }
-

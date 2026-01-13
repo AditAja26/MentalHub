@@ -13,6 +13,8 @@ import com.model.MoodLog;
 import com.services.AppointmentService;
 import com.services.UserService;
 
+import javax.servlet.http.HttpSession;
+
 @Controller
 @RequestMapping("/student")
 public class StudentController {

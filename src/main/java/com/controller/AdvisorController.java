@@ -16,6 +16,8 @@ import com.services.AnalysisService;
 import com.services.UserService;
 import com.model.User;
 
+import javax.servlet.http.HttpSession;
+
 @Controller
 @RequestMapping("/advisor")
 public class AdvisorController {

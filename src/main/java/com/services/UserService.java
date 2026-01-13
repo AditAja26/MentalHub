@@ -103,6 +103,7 @@ public class UserService {
             if (updatedUser.getAge() != null) existing.setAge(updatedUser.getAge());
             if (updatedUser.getEmail() != null) existing.setEmail(updatedUser.getEmail());
             if (updatedUser.getPhone() != null) existing.setPhone(updatedUser.getPhone());
+            if (updatedUser.getPassword() != null) existing.setPassword(updatedUser.getPassword());
             if (updatedUser.getGoals() != null) existing.setGoals(updatedUser.getGoals());
             if (updatedUser.getMoodLogs() != null) existing.setMoodLogs(updatedUser.getMoodLogs());
 

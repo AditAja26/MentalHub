@@ -86,6 +86,15 @@ public class UserService {
         return userDao.getById(id);
     }
 
+    /**
+     * Optimized method for fetching user with all details (goals and mood logs).
+     * Use this for reports and dashboards to avoid lazy loading issues.
+     */
+    @Transactional(readOnly = true)
+    public User getUserByIdWithDetails(Long id) {
+        return userDao.getByIdWithDetails(id);
+    }
+
     @Transactional
     public User updateUser(Long id, User updatedUser) {
         User existing = userDao.getById(id);
@@ -94,6 +103,7 @@ public class UserService {
             if (updatedUser.getAge() != null) existing.setAge(updatedUser.getAge());
             if (updatedUser.getEmail() != null) existing.setEmail(updatedUser.getEmail());
             if (updatedUser.getPhone() != null) existing.setPhone(updatedUser.getPhone());
+            if (updatedUser.getPassword() != null) existing.setPassword(updatedUser.getPassword());
             if (updatedUser.getGoals() != null) existing.setGoals(updatedUser.getGoals());
             if (updatedUser.getMoodLogs() != null) existing.setMoodLogs(updatedUser.getMoodLogs());
 
@@ -122,6 +132,10 @@ public class UserService {
                 
                 User hakimi = new User(null, "Hakimi", 25, "hakimi@email.com", "0811223344", "password123", "advisor");
                 userDao.save(hakimi);
+
+                User admin = new User(null, "Admin", 20, "admin@gmail.com", "0123456789", "password123", "admin");
+                userDao.save(admin);
+                
             } else {
                 System.out.println(">>> MENTALHUB: Users exist. Checking for missing goal/mood data...");
                 for (User user : users) {

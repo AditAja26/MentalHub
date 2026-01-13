@@ -2,138 +2,43 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
     <head>
         <meta charset="UTF-8">
-        <title>Peer Support Forum | MentalHub</title>
+        <title>Discussion | MentalHub</title>
         
         <link rel="stylesheet" th:href="@{/resources/css/nav-bar.css}" />
 
-       <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-            background-color: #f0f2f5; /* Light grey background */
-        }
-        
-        .reply-container {
-            max-width: 800px;
-            margin: 40px auto;
-            padding: 0 20px;
-        }
+        <style>
+            /* [ ... YOUR EXISTING CSS (Unchanged) ... ] */
+            body { font-family: Arial, sans-serif; margin: 0; padding: 0; background-color: #f0f2f5; }
+            .reply-container { max-width: 800px; margin: 40px auto; padding: 0 20px; }
+            h1 { color: #333; font-size: 2rem; margin-bottom: 25px; }
+            .original-post-card { background-color: #e9eefd; border: 1px solid #c9d2f7; border-radius: 8px; padding: 20px; margin-bottom: 30px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
+            .original-post-card .post-header { border-bottom: 1px solid #d2d8f8; padding-bottom: 8px; margin-bottom: 15px; }
+            .original-post-card .username { font-weight: bold; color: #5d50c6; }
+            .original-post-card .timestamp { float: right; color: #888; font-size: 0.9em; }
+            .original-post-card .post-body p { color: #333; line-height: 1.6; margin: 0; }
+            .reply-form-section { background-color: white; padding: 25px; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); margin-top: 30px; }
+            .reply-form-section h2 { font-size: 1.5rem; color: #444; border-bottom: 1px solid #eee; padding-bottom: 10px; margin-top: 0; margin-bottom: 20px; }
+            .reply-form-section label { display: block; font-weight: bold; color: #444; margin-bottom: 5px; }
+            .reply-form-section textarea { width: 100%; padding: 12px; border: 1px solid #ced4da; border-radius: 6px; box-sizing: border-box; font-size: 1rem; font-family: inherit; resize: vertical; }
+            .form-actions { margin-top: 20px; display: flex; justify-content: flex-end; gap: 15px; align-items: center; }
+            .submit-btn, .cancel-btn { padding: 10px 20px; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; text-decoration: none; text-align: center; transition: background-color 0.2s; font-size: 1rem; }
+            .submit-btn { background-color: #7b68ee; color: white; }
+            .submit-btn:hover { background-color: #6a5acd; }
+            .cancel-btn { background-color: #f8f9fa; color: #495057; border: 1px solid #ced4da; line-height: 1.5; }
+            .cancel-btn:hover { background-color: #e2e6ea; }
 
-        h1 {
-            color: #333;
-            font-size: 2rem;
-            margin-bottom: 25px;
-        }
-
-        /* Styling for the Original Post Card */
-        .original-post-card {
-            background-color: #e9eefd; /* Light purple/blue background to differentiate */
-            border: 1px solid #c9d2f7;
-            border-radius: 8px;
-            padding: 20px;
-            margin-bottom: 30px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
-        }
-
-        .original-post-card .post-header {
-            border-bottom: 1px solid #d2d8f8;
-            padding-bottom: 8px;
-            margin-bottom: 15px;
-        }
-        
-        .original-post-card .username {
-            font-weight: bold;
-            color: #5d50c6;
-        }
-        
-        .original-post-card .timestamp {
-            float: right;
-            color: #888;
-            font-size: 0.9em;
-        }
-
-        .original-post-card .post-body p {
-            color: #333;
-            line-height: 1.6;
-            margin: 0;
-            font-style: italic;
-        }
-        
-        /* Styling for the Reply Form Section */
-        .reply-form-section {
-            background-color: white;
-            padding: 25px;
-            border-radius: 8px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-        }
-
-        .reply-form-section h2 {
-            font-size: 1.5rem;
-            color: #444;
-            border-bottom: 1px solid #eee;
-            padding-bottom: 10px;
-            margin-top: 0;
-            margin-bottom: 20px;
-        }
-
-        .reply-form-section label {
-            display: block;
-            font-weight: bold;
-            color: #444;
-            margin-bottom: 5px;
-        }
-
-        .reply-form-section textarea {
-            width: 100%;
-            padding: 12px;
-            border: 1px solid #ced4da;
-            border-radius: 6px;
-            box-sizing: border-box;
-            font-size: 1rem;
-            font-family: inherit;
-            resize: vertical;
-        }
-
-        .form-actions {
-            margin-top: 20px;
-            display: flex;
-            justify-content: flex-end;
-            gap: 15px;
-        }
-
-        .submit-btn,
-        .cancel-btn {
-            padding: 10px 20px;
-            border: none;
-            border-radius: 6px;
-            font-weight: bold;
-            cursor: pointer;
-            text-decoration: none;
-            text-align: center;
-            transition: background-color 0.2s;
-            font-size: 1rem;
-        }
-        
-        .submit-btn {
-            background-color: #7b68ee; /* Purple primary action */
-            color: white;
-        }
-        
-        .submit-btn:hover {
-            background-color: #6a5acd;
-        }
-        
-        .cancel-btn {
-            background-color: #f8f9fa;
-            color: #495057;
-            border: 1px solid #ced4da;
-            line-height: 1.5; /* Align text vertically in link */
-        }
-        
-        .cancel-btn:hover {
-            background-color: #e2e6ea;
-        }
+            /* NEW: STYLING FOR THE COMMENTS LIST */
+            .comments-list { margin-bottom: 30px; }
+            .comment-card { background-color: white; border-radius: 8px; padding: 15px; margin-bottom: 15px; border-left: 4px solid #ddd; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
+            .comment-header { font-size: 0.9rem; color: #555; margin-bottom: 8px; }
+            .comment-author { font-weight: bold; color: #333; margin-right: 10px; }
+            .comment-date { color: #999; font-size: 0.85rem; }
+            .comment-body { color: #444; line-height: 1.4; }
+            
+            /* Checkbox style */
+            .checkbox-group { margin-right: auto; display: flex; align-items: center; }
+            .checkbox-group input { margin-right: 8px; transform: scale(1.1); }
+            .checkbox-group label { margin: 0; font-weight: normal; color: #555; cursor: pointer; }
         </style>
     </head>
 
@@ -142,32 +47,74 @@
 
         <main class="reply-container">
         
-        <h1>Reply to Conversation</h1>
+            <h1>Conversation</h1>
 
-        <section class="original-post-card">
-            <div class="post-header">
-                <span class="username">Original Poster (Student XYZ)</span>
-                <span class="timestamp">2 hours ago</span>
-            </div>
-            <div class="post-body">
-                <p>Original Post: "I've been feeling really overwhelmed with my assignments lately. Does anyone else struggle with balancing academic pressure and personal life? Any tips would be appreciated!"</p>
-            </div>
-        </section>
-        
-        <section class="reply-form-section">
-            <h2>Add Your Reply</h2>
-            <form th:action="@{/peer/reply/submit}" method="post">
-                
-                <label for="replyContent">Your Reply (Anonymous)</label>
-                <textarea id="replyContent" name="replyContent" rows="5" required placeholder="Type your supportive comment or advice here..."></textarea>
-                
-                <div class="form-actions">
-                    <a th:href="@{/peer/posts}" class="cancel-btn">Back to Feed</a>
-                    <button type="submit" class="submit-btn">Submit Reply</button>
+            <section class="original-post-card">
+                <div class="post-header">
+                    <span class="username" th:text="${post.displayAuthor}">Author Name</span>
+                    <span class="timestamp" th:text="${#dates.format(post.createdAt, 'dd MMM, HH:mm')}">Date</span>
                 </div>
-            </form>
-        </section>
-        
+                <div class="post-body">
+                    <h3 th:text="${post.title}" style="margin-top:0; margin-bottom:10px;">Post Title</h3>
+                    <p th:text="${post.content}">Original post content...</p>
+                </div>
+            </section>
+            
+            <section class="comments-list">
+                <h3 style="color: #666; font-size: 1.2rem; margin-bottom: 15px;">
+                    Replies (<span th:text="${post.comments.size()}">0</span>)
+                </h3>
+
+                <div th:if="${#lists.isEmpty(post.comments)}" style="color: #888; font-style: italic; margin-bottom: 20px;">
+                    No replies yet. Be the first to share your thoughts!
+                </div>
+
+                <div class="comment-card" th:each="comment : ${post.comments}">
+                    <div class="comment-header">
+                        <span class="comment-author" th:text="${comment.displayAuthor}">User</span>
+                        <span class="comment-date" th:text="${#dates.format(comment.createdAt, 'dd MMM, HH:mm')}">Time</span>
+                    </div>
+
+                    <form th:if="${session.loggedInUser != null and session.loggedInUser.role == 'ADMIN'}"
+                        th:action="@{/admin/deleteComment}" 
+                        method="post" 
+                        style="display:inline; float:right;"
+                        onsubmit="return confirm('Delete this comment?');">
+                        
+                        <input type="hidden" name="commentId" th:value="${comment.id}" />
+                        <input type="hidden" name="postId" th:value="${post.id}" /> <button type="submit" style="background:none; border:none; color:#dc3545; cursor:pointer; font-size:0.8em;">
+                            [Delete Comment]
+                        </button>
+                    </form>
+
+                    <div class="comment-body">
+                        <p th:text="${comment.content}" style="margin: 0;">Comment text...</p>
+                    </div>
+                </div>
+            </section>
+            
+            <section class="reply-form-section">
+                <h2>Add Your Reply</h2>
+                
+                <form th:action="@{/peer/reply}" method="post">
+                    
+                    <input type="hidden" name="postId" th:value="${post.id}" />
+
+                    <label for="replyContent">Your Message</label>
+                    <textarea id="replyContent" name="content" rows="4" required placeholder="Type your supportive comment or advice here..."></textarea>
+                    
+                    <div class="form-actions">
+                        <div class="checkbox-group">
+                            <input type="checkbox" id="anonCheck" name="isAnonymous">
+                            <label for="anonCheck">Reply Anonymously</label>
+                        </div>
+
+                        <a th:href="@{/peer/posts}" class="cancel-btn">Back to Feed</a>
+                        <button type="submit" class="submit-btn">Submit Reply</button>
+                    </div>
+                </form>
+            </section>
+            
         </main>
     </body>
 </html>

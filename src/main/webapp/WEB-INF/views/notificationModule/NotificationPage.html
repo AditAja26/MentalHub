@@ -80,46 +80,31 @@
     <div class="container">
         <h1>Notifications</h1>
         
-        <div class="indicators">
-            <div class="indicator">
-                <div class="indicator-number">24</div>
-                <div class="indicator-label">Total Messages</div>
-            </div>
-            <div class="indicator">
-                <div class="indicator-number">5</div>
-                <div class="indicator-label">Unread Messages</div>
-            </div>
-            <div class="indicator">
-                <div class="indicator-number">3</div>
-                <div class="indicator-label">Direct Messages</div>
-            </div>
+        <div class="indicator">
+            <div class="indicator-number" th:text="${totalCount}">0</div>
+            <div class="indicator-label">Total Messages</div>
+        </div>
+        <div class="indicator">
+            <div class="indicator-number" th:text="${unreadCount}">0</div>
+            <div class="indicator-label">Unread Messages</div>
+        </div>
+        <div class="indicator">
+            <div class="indicator-number" th:text="${directCount}">0</div>
+            <div class="indicator-label">Direct Messages</div>
         </div>
 
         <div class="notifications-list">
-            <div class="notification-item unread">
-                <div class="notification-title">New Message from John</div>
-                <div class="notification-message">Hey, how are you doing today?</div>
-                <div class="notification-time">2 minutes ago</div>
+            <div th:each="tempNote : ${notifications}" 
+                th:class="${tempNote.isRead} ? 'notification-item' : 'notification-item unread'">
+                
+                <div class="notification-title" th:text="${tempNote.title}">Title</div>
+                <div class="notification-message" th:text="${tempNote.message}">Message content</div>
+                <div class="notification-time" 
+                    th:text="${#dates.format(tempNote.dateCreated, 'dd MMM yyyy HH:mm')}">Time</div>
             </div>
-            <div class="notification-item unread">
-                <div class="notification-title">System Notification</div>
-                <div class="notification-message">Your appointment is confirmed for tomorrow at 3 PM</div>
-                <div class="notification-time">1 hour ago</div>
-            </div>
-            <div class="notification-item">
-                <div class="notification-title">Message from Sarah</div>
-                <div class="notification-message">Thanks for your help yesterday!</div>
-                <div class="notification-time">3 hours ago</div>
-            </div>
-            <div class="notification-item unread">
-                <div class="notification-title">Group Chat Update</div>
-                <div class="notification-message">You were added to "Wellness Group"</div>
-                <div class="notification-time">5 hours ago</div>
-            </div>
-            <div class="notification-item">
-                <div class="notification-title">Reminder</div>
-                <div class="notification-message">Time for your daily check-in</div>
-                <div class="notification-time">Yesterday at 9 AM</div>
+            
+            <div th:if="${#lists.isEmpty(notifications)}" style="text-align:center; padding: 20px;">
+                No notifications found.
             </div>
         </div>
     </div>

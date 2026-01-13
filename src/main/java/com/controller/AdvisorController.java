@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -15,6 +16,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.services.AnalysisService;
 import com.services.UserService;
+import com.services.AppointmentService;
+import com.services.NotificationService;
 import com.model.User;
 
 @Controller
@@ -26,6 +29,12 @@ public class AdvisorController {
 
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private AppointmentService appointmentService;
+
+    @Autowired
+    private NotificationService notificationService;
 
     /**
      * UC000: Advisor Landing Page
@@ -40,7 +49,12 @@ public class AdvisorController {
         }
 
         // Dynamically set the name from the logged-in user object
-        model.addAttribute("advisorName", user.getName()); 
+        model.addAttribute("advisorName", user.getName());
+        
+        // Add unread notification count to session
+        long unreadCount = notificationService.getUnreadCount(user.getId());
+        session.setAttribute("unreadCount", unreadCount);
+        
         return "mainPages/advisorLandingPage";
     }
 
@@ -93,11 +107,53 @@ public class AdvisorController {
     }
 
     @GetMapping("/appointment")
-    public String showAppointment(HttpSession session) {
-        if (session.getAttribute("loggedInUser") == null) {
+    public String showAppointment(HttpSession session, Model model) {
+        User user = (User) session.getAttribute("loggedInUser");
+        if (user == null) {
             return "redirect:/login";
         }
-        return "studentSupportModule/appointmentPage";
+        
+        // Get all appointments for this advisor
+        String advisorName = user.getName();
+        List<com.model.Appointment> appointments = appointmentService.getAppointmentsByAdvisor(advisorName);
+        
+        // Calculate statistics
+        int totalAppointments = appointments.size();
+        int todayAppointments = 0; // Can be enhanced to filter by today's date
+        int upcomingAppointments = appointments.size(); // Can be enhanced to filter future dates
+        
+        model.addAttribute("appointments", appointments);
+        model.addAttribute("totalAppointments", totalAppointments);
+        model.addAttribute("todayAppointments", todayAppointments);
+        model.addAttribute("upcomingAppointments", upcomingAppointments);
+        
+        return "advisorModule/appointmentManagement";
+    }
+
+    @GetMapping("/appointment/complete/{id}")
+    public String completeAppointment(@PathVariable Long id, HttpSession session) {
+        User user = (User) session.getAttribute("loggedInUser");
+        if (user == null) {
+            return "redirect:/login";
+        }
+        
+        // In a full implementation, you might want to update status instead of deleting
+        // For now, we'll delete the appointment as "completed"
+        appointmentService.deleteAppointment(id);
+        
+        return "redirect:/advisor/appointment?completed=true";
+    }
+
+    @GetMapping("/appointment/cancel/{id}")
+    public String cancelAppointment(@PathVariable Long id, HttpSession session) {
+        User user = (User) session.getAttribute("loggedInUser");
+        if (user == null) {
+            return "redirect:/login";
+        }
+        
+        appointmentService.deleteAppointment(id);
+        
+        return "redirect:/advisor/appointment?cancelled=true";
     }
 
     @GetMapping("/test")

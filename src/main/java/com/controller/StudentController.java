@@ -17,6 +17,7 @@ import com.model.User;
 import com.services.AppointmentService;
 import com.services.CounsellingSessionService;
 import com.services.UserService;
+import com.services.NotificationService;
 
 @Controller
 @RequestMapping("/student")
@@ -58,6 +59,13 @@ public class StudentController {
         
         User user = userService.getUserById(userId);
         model.addAttribute("studentName", user != null ? user.getName() : "Student");
+        
+        // Add unread notification count to session
+        if (userId != null) {
+            long unreadCount = notificationService.getUnreadCount(userId);
+            session.setAttribute("unreadCount", unreadCount);
+        }
+        
         return "mainPages/studentLandingPage";
     }
 
@@ -91,7 +99,12 @@ public class StudentController {
     @GetMapping("/appointment")
     public String showAppointment(HttpSession session, Model model) {
         if (getSessionUser(session) == null) return "redirect:/login";
-        model.addAttribute("appointment", new Appointment()); 
+        
+        // Fetch all advisors from the database
+        List<User> advisors = userService.getUsersByRole("advisor");
+        
+        model.addAttribute("appointment", new Appointment());
+        model.addAttribute("advisors", advisors);
         return "studentSupportModule/BookAppointmentPage";
     }
 
@@ -103,8 +116,41 @@ public class StudentController {
     }
 
     @PostMapping("/book-appointment")
-    public String bookAppointment(@ModelAttribute("appointment") Appointment appointment) {
+    public String bookAppointment(@ModelAttribute("appointment") Appointment appointment, HttpSession session) {
+        // Save the appointment
         appointmentService.addAppointment(appointment);
+        
+        // Get the student who made the appointment
+        User student = getSessionUser(session);
+        
+        if (student != null) {
+            // Create notification for the student
+            String studentMessage = String.format("Your appointment with %s on %s at %s has been successfully booked.", 
+                appointment.getCounselor(), appointment.getDate(), appointment.getTime());
+            notificationService.createNotification(
+                student.getId(), 
+                "Appointment Confirmed", 
+                studentMessage, 
+                "appointment"
+            );
+            
+            // Find the advisor and create notification for them
+            List<User> advisors = userService.getUsersByRole("advisor");
+            for (User advisor : advisors) {
+                if (advisor.getName().equals(appointment.getCounselor())) {
+                    String advisorMessage = String.format("New appointment request from %s on %s at %s. Reason: %s", 
+                        student.getName(), appointment.getDate(), appointment.getTime(), appointment.getReason());
+                    notificationService.createNotification(
+                        advisor.getId(), 
+                        "New Appointment Booked", 
+                        advisorMessage, 
+                        "appointment"
+                    );
+                    break;
+                }
+            }
+        }
+        
         return "redirect:/student/appointment?success";
     }
 

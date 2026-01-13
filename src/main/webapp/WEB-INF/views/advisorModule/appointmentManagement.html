@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manage Appointments - MentalHub</title>
+    <link th:href="@{/resources/css/nav-bar.css}" rel="stylesheet" type="text/css"/>
+    <style>
+        .container {
+            max-width: 1200px;
+            margin: 30px auto;
+            padding: 20px;
+        }
+
+        .page-title {
+            font-size: 32px;
+            font-weight: 700;
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .page-subtitle {
+            font-size: 16px;
+            color: #666;
+            margin-bottom: 30px;
+        }
+
+        .appointments-grid {
+            display: grid;
+            gap: 20px;
+        }
+
+        .appointment-card {
+            background-color: #D8D4E0;
+            border-radius: 16px;
+            padding: 25px;
+            display: grid;
+            grid-template-columns: auto 1fr auto;
+            gap: 20px;
+            align-items: center;
+            transition: all 0.3s ease;
+        }
+
+        .appointment-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+
+        .appointment-icon {
+            width: 60px;
+            height: 60px;
+            background-color: #8B7B9B;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+            color: white;
+        }
+
+        .appointment-details {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .appointment-date-time {
+            font-size: 18px;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .appointment-reason {
+            font-size: 14px;
+            color: #666;
+            margin-top: 5px;
+        }
+
+        .appointment-info {
+            font-size: 14px;
+            color: #555;
+        }
+
+        .appointment-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .action-btn {
+            padding: 10px 20px;
+            border-radius: 20px;
+            border: none;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .btn-complete {
+            background-color: #7CB98B;
+            color: white;
+        }
+
+        .btn-complete:hover {
+            background-color: #6AA87A;
+        }
+
+        .btn-cancel {
+            background-color: #E57373;
+            color: white;
+        }
+
+        .btn-cancel:hover {
+            background-color: #D35555;
+        }
+
+        .no-appointments {
+            text-align: center;
+            padding: 60px 20px;
+            color: #999;
+            font-size: 18px;
+        }
+
+        .no-appointments-icon {
+            font-size: 64px;
+            margin-bottom: 20px;
+        }
+
+        .stats-bar {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background-color: #F5F5F5;
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 32px;
+            font-weight: 700;
+            color: #4A90E2;
+        }
+
+        .stat-label {
+            font-size: 14px;
+            color: #666;
+            margin-top: 5px;
+        }
+
+        .success-message {
+            background-color: #d4edda;
+            color: #155724;
+            padding: 15px;
+            border-radius: 8px;
+            border: 1px solid #c3e6cb;
+            margin-bottom: 20px;
+            text-align: center;
+            font-weight: 600;
+        }
+
+        .info-message {
+            background-color: #d1ecf1;
+            color: #0c5460;
+            padding: 15px;
+            border-radius: 8px;
+            border: 1px solid #bee5eb;
+            margin-bottom: 20px;
+            text-align: center;
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body>
+    <div th:replace="~{_layout :: main-header}"></div>
+
+    <div class="container">
+        <h1 class="page-title">Manage Appointments</h1>
+        <p class="page-subtitle">View and manage your counseling appointments</p>
+
+        <div th:if="${param.completed}" class="success-message">
+            ✓ Appointment marked as completed successfully!
+        </div>
+
+        <div th:if="${param.cancelled}" class="info-message">
+            ✕ Appointment cancelled successfully.
+        </div>
+
+        <div class="stats-bar">
+            <div class="stat-card">
+                <div class="stat-number" th:text="${totalAppointments}">0</div>
+                <div class="stat-label">Total Appointments</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" th:text="${todayAppointments}">0</div>
+                <div class="stat-label">Today's Appointments</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" th:text="${upcomingAppointments}">0</div>
+                <div class="stat-label">Upcoming</div>
+            </div>
+        </div>
+
+        <div class="appointments-grid">
+            <div th:if="${#lists.isEmpty(appointments)}" class="no-appointments">
+                <div class="no-appointments-icon">📅</div>
+                <p>No appointments scheduled yet.</p>
+            </div>
+
+            <div class="appointment-card" th:each="appointment : ${appointments}">
+                <div class="appointment-icon">📅</div>
+                <div class="appointment-details">
+                    <div class="appointment-date-time">
+                        <span th:text="${appointment.date}">Date</span> at 
+                        <span th:text="${appointment.time}">Time</span>
+                    </div>
+                    <div class="appointment-info">
+                        <strong>Counselor:</strong> <span th:text="${appointment.counselor}">Counselor Name</span>
+                    </div>
+                    <div class="appointment-reason">
+                        <strong>Reason:</strong> <span th:text="${appointment.reason}">Appointment reason</span>
+                    </div>
+                </div>
+                <div class="appointment-actions">
+                    <a th:href="@{/advisor/appointment/complete/{id}(id=${appointment.id})}" 
+                       class="action-btn btn-complete" 
+                       onclick="return confirm('Mark this appointment as completed?');">
+                        ✓ Complete
+                    </a>
+                    <a th:href="@{/advisor/appointment/cancel/{id}(id=${appointment.id})}" 
+                       class="action-btn btn-cancel" 
+                       onclick="return confirm('Are you sure you want to cancel this appointment?');">
+                        ✕ Cancel
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
+

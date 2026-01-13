@@ -8,8 +8,6 @@ import org.springframework.web.bind.annotation.*;
 
 import com.model.User;
 import com.services.UserService;
-
-import javax.servlet.http.HttpSession;
 import java.util.List;
 
 @Controller
@@ -20,23 +18,23 @@ public class AuthController {
 
     @GetMapping("/login")
     public String showLoginPage(@RequestParam(value = "logout", required = false) String logout,
+                                @RequestParam(value = "registered", required = false) String registered,
                                 Model model) {
         if (logout != null) {
             model.addAttribute("message", "You have been logged out successfully.");
+        }
+        if (registered != null) {
+            model.addAttribute("success", "Registration successful! Please login.");
         }
         return "authenticationModule/loginPage";
     }
 
     @GetMapping("/register")
     public String showRegisterPage(Model model) {
-        // Prepare an empty user object for the registration form
         model.addAttribute("user", new User());
         return "authenticationModule/registerpage";
     }
 
-    /**
-     * Authenticates the user and starts a session.
-     */
     @PostMapping("/login")
     public String processLogin(@RequestParam("email") String email,
                                @RequestParam("password") String password,
@@ -46,13 +44,11 @@ public class AuthController {
         User user = userService.authenticate(email, password);
 
         if (user != null) {
-            // Store all necessary session attributes
             session.setAttribute("loggedInUser", user);
             session.setAttribute("userId", user.getId());
             session.setAttribute("userName", user.getName());
             session.setAttribute("userRole", user.getRole());
             
-            // Redirect based on the role stored in the database
             String role = user.getRole().toLowerCase();
             if ("admin".equals(role)) {
                 return "redirect:/admin";
@@ -63,63 +59,70 @@ public class AuthController {
             }
         }
 
-        // If authentication fails
         model.addAttribute("error", "Invalid email or password.");
         return "authenticationModule/loginPage";
     }
 
     /**
-     * Registers a new user including Age and Phone from the form.
+     * Updated Register Logic: Now actually checks if passwords match!
      */
     @PostMapping("/register")
     public String processRegister(@RequestParam("name") String name,
                                   @RequestParam("email") String email,
                                   @RequestParam("password") String password,
+                                  @RequestParam("confirmPassword") String confirmPassword, // ADDED THIS
                                   @RequestParam("role") String role,
                                   @RequestParam(value = "phone", required = false) String phone,
                                   @RequestParam(value = "age", required = false) Integer age,
                                   Model model) {
-        // Check if email already exists
-        List<User> allUsers = userService.getAllUsers();
-        for (User existingUser : allUsers) {
-            if (existingUser.getEmail().equals(email)) {
-                model.addAttribute("error", "Email already registered. Please login or use a different email.");
-                return "authenticationModule/registerpage";
-            }
-        }
         
-        // Create new user
+        // 1. THE FIX: Password Match Validation
+        if (!password.equals(confirmPassword)) {
+            model.addAttribute("error", "Passwords do not match! Please try again.");
+            model.addAttribute("typedName", name);
+            model.addAttribute("typedEmail", email);
+            model.addAttribute("typedPhone", phone);
+            model.addAttribute("typedAge", age);
+            return "authenticationModule/registerpage";
+        }
+
+        // 2. Password Length Validation
+        if (password.length() < 6) {
+            model.addAttribute("error", "Password must be at least 6 characters long.");
+            model.addAttribute("typedName", name);
+            model.addAttribute("typedEmail", email);
+            model.addAttribute("typedPhone", phone);
+            model.addAttribute("typedAge", age);
+            return "authenticationModule/registerpage";
+        }
+
+        // 3. Email Duplicate Validation
+        User existingUser = userService.getUserByEmail(email);
+        if (existingUser != null) {
+            model.addAttribute("error", "This email is already registered. Please use another or sign in.");
+            model.addAttribute("typedName", name);
+            model.addAttribute("typedPhone", phone);
+            model.addAttribute("typedAge", age);
+            return "authenticationModule/registerpage";
+        }
+
+        // 4. Everything is fine -> Save
         User newUser = new User();
         newUser.setName(name);
         newUser.setEmail(email);
         newUser.setPassword(password);
-        newUser.setRole(role.toLowerCase()); // Normalize role to lowercase
+        newUser.setRole(role.toLowerCase());
         newUser.setPhone(phone != null ? phone : "");
         newUser.setAge(age);
         
-        // Save to database
         userService.addUser(newUser);
         
-        // Redirect to login with success message
-        model.addAttribute("success", "Registration successful! Please login.");
         return "redirect:/login?registered=true";
     }
 
-    /**
-     * Clears the session and logs the user out.
-     */
     @GetMapping("/logout")
     public String logout(HttpSession session) {
         session.invalidate(); 
         return "redirect:/login?logout=true";
-    }
-    
-    @GetMapping("/notification")
-    public String showNotificationPage(HttpSession session, Model model) {
-        User user = (User) session.getAttribute("loggedInUser");
-        if (user == null) {
-            return "redirect:/login"; 
-        }
-        return "notificationModule/NotificationPage";
     }
 }

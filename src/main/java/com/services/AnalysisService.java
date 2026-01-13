@@ -56,7 +56,20 @@ public class AnalysisService {
         report.put("pendingGoals", pendingGoals);
         report.put("allGoals", allGoals);
         
-        // 6. Add Mood & Stress (Logic can be expanded later)
+        // 6. Add Mood Logs Data for Chart (CRITICAL for cross-platform compatibility)
+        User user = userService.getUserByIdWithDetails(userId);
+        if (user != null && user.getMoodLogs() != null && !user.getMoodLogs().isEmpty()) {
+            // Extract mood scores in order for the trend chart
+            List<Double> moodScores = user.getMoodLogs().stream()
+                .map(moodLog -> moodLog.getScore())
+                .collect(java.util.stream.Collectors.toList());
+            report.put("weeklyMoods", moodScores);
+        } else {
+            // Provide default data if no mood logs exist (prevents null errors)
+            report.put("weeklyMoods", java.util.Arrays.asList(0.0, 0.0, 0.0, 0.0, 0.0, 0.0));
+        }
+        
+        // 7. Add Mood & Stress (Logic can be expanded later)
         // If progress is high, we can assume lower stress for now
         report.put("moodAvg", (roundedPercentage / 20.0)); // e.g., 80% = 4.0/5.0
         report.put("stressLevel", percentage >= 70 ? "Low" : "Moderate");

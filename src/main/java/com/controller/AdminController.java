@@ -52,7 +52,11 @@ public class AdminController {
 
     @GetMapping("/users")
     public String showUsersList(Model model) {
-        List<User> users = userService.getAllUsers();
+        // Get all users but exclude admins (system should only have 1 admin)
+        List<User> allUsers = userService.getAllUsers();
+        List<User> users = allUsers.stream()
+                .filter(user -> !"admin".equalsIgnoreCase(user.getRole()))
+                .collect(java.util.stream.Collectors.toList());
         model.addAttribute("users", users);
         return "adminModule/usersList";
     }

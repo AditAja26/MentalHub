@@ -86,6 +86,15 @@ public class UserService {
         return userDao.getById(id);
     }
 
+    /**
+     * Optimized method for fetching user with all details (goals and mood logs).
+     * Use this for reports and dashboards to avoid lazy loading issues.
+     */
+    @Transactional(readOnly = true)
+    public User getUserByIdWithDetails(Long id) {
+        return userDao.getByIdWithDetails(id);
+    }
+
     @Transactional
     public User updateUser(Long id, User updatedUser) {
         User existing = userDao.getById(id);

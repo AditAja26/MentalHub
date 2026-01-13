@@ -15,7 +15,7 @@ public class CounsellingSessionDaoHibernate implements CounsellingSessionDao {
     @Autowired
     private SessionFactory sessionFactory;
 
-    private Session openSession(){
+    private Session openSession() {
         return sessionFactory.openSession();
     }
 
@@ -77,15 +77,15 @@ public class CounsellingSessionDaoHibernate implements CounsellingSessionDao {
             sessionH.close();
         }
     }
-    
+
     @Override
     public List<CounsellingSession> findByDate(String dateString) {
         Session sessionH = openSession();
         try {
             String hql = "from CounsellingSession where date = :dateString";
             return sessionH.createQuery(hql, CounsellingSession.class)
-                           .setParameter("dateString", dateString)
-                           .list();
+                    .setParameter("dateString", dateString)
+                    .list();
         } finally {
             sessionH.close();
         }

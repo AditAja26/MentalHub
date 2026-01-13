@@ -62,6 +62,7 @@ public class AdvisorController {
 
     /**
      * UC010: Generate Report for a specific student
+     * Optimized to use efficient JOIN FETCH query
      */
     @Transactional(readOnly = true)
     @GetMapping("/report")
@@ -73,16 +74,14 @@ public class AdvisorController {
             return "redirect:/login";
         }
 
-        User student = userService.getUserById(studentId);
+        // Use optimized method that fetches everything in one query
+        User student = userService.getUserByIdWithDetails(studentId);
         
         if (student == null) {
             return "redirect:/advisor/monitor";
         }
 
-        // Lazy Loading Fix for Goals
-        if (student.getGoals() != null) {
-            student.getGoals().size(); 
-        }
+        // No need to manually trigger lazy loading - everything is already loaded!
         
         Map<String, Object> analysis = analysisService.analyzeUserProgress(studentId);
         

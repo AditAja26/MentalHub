@@ -1,7 +1,6 @@
 package com.services;
 
 import com.dao.ForumPostDao;
-import com.dao.ForumCommentDao;
 import com.model.ForumPost;
 import com.model.ForumComment;
 import com.model.User;
@@ -22,9 +21,6 @@ public class ForumPostServiceImpl implements ForumPostService {
 
     @Autowired
     private ForumPostDao forumDao;
-
-    @Autowired
-    private ForumCommentDao forumCommentDao;
 
     @Autowired
     private SessionFactory sessionFactory;

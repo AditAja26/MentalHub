@@ -1,7 +1,6 @@
 package com.services;
 
 import com.model.ForumPost;
-import com.model.ForumComment;
 import com.model.User;
 import java.util.List;
 

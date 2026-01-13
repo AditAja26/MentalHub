@@ -1,6 +1,7 @@
 package com.controller;
 
 import java.util.List;
+import javax.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -23,6 +24,11 @@ public class StudentController {
 
     @Autowired 
     private AppointmentService appointmentService;
+
+    // Helper to get the user from session safely
+    private User getSessionUser(HttpSession session) {
+        return (User) session.getAttribute("loggedInUser");
+    }
 
     @GetMapping(value = { "", "/" })
     public String showStudentLandingPage(Model model, HttpSession session) {
@@ -47,51 +53,49 @@ public class StudentController {
         return "mainPages/studentLandingPage";
     }
 
-    /**
-     * This method fixes the blank "Student Analysis" page.
-     * It fetches the user, their goals, and their trend data.
-     */
     @GetMapping("/analysis")
-    public String showStudentAnalysis(Model model, HttpSession session) {
-        Long userId = (Long) session.getAttribute("userId");
-        if (userId == null) {
-            return "redirect:/login";
-        }
-        
-        User user = userService.getUserById(userId);
-        
-        if (user != null) {
-            // 1. Calculate Mood Average for the blue box
+    public String showStudentAnalysis(HttpSession session, Model model) {
+        User user = getSessionUser(session);
+        if (user == null) return "redirect:/login";
+
+        // Fetch fresh data for the logged-in user
+        User currentUser = userService.getUserById(user.getId());
+
+        if (currentUser != null) {
             double average = 0.0;
-            List<MoodLog> moods = user.getMoodLogs();
+            List<MoodLog> moods = currentUser.getMoodLogs();
             if (moods != null && !moods.isEmpty()) {
                 average = moods.stream().mapToDouble(MoodLog::getScore).average().orElse(0.0);
             }
 
-            // 2. Add data to the page model
-            model.addAttribute("user", user);
-            model.addAttribute("goals", user.getGoals()); // Accessed via user_goals join table
+            model.addAttribute("user", currentUser);
+            model.addAttribute("goals", currentUser.getGoals());
             model.addAttribute("moodAverage", String.format("%.1f", average));
-            model.addAttribute("moodLogs", moods); // Data for the trend chart
+            model.addAttribute("moodLogs", moods);
+            
+            String stress = (average > 3.5) ? "LOW" : (average > 2.5) ? "MODERATE" : "HIGH";
+            model.addAttribute("stressLevel", stress);
         }
 
-        return "mainPages/studentAnalysisPage"; // Ensure this matches your JSP file name
+        return "mainPages/studentAnalysisPage";
     }
 
     @GetMapping("/appointment")
-    public String showAppointment(Model model) {
+    public String showAppointment(HttpSession session, Model model) {
+        if (getSessionUser(session) == null) return "redirect:/login";
         model.addAttribute("appointment", new Appointment()); 
         return "studentSupportModule/BookAppointmentPage";
-    }
-
-    @GetMapping("/counseling")
-    public String showCounseling(Model model) {
-        return "studentSupportModule/AttendCounselingPage";
     }
 
     @PostMapping("/book-appointment")
     public String bookAppointment(@ModelAttribute("appointment") Appointment appointment) {
         appointmentService.addAppointment(appointment);
         return "redirect:/student/appointment?success";
+    }
+
+    @GetMapping("/counseling")
+    public String showCounseling(HttpSession session) {
+        if (getSessionUser(session) == null) return "redirect:/login";
+        return "studentSupportModule/AttendCounselingPage";
     }
 }

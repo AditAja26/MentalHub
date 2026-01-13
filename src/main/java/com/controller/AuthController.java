@@ -71,10 +71,34 @@ public class AuthController {
     public String processRegister(@RequestParam("name") String name,
                                   @RequestParam("email") String email,
                                   @RequestParam("password") String password,
-                                  @RequestParam("role") String role) {
-        // In a real app, you'd save user to database
-        // For now, redirect to login
-        return "redirect:/login";
+                                  @RequestParam("role") String role,
+                                  @RequestParam(value = "phone", required = false) String phone,
+                                  @RequestParam(value = "age", required = false) Integer age,
+                                  Model model) {
+        // Check if email already exists
+        List<User> allUsers = userService.getAllUsers();
+        for (User existingUser : allUsers) {
+            if (existingUser.getEmail().equals(email)) {
+                model.addAttribute("error", "Email already registered. Please login or use a different email.");
+                return "authenticationModule/registerpage";
+            }
+        }
+        
+        // Create new user
+        User newUser = new User();
+        newUser.setName(name);
+        newUser.setEmail(email);
+        newUser.setPassword(password);
+        newUser.setRole(role.toLowerCase()); // Normalize role to lowercase
+        newUser.setPhone(phone != null ? phone : "");
+        newUser.setAge(age);
+        
+        // Save to database
+        userService.addUser(newUser);
+        
+        // Redirect to login with success message
+        model.addAttribute("success", "Registration successful! Please login.");
+        return "redirect:/login?registered=true";
     }
 
     @GetMapping("/logout")

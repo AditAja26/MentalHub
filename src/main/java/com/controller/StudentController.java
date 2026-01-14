@@ -5,21 +5,16 @@ import javax.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 
 import com.model.Appointment;
-import com.model.CounsellingSession;
 import com.model.MoodLog;
 import com.model.User;
-import com.model.CounselingSession;
+import com.model.CounselingSession; // Standardized to single 'l'
 import com.services.AppointmentService;
-import com.services.CounsellingSessionService;
 import com.services.UserService;
 import com.services.NotificationService;
-import com.services.CounselingSessionService; // Required for sessions
+import com.services.CounselingSessionService; // Standardized to single 'l'
 
 @Controller
 @RequestMapping("/student")
@@ -32,36 +27,27 @@ public class StudentController {
     private AppointmentService appointmentService;
 
     @Autowired
-    private CounsellingSessionService counsellingSessionService;
-
-    @Autowired
     private NotificationService notificationService;
 
     @Autowired
-    private CounselingSessionService sessionService; // Added service
+    private CounselingSessionService sessionService; 
 
     // Helper to get the user from session safely
     private User getSessionUser(HttpSession session) {
         return (User) session.getAttribute("loggedInUser");
     }
 
-    
-
     @GetMapping(value = { "", "/" })
     public String showStudentLandingPage(Model model, HttpSession session) {
         Long userId = (Long) session.getAttribute("userId");
         String userRole = (String) session.getAttribute("userRole");
         
-        if (userId == null) {
-            return "redirect:/login";
-        }
+        if (userId == null) return "redirect:/login";
         
+        // Redirect non-students
         if (userRole != null && !userRole.equalsIgnoreCase("student")) {
-            if (userRole.equalsIgnoreCase("admin")) {
-                return "redirect:/admin";
-            } else if (userRole.equalsIgnoreCase("advisor")) {
-                return "redirect:/advisor";
-            }
+            if (userRole.equalsIgnoreCase("admin")) return "redirect:/admin";
+            if (userRole.equalsIgnoreCase("advisor")) return "redirect:/advisor";
         }
         
         User user = userService.getUserById(userId);
@@ -82,13 +68,12 @@ public class StudentController {
         Long userId = (Long) session.getAttribute("userId");
         if (userId == null) return "redirect:/login";
 
-        // Fetch fresh data to avoid LazyInitialization / Proxy issues
         User currentUser = userService.getUserById(userId);
         List<CounselingSession> allSessions = sessionService.getAllSessions();
 
         model.addAttribute("sessions", allSessions);
         model.addAttribute("currentUser", currentUser);
-        return "studentModule/sessionList";
+        return "studentModule/sessionList"; // Points to the folder you confirmed
     }
 
     @PostMapping("/sessions/join")
@@ -100,14 +85,12 @@ public class StudentController {
         User student = userService.getUserById(userId);
 
         if (cSession != null && student != null && !cSession.isFull()) {
-            // Check if student is already in the list
             if (!cSession.getAttendees().contains(student)) {
                 cSession.getAttendees().add(student);
-                sessionService.updateSession(cSession); // Persist change
+                sessionService.updateSession(cSession);
             }
             return "redirect:/student/sessions?joined=true";
         }
-        
         return "redirect:/student/sessions?joined=false";
     }
 
@@ -120,12 +103,18 @@ public class StudentController {
         User student = userService.getUserById(userId);
 
         if (cSession != null && student != null) {
-            // Remove the student from the session's attendee list
             cSession.getAttendees().remove(student);
             sessionService.updateSession(cSession);
         }
-        
         return "redirect:/student/sessions?left=true";
+    }
+
+    // --- REDIRECT FOR OLD LINKS ---
+    // This fixes the Ambiguous Mapping error by having only ONE method for this URL
+    @GetMapping("/counseling")
+    public String showCounseling(HttpSession session) {
+        if (getSessionUser(session) == null) return "redirect:/login";
+        return "redirect:/student/sessions";
     }
 
     // --- REMAINING METHODS ---
@@ -136,7 +125,6 @@ public class StudentController {
         if (user == null) return "redirect:/login";
 
         User currentUser = userService.getUserById(user.getId());
-
         if (currentUser != null) {
             double average = 0.0;
             List<MoodLog> moods = currentUser.getMoodLogs();
@@ -152,7 +140,6 @@ public class StudentController {
             String stress = (average > 3.5) ? "LOW" : (average > 2.5) ? "MODERATE" : "HIGH";
             model.addAttribute("stressLevel", stress);
         }
-
         return "mainPages/studentAnalysisPage";
     }
 
@@ -164,13 +151,6 @@ public class StudentController {
         model.addAttribute("appointment", new Appointment());
         model.addAttribute("advisors", advisors);
         return "studentSupportModule/BookAppointmentPage";
-    }
-
-    @GetMapping("/counseling")
-    public String showCounseling(Model model) {
-        List<CounsellingSession> sessions = counsellingSessionService.getAllSessions(); 
-        model.addAttribute("sessions", sessions);
-        return "studentSupportModule/AttendCounselingPage";
     }
 
     @PostMapping("/book-appointment")
@@ -197,14 +177,6 @@ public class StudentController {
                 break;
             }
         }
-        
         return "redirect:/student/appointment?success";
-    }
-
-    @GetMapping("/counseling")
-    public String showCounseling(HttpSession session) {
-        if (getSessionUser(session) == null) return "redirect:/login";
-        // Option: Redirect to the sessions list directly
-        return "redirect:/student/sessions";
     }
 }

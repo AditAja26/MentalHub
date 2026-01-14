@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Wellness Sessions - MentalHub</title>
+    <link th:href="@{/resources/css/nav-bar.css}" rel="stylesheet" type="text/css"/>
+    <style>
+        body { background-color: #f8f9fa; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 0; }
+        .container { max-width: 1100px; margin: 40px auto; padding: 0 20px; }
+        
+        .header-section { margin-bottom: 30px; }
+        .header-section h1 { color: #2d3748; font-size: 2rem; margin-bottom: 10px; }
+        
+        /* Alerts */
+        .alert { padding: 15px; margin-bottom: 25px; border-radius: 8px; font-weight: 500; border: 1px solid transparent; }
+        .alert-success { background-color: #def7ec; color: #03543f; border-color: #bcf0da; }
+        .alert-error { background-color: #fde8e8; color: #9b1c1c; border-color: #fbd5d5; }
+
+        /* Grid Layout */
+        .session-grid { 
+            display: grid; 
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); 
+            gap: 25px; 
+        }
+
+        /* Card Styling */
+        .card {
+            background: white;
+            border-radius: 12px;
+            padding: 25px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            border: 1px solid #edf2f7;
+            display: flex;
+            flex-direction: column;
+            transition: transform 0.2s ease;
+        }
+        .card:hover { transform: translateY(-4px); }
+
+        .card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
+        .date-badge { background: #ebf4ff; color: #2b6cb0; padding: 4px 12px; border-radius: 9999px; font-size: 0.85rem; font-weight: 700; }
+        .time-text { color: #718096; font-size: 0.9rem; font-weight: 600; }
+
+        .card-title { color: #1a202c; font-size: 1.25rem; font-weight: 700; margin: 0 0 10px 0; }
+        .card-desc { color: #4a5568; font-size: 0.95rem; line-height: 1.5; margin-bottom: 20px; flex-grow: 1; }
+
+        .meta-info { 
+            border-top: 1px solid #edf2f7; 
+            padding-top: 15px; 
+            margin-top: auto; 
+            display: flex; 
+            justify-content: space-between;
+            font-size: 0.85rem;
+            color: #718096;
+        }
+
+        /* Buttons */
+        .btn { 
+            display: block; width: 100%; padding: 12px; border-radius: 8px; font-weight: 600; 
+            text-align: center; border: none; cursor: pointer; transition: 0.2s; margin-top: 15px;
+            font-size: 1rem;
+        }
+        .btn-join { background-color: #667eea; color: white; }
+        .btn-join:hover { background-color: #5a67d8; }
+        
+        .btn-leave { background-color: #fff; color: #e53e3e; border: 1px solid #e53e3e; }
+        .btn-leave:hover { background-color: #fff5f5; }
+
+        .btn-full { background-color: #edf2f7; color: #a0aec0; cursor: not-allowed; }
+
+        .empty-state { text-align: center; padding: 50px; color: #718096; }
+    </style>
+</head>
+<body>
+    <div th:replace="~{_layout :: main-header}"></div>
+
+    <div class="container">
+        <div class="header-section">
+            <h1>Wellness Counseling Sessions</h1>
+            <p>Join group sessions hosted by our professional advisors.</p>
+        </div>
+
+        <div th:if="${param.joined}" class="alert alert-success">
+            <span th:if="${param.joined[0] == 'true'}">✅ You have successfully joined the session!</span>
+            <span th:if="${param.joined[0] == 'false'}">⚠️ Sorry, that session is already full or you are already enrolled.</span>
+        </div>
+        <div th:if="${param.left}" class="alert alert-success">
+            🗑️ You have successfully left the session.
+        </div>
+
+        <div class="session-grid">
+            <div th:each="s : ${sessions}" class="card">
+                
+                <div class="card-header">
+                    <span class="date-badge" th:text="${s.date}">Oct 24, 2023</span>
+                    <span class="time-text" th:text="${s.time}">10:00 AM</span>
+                </div>
+
+                <h3 class="card-title" th:text="${s.title}">Session Title</h3>
+                <p class="card-desc" th:text="${s.description}">Description of the session goes here...</p>
+                
+                <div class="meta-info">
+                    <span>👤 Advisor: <strong th:text="${s.advisor != null ? s.advisor.name : 'Unknown'}">Dr. Smith</strong></span>
+                    <span>👥 Spots: <strong th:text="${s.attendees.size()} + ' / ' + ${s.maxCapacity}">0 / 10</strong></span>
+                </div>
+
+                <div th:with="isAttendee=${#lists.contains(s.attendees.![id], currentUser.id)}">
+                    
+                    <form th:if="${isAttendee}" th:action="@{/student/sessions/leave}" method="post">
+                        <input type="hidden" name="sessionId" th:value="${s.id}" />
+                        <button type="submit" class="btn btn-leave" 
+                                onclick="return confirm('Are you sure you want to leave this session?');">
+                            Leave Session
+                        </button>
+                    </form>
+
+                    <form th:if="${!isAttendee}" th:action="@{/student/sessions/join}" method="post">
+                        <input type="hidden" name="sessionId" th:value="${s.id}" />
+                        
+                        <button th:if="${!s.isFull()}" type="submit" class="btn btn-join">
+                            Join Session
+                        </button>
+                        
+                        <button th:if="${s.isFull()}" type="button" class="btn btn-full" disabled>
+                            Session Full
+                        </button>
+                    </form>
+
+                </div>
+            </div>
+        </div>
+
+        <div th:if="${#lists.isEmpty(sessions)}" class="empty-state">
+            <h3>No sessions available right now.</h3>
+            <p>Please check back later for new wellness workshops.</p>
+        </div>
+    </div>
+</body>
+</html>

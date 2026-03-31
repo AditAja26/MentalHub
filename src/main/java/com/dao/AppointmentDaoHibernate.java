@@ -13,7 +13,7 @@ import com.model.Appointment;
 
 
 @Repository
-public class AppointmentDaoHibernate implements AppointmentDao {
+public class AppointmentDaoHibernate implements AppointmentDAO {
 
         @Autowired
         private SessionFactory sessionFactory;

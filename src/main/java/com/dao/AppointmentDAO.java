@@ -4,7 +4,7 @@ import java.util.List;
 
 import com.model.Appointment;
 
-public interface AppointmentDao {
+public interface AppointmentDAO {
     Appointment save(Appointment appointment);
     List<Appointment> findAll();
     Appointment findById(Long id);

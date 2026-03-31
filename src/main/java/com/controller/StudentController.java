@@ -30,7 +30,10 @@ public class StudentController {
     private NotificationService notificationService;
 
     @Autowired
-    private CounselingSessionService sessionService; 
+    private CounselingSessionService sessionService;
+
+    @Autowired
+    private com.services.MoodLogService moodLogService; 
 
     // Helper to get the user from session safely
     private User getSessionUser(HttpSession session) {
@@ -132,10 +135,14 @@ public class StudentController {
                 average = moods.stream().mapToDouble(MoodLog::getScore).average().orElse(0.0);
             }
 
+            // Get recent mood logs (with mood type information)
+            List<MoodLog> recentMoodLogs = moodLogService.getUserMoodLogs(user.getId());
+            
             model.addAttribute("user", currentUser);
             model.addAttribute("goals", currentUser.getGoals());
             model.addAttribute("moodAverage", String.format("%.1f", average));
             model.addAttribute("moodLogs", moods);
+            model.addAttribute("recentMoodLogs", recentMoodLogs);
             
             String stress = (average > 3.5) ? "LOW" : (average > 2.5) ? "MODERATE" : "HIGH";
             model.addAttribute("stressLevel", stress);

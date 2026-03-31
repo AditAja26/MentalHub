@@ -8,7 +8,6 @@ import org.springframework.web.bind.annotation.*;
 
 import com.model.User;
 import com.services.UserService;
-import java.util.List;
 
 @Controller
 public class AuthController {
@@ -48,6 +47,14 @@ public class AuthController {
             session.setAttribute("userId", user.getId());
             session.setAttribute("userName", user.getName());
             session.setAttribute("userRole", user.getRole());
+            
+            // ALWAYS ask for mood on each login (not just once per day)
+            // Reset mood flags on every new login session
+            session.setAttribute("moodLoggedToday", false);
+            session.setAttribute("moodSkippedToday", false);
+            
+            System.out.println(">>> New login session started for user: " + user.getName());
+            System.out.println(">>> Mood tracking flags reset - will show quiz modal");
             
             String role = user.getRole().toLowerCase();
             if ("admin".equals(role)) {

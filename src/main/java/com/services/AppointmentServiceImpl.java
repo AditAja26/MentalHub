@@ -8,7 +8,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.services.AppointmentService;
-import com.dao.AppointmentDao;
+import com.dao.AppointmentDAO;
 import com.model.Appointment;
 
 
@@ -17,7 +17,7 @@ import com.model.Appointment;
 class AppointmentServiceImpl implements AppointmentService {
     
     @Autowired
-    private AppointmentDao appointmentDao;
+    private AppointmentDAO appointmentDao;
 
     @PostConstruct
     public void init() {
